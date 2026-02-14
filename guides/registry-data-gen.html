@@ -1,0 +1,54 @@
+﻿<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>第 5 章：数据生成与资源组织 | CraftMod Lab</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;700&family=Noto+Sans+SC:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../styles/main.css">
+</head>
+<body>
+  <main class="guide-main">
+    <a class="breadcrumb" href="../index.html">← 返回首页</a>
+
+    <header class="guide-hero">
+      <h1>第 5 章：数据生成与资源组织</h1>
+      <div class="meta">
+        <span>预计时长：50 分钟</span>
+        <span>难度：进阶</span>
+      </div>
+    </header>
+
+    <section class="section">
+      <h2>本章目标</h2>
+      <p>用 Data Generator 自动生成模型、语言、配方与标签，降低手写 JSON 出错率。</p>
+    </section>
+
+    <section class="section">
+      <h2>实践步骤</h2>
+      <ul>
+  <li>建立 datagen 入口，拆分 BlockStateProvider、ItemModelProvider 等类。</li>
+  <li>把可枚举资源尽量转为代码生成，减少重复维护。</li>
+  <li>按功能组织资源目录，避免一个文件夹堆满所有 JSON。</li>
+  <li>每次新增内容后先运行 datagen，再运行客户端验证。</li>
+</ul>
+    </section>
+
+    <section class="section">
+      <h2>参考代码</h2>
+      <pre><code>@Override
+protected void registerModels() {
+  withExistingParent("copper_dust", mcLoc("item/generated"))
+    .texture("layer0", modLoc("item/copper_dust"));
+}</code></pre>
+    </section>
+
+    <nav class="guide-nav">
+      <a href="first-block.html">上一章</a>
+      <a href="networking.html">下一章</a>
+    </nav>
+  </main>
+</body>
+</html>

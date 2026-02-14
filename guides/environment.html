@@ -1,0 +1,53 @@
+﻿<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>第 2 章：开发环境搭建 | CraftMod Lab</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;700&family=Noto+Sans+SC:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../styles/main.css">
+</head>
+<body>
+  <main class="guide-main">
+    <a class="breadcrumb" href="../index.html">← 返回首页</a>
+
+    <header class="guide-hero">
+      <h1>第 2 章：开发环境搭建</h1>
+      <div class="meta">
+        <span>预计时长：40 分钟</span>
+        <span>难度：入门</span>
+      </div>
+    </header>
+
+    <section class="section">
+      <h2>本章目标</h2>
+      <p>安装 JDK 与 IDE，导入模板工程，成功运行一次开发客户端并确认日志无关键报错。</p>
+    </section>
+
+    <section class="section">
+      <h2>实践步骤</h2>
+      <ul>
+  <li>安装 JDK 17/21（根据目标 MC 版本要求）。</li>
+  <li>IDE 推荐 IntelliJ IDEA，打开工程后等待 Gradle 同步。</li>
+  <li>运行 gradlew genIntellijRuns（若模板需要），再启动 runClient。</li>
+  <li>启动后检查日志：确认模组 ID、版本号、资源路径均被正确读取。</li>
+</ul>
+    </section>
+
+    <section class="section">
+      <h2>参考代码</h2>
+      <pre><code># 常用命令（Windows）
+./gradlew clean
+./gradlew --refresh-dependencies
+./gradlew runClient</code></pre>
+    </section>
+
+    <nav class="guide-nav">
+      <a href="getting-started.html">上一章</a>
+      <a href="first-item.html">下一章</a>
+    </nav>
+  </main>
+</body>
+</html>
