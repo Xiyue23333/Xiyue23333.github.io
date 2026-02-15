@@ -12,7 +12,7 @@
 </head>
 <body>
   <header class="site-header">
-    <a class="brand" href="index.html">
+    <a class="brand js-sidebar-toggle" href="#" aria-controls="site-drawer" aria-expanded="false">
       <span class="brand-block"></span>
       <span>CraftMod Lab</span>
     </a>
@@ -23,6 +23,27 @@
       <a class="nav-cta" href="guides/getting-started.html">开始学习</a>
     </nav>
   </header>
+
+  <div class="drawer-overlay" data-drawer-overlay hidden></div>
+  <aside class="site-drawer" id="site-drawer" aria-hidden="true">
+    <div class="site-drawer-head">
+      <h2>目录导航</h2>
+      <button class="drawer-close" type="button" data-drawer-close aria-label="关闭侧边栏">x</button>
+    </div>
+    <p class="site-drawer-text">点击章节可快速跳转。</p>
+    <nav class="site-drawer-nav">
+      <a href="#path">学习路径</a>
+      <a href="#stack">技术栈选择</a>
+      <a href="#faq">常见问题</a>
+      <a href="guides/getting-started.html">第 1 章：模组开发总览</a>
+      <a href="guides/environment.html">第 2 章：开发环境搭建</a>
+      <a href="guides/first-item.html">第 3 章：创建第一个物品</a>
+      <a href="guides/first-block.html">第 4 章：创建第一个方块</a>
+      <a href="guides/registry-data-gen.html">第 5 章：数据生成与资源组织</a>
+      <a href="guides/networking.html">第 6 章：联机同步基础</a>
+      <a href="guides/release.html">第 7 章：打包与发布</a>
+    </nav>
+  </aside>
 
   <main>
     <section class="hero">

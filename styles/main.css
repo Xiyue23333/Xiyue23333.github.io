@@ -862,3 +862,132 @@ pre {
     min-height: 300px;
   }
 }
+/* Header Drawer */
+.brand {
+  cursor: pointer;
+}
+
+.drawer-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(2, 6, 8, 0.52);
+  opacity: 0;
+  transition: opacity 0.22s ease;
+  z-index: 25;
+}
+
+.drawer-overlay.visible {
+  opacity: 1;
+}
+
+.site-drawer {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: min(360px, 86vw);
+  height: 100vh;
+  padding: 1rem;
+  border-right: 1px solid #274335;
+  background: linear-gradient(180deg, #0c1713, #08110e 58%);
+  transform: translateX(-106%);
+  transition: transform 0.22s ease;
+  z-index: 30;
+  overflow: auto;
+  box-shadow: 18px 0 40px rgba(0, 0, 0, 0.35);
+}
+
+.site-drawer.open {
+  transform: translateX(0);
+}
+
+.site-drawer-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.8rem;
+}
+
+.site-drawer-head h2 {
+  font-family: "Chakra Petch", "Noto Sans SC", sans-serif;
+  font-size: 1.35rem;
+}
+
+.drawer-close {
+  border: 1px solid #2e4f3e;
+  background: rgba(255, 255, 255, 0.03);
+  color: var(--text);
+  width: 30px;
+  height: 30px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.drawer-close:hover {
+  border-color: var(--accent);
+}
+
+.site-drawer-text {
+  margin: 0.5rem 0 0;
+  color: var(--muted);
+}
+
+.site-drawer-nav {
+  margin-top: 0.9rem;
+  display: grid;
+  gap: 0.45rem;
+}
+
+.site-drawer-nav a {
+  text-decoration: none;
+  color: #c7dfd4;
+  border: 1px solid #234238;
+  border-radius: 10px;
+  padding: 0.5rem 0.6rem;
+  background: rgba(255, 255, 255, 0.02);
+  font-size: 0.93rem;
+}
+
+.site-drawer-nav a:hover {
+  border-color: var(--accent);
+  color: #e8f6f0;
+}
+
+body.drawer-open {
+  overflow: hidden;
+}
+
+/* Larger Guide IDE */
+.guide-main {
+  width: min(1180px, 95vw);
+}
+
+.ide-workbench {
+  grid-template-columns: 320px 1fr;
+  min-height: 620px;
+}
+
+.ide-code-wrap,
+.ide-highlight,
+.ide-code {
+  min-height: 520px;
+}
+
+@media (max-width: 860px) {
+  .site-drawer {
+    width: min(340px, 92vw);
+  }
+
+  .guide-main {
+    width: 96vw;
+  }
+
+  .ide-workbench {
+    min-height: 0;
+  }
+
+  .ide-code-wrap,
+  .ide-highlight,
+  .ide-code {
+    min-height: 340px;
+  }
+}
