@@ -17,7 +17,6 @@
 - `index.html`：首页与章节入口
 - `styles/main.css`：全站样式
 - `scripts/main.js`：首页交互（含侧边栏）
-- `scripts/ide.js`：教程页 IDE 视图脚本
 - `guides/*.html`：章节与小节框架页
 
 ## 部署到 GitHub Pages
@@ -28,3 +27,4 @@
    - Branch: `main` / `/root`
 3. 提交后等待 1-3 分钟，访问：
    - `https://xiyue23333.github.io/`
+
