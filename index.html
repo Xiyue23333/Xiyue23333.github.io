@@ -3,8 +3,8 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>CraftMod Lab | Minecraft 模组制作教程</title>
-  <meta name="description" content="面向中文创作者的 Minecraft 模组开发教程站：从环境配置到发布上线。">
+  <title>Minecraft Mod Create | Minecraft 模组制作教程</title>
+  <meta name="description" content="Minecraft Mod Create：Minecraft 模组教程站，当前已搭建第一章《初窥门径》框架。">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;700&family=Noto+Sans+SC:wght@400;600;700&display=swap" rel="stylesheet">
@@ -13,158 +13,109 @@
 <body>
   <header class="site-header">
     <a class="brand js-sidebar-toggle" href="#" aria-controls="site-drawer" aria-expanded="false">
-      <span class="brand-block"></span>
-      <span>CraftMod Lab</span>
+      <span class="brand-menu" aria-hidden="true"><span></span><span></span><span></span></span>
+      <span>Minecraft Mod Create</span>
     </a>
     <nav>
-      <a href="#path">学习路径</a>
-      <a href="#stack">技术栈</a>
-      <a href="#faq">常见问题</a>
-      <a class="nav-cta" href="guides/getting-started.html">开始学习</a>
+      <a href="#chapter-1">第一章</a>
+      <a href="#outline">章节结构</a>
+      <a href="#note">说明</a>
+      <a class="nav-cta" href="guides/chapter-1-intro.html">进入第一章</a>
     </nav>
   </header>
 
   <div class="drawer-overlay" data-drawer-overlay hidden></div>
   <aside class="site-drawer" id="site-drawer" aria-hidden="true">
     <div class="site-drawer-head">
-      <h2>目录导航</h2>
+      <h2>章节导航</h2>
       <button class="drawer-close" type="button" data-drawer-close aria-label="关闭侧边栏">x</button>
     </div>
-    <p class="site-drawer-text">点击章节可快速跳转。</p>
+    <p class="site-drawer-text">当前仅搭建第一章框架，内容待后续导入。</p>
     <nav class="site-drawer-nav">
-      <a href="#path">学习路径</a>
-      <a href="#stack">技术栈选择</a>
-      <a href="#faq">常见问题</a>
-      <a href="guides/getting-started.html">第 1 章：模组开发总览</a>
-      <a href="guides/environment.html">第 2 章：开发环境搭建</a>
-      <a href="guides/first-item.html">第 3 章：创建第一个物品</a>
-      <a href="guides/first-block.html">第 4 章：创建第一个方块</a>
-      <a href="guides/registry-data-gen.html">第 5 章：数据生成与资源组织</a>
-      <a href="guides/networking.html">第 6 章：联机同步基础</a>
-      <a href="guides/release.html">第 7 章：打包与发布</a>
+      <a href="guides/chapter-1-intro.html">第一章：初窥门径</a>
+      <a href="guides/ch1-sec1-environment-setup.html">第一节：开发环境构建</a>
+      <a href="guides/ch1-sec2-read-official-code.html">第二节：学会查看官方代码</a>
+      <a href="guides/ch1-sec3-start-your-mod.html">第三节：开始制作自己的 Mod</a>
+      <a href="guides/ch1-sec3-point1-first-item.html">第三节-1：第一个物品</a>
+      <a href="guides/ch1-sec3-point2-creative-tab.html">第三节-2：创造模式物品栏</a>
+      <a href="guides/ch1-sec3-point3-resources-structure.html">第三节-3：resources 文件构建</a>
     </nav>
   </aside>
 
   <main>
-    <section class="hero">
-      <p class="eyebrow">MINECRAFT MODDING IN CHINESE</p>
-      <h1>从零构建你的第一个<br>Minecraft 模组</h1>
-      <p class="hero-text">覆盖 Forge / NeoForge / Fabric 的完整入门路线，按步骤学会注册方块、物品、配方、联机同步与打包发布。</p>
+    <section class="hero" id="chapter-1">
+      <p class="eyebrow">MINECRAFT MOD CREATE</p>
+      <h1>第一章：初窥门径</h1>
+      <p class="hero-text">已完成章节框架搭建，后续将导入你的教程 Mod 实战内容。</p>
       <div class="hero-actions">
-        <a class="btn btn-primary" href="guides/getting-started.html">进入第 1 章</a>
-        <a class="btn btn-outline" href="#path">查看课程地图</a>
+        <a class="btn btn-primary" href="guides/chapter-1-intro.html">进入第一章</a>
+        <a class="btn btn-outline" href="#outline">查看结构</a>
       </div>
       <div class="hero-grid">
         <article>
-          <h3>7 个核心章节</h3>
-          <p>每章附目标、代码片段与常见坑位。</p>
+          <h3>第一节</h3>
+          <p>开发环境构建</p>
         </article>
         <article>
-          <h3>版本分流</h3>
-          <p>1.20.1 与 1.21+ 给出差异说明。</p>
+          <h3>第二节</h3>
+          <p>学会查看官方代码</p>
         </article>
         <article>
-          <h3>可直接部署</h3>
-          <p>纯静态站点，兼容 GitHub Pages。</p>
+          <h3>第三节</h3>
+          <p>开始制作自己的 Mod（含 3 个要点）</p>
         </article>
       </div>
     </section>
 
-    <section id="path" class="panel">
+    <section id="outline" class="panel">
       <div class="panel-head">
-        <h2>学习路径</h2>
-        <p>建议顺序：按章节逐步推进，先跑通最小可运行模组，再扩展功能。</p>
+        <h2>第一章结构</h2>
+        <p>仅保留框架，不预填教程正文。</p>
       </div>
-      <div class="card-list">
-        <a class="card" href="guides/getting-started.html">
-          <span class="tag">第 1 章</span>
-          <h3>模组开发总览</h3>
-          <p>理解 Loader、映射、Gradle 与项目结构。</p>
-        </a>
-        <a class="card" href="guides/environment.html">
-          <span class="tag">第 2 章</span>
-          <h3>开发环境搭建</h3>
-          <p>JDK、IDE、模板工程与首次运行。</p>
-        </a>
-        <a class="card" href="guides/first-item.html">
-          <span class="tag">第 3 章</span>
-          <h3>创建第一个物品</h3>
-          <p>注册 Item、语言文件、模型与贴图。</p>
-        </a>
-        <a class="card" href="guides/first-block.html">
-          <span class="tag">第 4 章</span>
-          <h3>创建第一个方块</h3>
-          <p>方块属性、掉落表、方块物品与配方。</p>
-        </a>
-        <a class="card" href="guides/registry-data-gen.html">
-          <span class="tag">第 5 章</span>
-          <h3>数据生成与资源组织</h3>
-          <p>DataGen 自动生成 JSON，减少重复劳动。</p>
-        </a>
-        <a class="card" href="guides/networking.html">
-          <span class="tag">第 6 章</span>
-          <h3>联机同步基础</h3>
-          <p>客户端与服务端通信、数据同步与安全校验。</p>
-        </a>
-        <a class="card" href="guides/release.html">
-          <span class="tag">第 7 章</span>
-          <h3>打包与发布</h3>
-          <p>构建 Jar、版本号规范、发布平台清单。</p>
-        </a>
+      <div class="chapter-outline">
+        <article class="outline-card">
+          <span class="tag">第一节</span>
+          <h3><a href="guides/ch1-sec1-environment-setup.html">开发环境构建</a></h3>
+          <p>占位页面已创建。</p>
+        </article>
+        <article class="outline-card">
+          <span class="tag">第二节</span>
+          <h3><a href="guides/ch1-sec2-read-official-code.html">学会查看官方代码</a></h3>
+          <p>占位页面已创建。</p>
+        </article>
+        <article class="outline-card">
+          <span class="tag">第三节</span>
+          <h3><a href="guides/ch1-sec3-start-your-mod.html">开始制作自己的 Mod</a></h3>
+          <p>下设 3 个要点页面：</p>
+          <ul>
+            <li><a href="guides/ch1-sec3-point1-first-item.html">第一点：制作模组的第一个物品</a></li>
+            <li><a href="guides/ch1-sec3-point2-creative-tab.html">第二点：制作创造模式物品栏</a></li>
+            <li><a href="guides/ch1-sec3-point3-resources-structure.html">第三点：resources 文件的构建</a></li>
+          </ul>
+        </article>
       </div>
     </section>
 
-    <section id="stack" class="panel split">
-      <div>
-        <h2>技术栈选择</h2>
-        <p>不同 Loader 适用场景不一样。你可以先选一个主线，后续再做多平台适配。</p>
-      </div>
-      <div class="tabs" role="tablist" aria-label="模组加载器">
-        <button class="tab active" data-target="forge" role="tab">Forge / NeoForge</button>
-        <button class="tab" data-target="fabric" role="tab">Fabric</button>
-      </div>
-      <article id="forge" class="tab-panel active">
-        <h3>Forge / NeoForge</h3>
-        <p>生态成熟，教程多，适合从零入门和复杂内容型模组。</p>
-        <ul>
-          <li>优势：资料丰富、事件系统完整、兼容老项目迁移。</li>
-          <li>建议：先做 1 个小功能模组，再扩展到 GUI、方块实体等。</li>
-        </ul>
-      </article>
-      <article id="fabric" class="tab-panel">
-        <h3>Fabric</h3>
-        <p>轻量灵活，版本更新快，适合快速迭代与工具型模组。</p>
-        <ul>
-          <li>优势：启动快、API 轻、社区工具链活跃。</li>
-          <li>建议：搭配 Yarn 映射与 Loom，保持依赖版本一致。</li>
-        </ul>
-      </article>
-    </section>
-
-    <section id="faq" class="panel">
+    <section id="note" class="panel">
       <div class="panel-head">
-        <h2>常见问题</h2>
+        <h2>当前状态说明</h2>
       </div>
       <div class="faq">
-        <details>
-          <summary>Q1: Java 基础很弱，能学模组开发吗？</summary>
-          <p>可以。先掌握类、方法、集合、面向对象，再按本教程做小步实战。</p>
+        <details open>
+          <summary>为什么页面内容很少？</summary>
+          <p>按你的要求，本轮只搭建课程框架，不填充具体教程内容。</p>
         </details>
         <details>
-          <summary>Q2: 先学 Forge 还是 Fabric？</summary>
-          <p>如果你是第一次做模组，优先 Forge/NeoForge；追求轻量和新版本可优先 Fabric。</p>
-        </details>
-        <details>
-          <summary>Q3: 为什么进游戏后看不到我注册的物品？</summary>
-          <p>先检查注册事件是否触发、命名空间是否一致、模型 JSON 与贴图路径是否匹配。</p>
+          <summary>下一步怎么接入你的教程 Mod？</summary>
+          <p>后续你给我项目目录或代码后，我会把每节页面替换成真实教程与示例。</p>
         </details>
       </div>
     </section>
   </main>
 
   <footer class="site-footer">
-    <p>CraftMod Lab · Minecraft 模组制作教程</p>
-    <p>基于 GitHub Pages 构建，持续更新中。</p>
+    <p>Minecraft Mod Create · Minecraft 模组制作教程</p>
+    <p>第一章《初窥门径》框架已完成。</p>
   </footer>
 
   <script src="scripts/main.js"></script>

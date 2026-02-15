@@ -354,6 +354,14 @@ summary {
   margin: 0.6rem 0 0 1rem;
 }
 
+.section a {
+  color: var(--text);
+}
+
+.section a:hover {
+  color: var(--accent);
+}
+
 .section code,
 pre code {
   font-family: "Consolas", "Courier New", monospace;
@@ -989,5 +997,77 @@ body.drawer-open {
   .ide-highlight,
   .ide-code {
     min-height: 340px;
+  }
+}
+/* Chapter Framework */
+.brand {
+  gap: 0.6rem;
+}
+
+.brand-menu {
+  width: 18px;
+  height: 14px;
+  display: inline-grid;
+  align-content: space-between;
+}
+
+.brand-menu span {
+  display: block;
+  height: 2px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, #9ef7b9, #58d18a);
+  box-shadow: 0 0 6px rgba(89, 209, 137, 0.3);
+}
+
+.brand-block {
+  display: none;
+}
+
+.chapter-outline {
+  margin-top: 1rem;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.9rem;
+}
+
+.outline-card {
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  padding: 0.9rem;
+  background: rgba(5, 11, 9, 0.3);
+}
+
+.outline-card h3 {
+  margin-top: 0.45rem;
+  font-size: 1.1rem;
+}
+
+.outline-card h3 a {
+  color: var(--text);
+  text-decoration: none;
+}
+
+.outline-card h3 a:hover {
+  color: var(--accent);
+}
+
+.outline-card p,
+.outline-card li {
+  color: var(--muted);
+}
+
+.outline-card ul {
+  margin: 0.5rem 0 0 1rem;
+}
+
+.placeholder-section {
+  border-style: dashed;
+  border-color: #2f5848;
+  background: rgba(7, 13, 11, 0.42);
+}
+
+@media (max-width: 960px) {
+  .chapter-outline {
+    grid-template-columns: 1fr;
   }
 }
