@@ -1,22 +1,8 @@
-﻿const tabs = document.querySelectorAll('.tab');
-const panels = document.querySelectorAll('.tab-panel');
-
-for (const tab of tabs) {
-  tab.addEventListener('click', () => {
-    for (const t of tabs) t.classList.remove('active');
-    for (const panel of panels) panel.classList.remove('active');
-
-    tab.classList.add('active');
-    const target = document.getElementById(tab.dataset.target);
-    if (target) target.classList.add('active');
-  });
-}
-
-const drawerToggle = document.querySelector('.js-sidebar-toggle');
+﻿const drawerToggle = document.querySelector('.js-sidebar-toggle');
 const drawer = document.getElementById('site-drawer');
 const drawerOverlay = document.querySelector('[data-drawer-overlay]');
 const drawerClose = document.querySelector('[data-drawer-close]');
-const drawerLinks = document.querySelectorAll('.site-drawer-nav a');
+const drawerLinks = drawer ? drawer.querySelectorAll('a') : [];
 
 if (drawerToggle && drawer && drawerOverlay && drawerClose) {
   let closeTimer = null;
@@ -68,4 +54,114 @@ if (drawerToggle && drawer && drawerOverlay && drawerClose) {
       closeDrawer();
     }
   });
+}
+
+const drawerGroupToggles = document.querySelectorAll('[data-drawer-group-toggle]');
+
+for (const toggle of drawerGroupToggles) {
+  const targetId = toggle.getAttribute('data-target');
+  const target = targetId ? document.getElementById(targetId) : null;
+  if (!target) continue;
+
+  toggle.addEventListener('click', () => {
+    const isOpen = target.classList.toggle('open');
+    toggle.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+    toggle.classList.toggle('open', isOpen);
+  });
+}
+
+const COMMENT_KEY = 'mmc_comments_v1';
+const commentForm = document.querySelector('[data-comment-form]');
+const commentList = document.querySelector('[data-comment-list]');
+const commentClear = document.querySelector('[data-comment-clear]');
+
+function loadComments() {
+  try {
+    const raw = window.localStorage.getItem(COMMENT_KEY);
+    if (!raw) return [];
+    const parsed = JSON.parse(raw);
+    return Array.isArray(parsed) ? parsed : [];
+  } catch {
+    return [];
+  }
+}
+
+function saveComments(comments) {
+  window.localStorage.setItem(COMMENT_KEY, JSON.stringify(comments));
+}
+
+function renderComments() {
+  if (!commentList) return;
+  const comments = loadComments();
+  commentList.innerHTML = '';
+
+  if (comments.length === 0) {
+    const empty = document.createElement('p');
+    empty.className = 'message-empty';
+    empty.textContent = '暂无留言，来写第一条吧。';
+    commentList.appendChild(empty);
+    return;
+  }
+
+  const ordered = comments.slice().reverse();
+  for (const item of ordered) {
+    const card = document.createElement('article');
+    card.className = 'message-item';
+
+    const head = document.createElement('div');
+    head.className = 'message-item-head';
+
+    const name = document.createElement('strong');
+    name.textContent = item.name;
+
+    const time = document.createElement('span');
+    const timeValue = new Date(item.createdAt);
+    time.textContent = Number.isNaN(timeValue.getTime())
+      ? '未知时间'
+      : timeValue.toLocaleString('zh-CN', { hour12: false });
+
+    head.appendChild(name);
+    head.appendChild(time);
+
+    const body = document.createElement('p');
+    body.textContent = item.message;
+
+    card.appendChild(head);
+    card.appendChild(body);
+    commentList.appendChild(card);
+  }
+}
+
+if (commentForm && commentList) {
+  renderComments();
+
+  commentForm.addEventListener('submit', (event) => {
+    event.preventDefault();
+    const formData = new FormData(commentForm);
+    const name = String(formData.get('name') || '').trim();
+    const message = String(formData.get('message') || '').trim();
+
+    if (!name || !message) return;
+
+    const comments = loadComments();
+    comments.push({
+      name: name.slice(0, 24),
+      message: message.slice(0, 280),
+      createdAt: new Date().toISOString(),
+    });
+
+    const capped = comments.slice(-80);
+    saveComments(capped);
+    commentForm.reset();
+    renderComments();
+  });
+
+  if (commentClear) {
+    commentClear.addEventListener('click', () => {
+      const ok = window.confirm('确定清空当前浏览器中的所有留言吗？');
+      if (!ok) return;
+      window.localStorage.removeItem(COMMENT_KEY);
+      renderComments();
+    });
+  }
 }

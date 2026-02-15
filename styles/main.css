@@ -1071,3 +1071,197 @@ body.drawer-open {
     grid-template-columns: 1fr;
   }
 }
+/* Main Tutorial Home */
+.drawer-home {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  text-decoration: none;
+  color: var(--text);
+  border: 1px solid #2a4a3c;
+  border-radius: 9px;
+  padding: 0.4rem 0.62rem;
+  background: rgba(255, 255, 255, 0.02);
+  font-size: 0.9rem;
+}
+
+.drawer-home:hover {
+  border-color: var(--accent);
+}
+
+.site-drawer-head {
+  margin-top: 0.8rem;
+}
+
+.drawer-groups {
+  margin-top: 0.8rem;
+  display: grid;
+  gap: 0.7rem;
+}
+
+.drawer-group-toggle {
+  width: 100%;
+  border: 1px solid #234238;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.02);
+  color: var(--text);
+  font-size: 0.98rem;
+  text-align: left;
+  padding: 0.6rem 0.7rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  cursor: pointer;
+}
+
+.drawer-group-toggle:hover,
+.drawer-group-toggle.open {
+  border-color: var(--accent);
+}
+
+.drawer-caret {
+  transition: transform 0.2s ease;
+}
+
+.drawer-group-toggle:not(.open) .drawer-caret {
+  transform: rotate(-90deg);
+}
+
+.drawer-group-list {
+  margin-top: 0.45rem;
+  display: grid;
+  gap: 0.4rem;
+  overflow: hidden;
+  max-height: 0;
+  opacity: 0;
+  transform: translateY(-4px);
+  transition: max-height 0.2s ease, opacity 0.2s ease, transform 0.2s ease;
+}
+
+.drawer-group-list.open {
+  max-height: 420px;
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.drawer-group-list a {
+  text-decoration: none;
+  color: #c7dfd4;
+  border: 1px solid #1f3b32;
+  border-radius: 9px;
+  padding: 0.46rem 0.58rem;
+  background: rgba(255, 255, 255, 0.02);
+  font-size: 0.9rem;
+}
+
+.drawer-group-list a:hover {
+  border-color: var(--accent);
+  color: #e8f6f0;
+}
+
+.updates-list {
+  margin-top: 1rem;
+  display: grid;
+  gap: 0.8rem;
+}
+
+.update-item {
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 0.85rem;
+  background: rgba(5, 11, 9, 0.3);
+}
+
+.update-date {
+  margin: 0;
+  font-family: "Chakra Petch", "Noto Sans SC", sans-serif;
+  color: var(--accent-2);
+  font-size: 0.82rem;
+  letter-spacing: 0.03em;
+}
+
+.update-item h3 {
+  margin-top: 0.35rem;
+}
+
+.update-item p {
+  margin: 0.35rem 0 0;
+  color: var(--muted);
+}
+
+.message-form {
+  margin-top: 1rem;
+  display: grid;
+  gap: 0.75rem;
+}
+
+.message-form label {
+  display: grid;
+  gap: 0.35rem;
+  font-weight: 600;
+}
+
+.message-form input,
+.message-form textarea {
+  width: 100%;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 0.62rem 0.7rem;
+  background: rgba(0, 0, 0, 0.18);
+  color: var(--text);
+  font: inherit;
+}
+
+.message-form input:focus,
+.message-form textarea:focus {
+  outline: 0;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 2px rgba(89, 209, 137, 0.15);
+}
+
+.message-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.65rem;
+}
+
+.message-feed {
+  margin-top: 0.85rem;
+  display: grid;
+  gap: 0.7rem;
+}
+
+.message-empty {
+  margin: 0;
+  border: 1px dashed #35584c;
+  border-radius: 10px;
+  padding: 0.75rem;
+  color: var(--muted);
+}
+
+.message-item {
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 0.72rem;
+  background: rgba(5, 11, 9, 0.3);
+}
+
+.message-item-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 0.8rem;
+  font-size: 0.88rem;
+}
+
+.message-item-head span {
+  color: var(--muted);
+  font-size: 0.8rem;
+}
+
+.message-item p {
+  margin: 0.48rem 0 0;
+  color: var(--text);
+  white-space: pre-wrap;
+  word-break: break-word;
+}
