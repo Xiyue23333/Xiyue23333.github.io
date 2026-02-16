@@ -10,6 +10,48 @@
   <link rel="stylesheet" href="../styles/main.css">
 </head>
 <body>
+  <header class="site-header">
+    <a class="brand js-sidebar-toggle" href="#" aria-controls="site-drawer" aria-expanded="false">
+      <span class="brand-menu" aria-hidden="true"><span></span><span></span><span></span></span>
+      <span>Minecraft Mod Create</span>
+    </a>
+    <nav>
+      <a href="../index.html#updates">最新更新</a>
+      <a href="chapter-select.html">章节选择</a>
+      <a href="../index.html#messages">留言区</a>
+      <a class="nav-cta" href="chapter-select.html">开始学习</a>
+    </nav>
+  </header>
+
+  <div class="drawer-overlay" data-drawer-overlay hidden></div>
+  <aside class="site-drawer" id="site-drawer" aria-hidden="true">
+    <a class="drawer-home" href="../index.html">← 回到首页</a>
+
+    <div class="site-drawer-head">
+      <h2>快捷跳转</h2>
+      <button class="drawer-close" type="button" data-drawer-close aria-label="关闭侧边栏">x</button>
+    </div>
+
+    <p class="site-drawer-text">点击章节可展开并跳转到对应页面。</p>
+
+    <div class="drawer-groups">
+      <section class="drawer-group">
+        <button class="drawer-group-toggle" type="button" data-drawer-group-toggle data-target="drawer-ch1-list" aria-expanded="false">
+          <span>第一章：初窥门径</span>
+          <span class="drawer-caret" aria-hidden="true">▾</span>
+        </button>
+        <nav class="drawer-group-list" id="drawer-ch1-list">
+          <a href="chapter-1-intro.html">章节总览</a>
+          <a href="ch1-sec1-environment-setup.html">第一节：开发环境构建</a>
+          <a href="ch1-sec2-read-official-code.html">第二节：学会查看官方代码</a>
+          <a href="ch1-sec3-start-your-mod.html">第三节：开始制作自己的 Mod</a>
+          <a href="ch1-sec3-point1-first-item.html">第三节-1：第一个物品</a>
+          <a href="ch1-sec3-point2-creative-tab.html">第三节-2：创造模式物品栏</a>
+          <a href="ch1-sec3-point3-resources-structure.html">第三节-3：resources 文件构建</a>
+        </nav>
+      </section>
+    </div>
+  </aside>
   <main class="guide-main">
     <a class="breadcrumb" href="../index.html">← 返回首页</a>
 
@@ -46,5 +88,7 @@
       <a href="ch1-sec3-start-your-mod.html">下一页</a>
     </nav>
   </main>
+  <script src="../scripts/main.js"></script>
 </body>
 </html>
+
