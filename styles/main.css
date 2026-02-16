@@ -1129,9 +1129,26 @@ body.drawer-open {
   cursor: pointer;
 }
 
+.drawer-group-toggle.root-toggle {
+  border-color: transparent;
+  background: linear-gradient(120deg, var(--accent), #97ee89);
+  color: #06140d;
+  font-weight: 700;
+  box-shadow: 0 8px 20px rgba(89, 209, 137, 0.18);
+}
+
+.drawer-group-toggle.root-toggle .drawer-caret {
+  color: #0b2a1a;
+}
+
 .drawer-group-toggle:hover,
 .drawer-group-toggle.open {
   border-color: var(--accent);
+}
+
+.drawer-group-toggle.root-toggle:hover,
+.drawer-group-toggle.root-toggle.open {
+  border-color: transparent;
 }
 
 .drawer-caret {
@@ -1155,9 +1172,24 @@ body.drawer-open {
 }
 
 .drawer-group-list.open {
-  max-height: 420px;
+  max-height: 980px;
   opacity: 1;
   transform: translateY(0);
+}
+
+.drawer-sub-toggle {
+  margin-top: 0.15rem;
+  font-size: 0.93rem;
+}
+
+.drawer-sub-list {
+  margin: 0.32rem 0 0.2rem 0.52rem;
+  border-left: 1px dashed #2f5848;
+  padding-left: 0.52rem;
+}
+
+.drawer-sub-list.open {
+  max-height: 520px;
 }
 
 .drawer-group-list a {

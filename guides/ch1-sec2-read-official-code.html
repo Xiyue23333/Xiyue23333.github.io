@@ -36,18 +36,24 @@
 
     <div class="drawer-groups">
       <section class="drawer-group">
-        <button class="drawer-group-toggle" type="button" data-drawer-group-toggle data-target="drawer-ch1-list" aria-expanded="false">
+        <button class="drawer-group-toggle root-toggle" type="button" data-drawer-group-toggle data-target="drawer-ch1-list" aria-expanded="false">
           <span>第一章：初窥门径</span>
           <span class="drawer-caret" aria-hidden="true">▾</span>
         </button>
-        <nav class="drawer-group-list" id="drawer-ch1-list">
+                <nav class="drawer-group-list" id="drawer-ch1-list">
           <a href="chapter-1-intro.html">章节总览</a>
           <a href="ch1-sec1-environment-setup.html">第一节：开发环境构建</a>
           <a href="ch1-sec2-read-official-code.html">第二节：学会查看官方代码</a>
-          <a href="ch1-sec3-start-your-mod.html">第三节：开始制作自己的 Mod</a>
-          <a href="ch1-sec3-point1-first-item.html">第三节-1：第一个物品</a>
-          <a href="ch1-sec3-point2-creative-tab.html">第三节-2：创造模式物品栏</a>
-          <a href="ch1-sec3-point3-resources-structure.html">第三节-3：resources 文件构建</a>
+          <button class="drawer-group-toggle drawer-sub-toggle" type="button" data-drawer-group-toggle data-target="drawer-ch1-sec3-list" aria-expanded="false">
+            <span>第三节：开始制作自己的 Mod</span>
+            <span class="drawer-caret" aria-hidden="true">▾</span>
+          </button>
+          <nav class="drawer-group-list drawer-sub-list" id="drawer-ch1-sec3-list">
+            <a href="ch1-sec3-point1-first-item.html">第三节-1：第一个物品</a>
+            <a href="ch1-sec3-point2-creative-tab.html">第三节-2：创造模式物品栏</a>
+            <a href="ch1-sec3-point3-resources-structure.html">第三节-3：resources 文件构建</a>
+          </nav>
+          <a href="ch1-sec3-start-your-mod.html">进入第三节总览</a>
         </nav>
       </section>
     </div>
@@ -91,4 +97,5 @@
   <script src="../scripts/main.js"></script>
 </body>
 </html>
+
 
