@@ -63,6 +63,10 @@ for (const toggle of drawerGroupToggles) {
   const target = targetId ? document.getElementById(targetId) : null;
   if (!target) continue;
 
+  const initOpen = target.classList.contains('open');
+  toggle.classList.toggle('open', initOpen);
+  toggle.setAttribute('aria-expanded', initOpen ? 'true' : 'false');
+
   toggle.addEventListener('click', () => {
     const isOpen = target.classList.toggle('open');
     toggle.setAttribute('aria-expanded', isOpen ? 'true' : 'false');

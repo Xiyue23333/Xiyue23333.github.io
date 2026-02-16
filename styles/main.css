@@ -66,20 +66,20 @@ body {
   box-shadow: 0 0 18px rgba(89, 209, 137, 0.45);
 }
 
-nav {
+.site-header nav {
   display: flex;
   align-items: center;
   gap: 0.7rem;
 }
 
-nav a {
+.site-header nav a {
   color: var(--muted);
   text-decoration: none;
   font-size: 0.92rem;
   transition: color 0.2s ease;
 }
 
-nav a:hover {
+.site-header nav a:hover {
   color: var(--text);
 }
 
@@ -393,7 +393,7 @@ pre {
 }
 
 @media (max-width: 860px) {
-  nav a:not(.nav-cta) {
+  .site-header nav a:not(.nav-cta) {
     display: none;
   }
 
@@ -1130,6 +1130,7 @@ body.drawer-open {
 .drawer-group-list {
   margin-top: 0.45rem;
   display: grid;
+  grid-template-columns: 1fr;
   gap: 0.4rem;
   overflow: hidden;
   max-height: 0;
@@ -1145,18 +1146,23 @@ body.drawer-open {
 }
 
 .drawer-group-list a {
+  display: block;
+  width: 100%;
   text-decoration: none;
-  color: #c7dfd4;
-  border: 1px solid #1f3b32;
-  border-radius: 9px;
-  padding: 0.46rem 0.58rem;
+  color: var(--text);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 0.56rem 0.68rem;
   background: rgba(255, 255, 255, 0.02);
-  font-size: 0.9rem;
+  font-size: 0.93rem;
+  line-height: 1.45;
+  transition: border-color 0.2s ease, transform 0.2s ease;
 }
 
 .drawer-group-list a:hover {
   border-color: var(--accent);
   color: #e8f6f0;
+  transform: translateY(-1px);
 }
 
 .updates-list {
