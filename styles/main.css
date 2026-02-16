@@ -1060,6 +1060,21 @@ body.drawer-open {
   margin: 0.5rem 0 0 1rem;
 }
 
+.outline-card li::marker {
+  color: #a7cfc0;
+}
+
+.outline-card li a {
+  color: #f1fff8;
+  text-decoration: none;
+  border-bottom: 1px solid rgba(241, 255, 248, 0.35);
+}
+
+.outline-card li a:hover {
+  color: #ffffff;
+  border-bottom-color: var(--accent);
+}
+
 .placeholder-section {
   border-style: dashed;
   border-color: #2f5848;

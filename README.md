@@ -16,7 +16,8 @@
 
 ## 目录结构
 
-- `index.html`：首页与章节入口
+- `index.html`：教程主页面（更新 + 留言）
+- `guides/chapter-select.html`：章节选择页面（中间页）
 - `styles/main.css`：全站样式
 - `scripts/main.js`：首页交互（含侧边栏）
 - `guides/*.html`：章节与小节框架页
