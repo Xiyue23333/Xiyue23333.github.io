@@ -92,7 +92,7 @@
       <ol class="step-list">
         <li>在 <code>src/main/java/com/example/ExampleMod.java</code>（或你的当前主类文件）中，将 <code>public static final String MODID = "examplemod";</code> 修改为自己的 <code>mod_id</code>，教程示例为 <code>tutorial</code>。</li>
         <li>右键重命名主类（教程示例：<code>ExampleMod</code> → <code>Tutorial</code>）。</li>
-        <li>重命名包路径（教程示例：<code>example/examplemod</code> → <code>com/xiyue/tutorial</code>）。你当前工程已是 <code>com/xiyue/tutorialmod</code>。</li>
+        <li>重命名包路径（教程示例：<code>example/examplemod</code> → <code>com/xiyue/tutorial</code>）。你当前工程命名示例为 <code>com/xiyue/tutorial</code>。</li>
       </ol>
       <p><strong>命名规范：</strong>文件夹命名不能有大写；类文件可以有大写（如 <code>ExampleMod</code>、<code>Tutorial</code>）。</p>
       <pre><code>// 修改前
@@ -147,6 +147,12 @@ public class Tutorial { ... }</code></pre>
             <span class="viewer-dot amber"></span>
             <span class="viewer-dot green"></span>
             <div class="viewer-tabs" role="tablist" aria-label="打开的文件标签"></div>
+            <div class="viewer-search" role="search">
+              <input class="viewer-search-input" type="search" placeholder="搜索代码 (Ctrl+F)" aria-label="搜索代码">
+              <button class="viewer-search-btn" type="button" data-search-nav="-1" aria-label="上一个搜索结果">↑</button>
+              <button class="viewer-search-btn" type="button" data-search-nav="1" aria-label="下一个搜索结果">↓</button>
+              <span class="viewer-search-count" aria-live="polite">0 / 0</span>
+            </div>
           </div>
 
           <div class="viewer-code-area">
@@ -162,7 +168,7 @@ public class Tutorial { ... }</code></pre>
           </div>
         </section>
 
-        <script type="text/plain" data-file="src/main/java/com/xiyue/tutorialmod/TutorialMod.java">package com.xiyue.tutorialmod;
+        <script type="text/plain" data-file="src/main/java/com/xiyue/tutorial/Tutorial.java">package com.xiyue.tutorial;
 
 import com.mojang.logging.LogUtils;
 import net.minecraft.client.Minecraft;
@@ -193,8 +199,8 @@ import net.minecraftforge.registries.RegistryObject;
 import org.slf4j.Logger;
 
 // The value here should match an entry in the META-INF/mods.toml file
-@Mod(TutorialMod.MODID)
-public class TutorialMod
+@Mod(Tutorial.MODID)
+public class Tutorial
 {
     // Define mod id in a common place for everything to reference
     public static final String MODID = "tutorial";
@@ -224,7 +230,7 @@ public class TutorialMod
                 output.accept(EXAMPLE_ITEM.get()); // Add the example item to the tab. For your own tabs, this method is preferred over the event
             }).build());
 
-    public TutorialMod(FMLJavaModLoadingContext context)
+    public Tutorial(FMLJavaModLoadingContext context)
     {
         IEventBus modEventBus = context.getModEventBus();
 
@@ -290,7 +296,7 @@ public class TutorialMod
     }
 }
 </script>
-        <script type="text/plain" data-file="src/main/java/com/xiyue/tutorialmod/Config.java">package com.xiyue.tutorialmod;
+        <script type="text/plain" data-file="src/main/java/com/xiyue/tutorial/Config.java">package com.xiyue.tutorial;
 
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
@@ -306,7 +312,7 @@ import java.util.stream.Collectors;
 
 // An example config class. This is not required, but it's a good idea to have one to keep your config organized.
 // Demonstrates how to use Forge's config APIs
-@Mod.EventBusSubscriber(modid = TutorialMod.MODID, bus = Mod.EventBusSubscriber.Bus.MOD)
+@Mod.EventBusSubscriber(modid = Tutorial.MODID, bus = Mod.EventBusSubscriber.Bus.MOD)
 public class Config
 {
     private static final ForgeConfigSpec.Builder BUILDER = new ForgeConfigSpec.Builder();

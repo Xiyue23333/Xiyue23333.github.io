@@ -1,4 +1,4 @@
-(function () {
+﻿(function () {
   const viewers = document.querySelectorAll("[data-ide-viewer]");
   if (!viewers.length) return;
 
@@ -37,7 +37,7 @@
       ]
     },
     {
-      file: /TutorialMod\.java$/i,
+      file: /Tutorial\.java$/i,
       includes: ["public static final String MODID = \"tutorial\";"]
     }
   ];
@@ -287,65 +287,240 @@
     return classes;
   }
 
-  function buildHighlightedLines(file, activeLine, bracketPair) {
-    const rows = file.code.split("\n");
+  function computeFoldRanges(lines) {
+    const foldRanges = {};
+    const stack = [];
+    let inBlockComment = false;
+
+    for (let lineIndex = 0; lineIndex < lines.length; lineIndex += 1) {
+      const lineNo = lineIndex + 1;
+      const line = lines[lineIndex];
+      let inString = null;
+
+      for (let i = 0; i < line.length; i += 1) {
+        const ch = line[i];
+        const next = line[i + 1] || "";
+
+        if (inBlockComment) {
+          if (ch === "*" && next === "/") {
+            inBlockComment = false;
+            i += 1;
+          }
+          continue;
+        }
+
+        if (inString) {
+          if (ch === "\\") {
+            i += 1;
+            continue;
+          }
+          if (ch === inString) {
+            inString = null;
+          }
+          continue;
+        }
+
+        if (ch === "/" && next === "*") {
+          inBlockComment = true;
+          i += 1;
+          continue;
+        }
+
+        if (ch === "/" && next === "/") {
+          break;
+        }
+
+        if (ch === "\"" || ch === "'" || ch === "`") {
+          inString = ch;
+          continue;
+        }
+
+        if (ch === "{") {
+          stack.push(lineNo);
+          continue;
+        }
+
+        if (ch === "}" && stack.length) {
+          const start = stack.pop();
+          if (lineNo > start) {
+            const prev = foldRanges[start] || 0;
+            foldRanges[start] = Math.max(prev, lineNo);
+          }
+        }
+      }
+    }
+
+    return foldRanges;
+  }
+
+  function hasModifiedInRange(modifiedLines, startLine, endLine) {
+    for (let i = startLine; i <= endLine; i += 1) {
+      if (modifiedLines.has(i)) return true;
+    }
+    return false;
+  }
+
+  function projectFile(file) {
+    const rows = [];
+    const total = file.linesOriginal.length;
+    let line = 1;
+
+    while (line <= total) {
+      const foldEnd = file.foldRanges[line] || null;
+      const isCollapsed = !!(foldEnd && file.collapsedStarts.has(line));
+
+      rows.push({
+        type: "code",
+        lineNumber: line,
+        text: file.linesOriginal[line - 1],
+        foldStart: !!foldEnd,
+        foldEnd: foldEnd,
+        folded: isCollapsed,
+        hasModified: file.modifiedLines.has(line)
+      });
+
+      if (isCollapsed) {
+        const hiddenLines = Math.max(0, foldEnd - line);
+        rows.push({
+          type: "fold",
+          lineNumber: null,
+          text: `... 已折叠 ${hiddenLines} 行 ...`,
+          startLine: line,
+          endLine: foldEnd,
+          hasModified: hasModifiedInRange(file.modifiedLines, line + 1, foldEnd)
+        });
+        line = foldEnd + 1;
+      } else {
+        line += 1;
+      }
+    }
+
+    const visibleText = rows.map((row) => row.text).join("\n");
+
+    return {
+      rows,
+      visibleText,
+      visibleLineStarts: buildLineStarts(visibleText)
+    };
+  }
+
+  function getSearchMatches(text, term) {
+    const cleanTerm = (term || "").trim();
+    if (!cleanTerm) return [];
+
+    const lowerText = text.toLowerCase();
+    const lowerTerm = cleanTerm.toLowerCase();
+    const matches = [];
+    let startAt = 0;
+
+    while (startAt < lowerText.length) {
+      const index = lowerText.indexOf(lowerTerm, startAt);
+      if (index === -1) break;
+      matches.push({ start: index, end: index + lowerTerm.length });
+      startAt = index + Math.max(1, lowerTerm.length);
+    }
+
+    return matches;
+  }
+
+  function buildSearchMask(length, matches) {
+    const mask = new Array(length).fill(false);
+    matches.forEach((match) => {
+      for (let i = match.start; i < match.end; i += 1) {
+        mask[i] = true;
+      }
+    });
+    return mask;
+  }
+
+  function findSelectedMatchIndex(matches, selectionStart, selectionEnd) {
+    for (let i = 0; i < matches.length; i += 1) {
+      const item = matches[i];
+      if (selectionStart === selectionEnd) {
+        if (selectionStart >= item.start && selectionStart <= item.end) return i;
+      } else if (selectionStart === item.start && selectionEnd === item.end) {
+        return i;
+      }
+    }
+    return -1;
+  }
+
+  function buildHighlightedRows(projection, activeRow, bracketPair, tokenStyles, searchMask) {
     const bracketSet = new Set(bracketPair || []);
     const html = [];
     let globalPos = 0;
 
-    for (let rowIndex = 0; rowIndex < rows.length; rowIndex += 1) {
-      const lineNumber = rowIndex + 1;
+    for (let rowIndex = 0; rowIndex < projection.rows.length; rowIndex += 1) {
+      const row = projection.rows[rowIndex];
       const rowClasses = ["viewer-code-line"];
-      if (lineNumber === activeLine) rowClasses.push("is-active");
-      if (file.modifiedLines.has(lineNumber)) rowClasses.push("is-modified");
+      if (rowIndex + 1 === activeRow) rowClasses.push("is-active");
+      if (row.hasModified) rowClasses.push("is-modified");
+      if (row.type === "fold") rowClasses.push("is-fold-placeholder");
 
-      const rowText = rows[rowIndex];
+      const rowText = row.text;
       let rowHtml = "";
-      let currentClass = "";
-      let buffer = "";
 
-      for (let i = 0; i < rowText.length; i += 1) {
-        const char = rowText[i];
-        const classes = getCharClass(char, file.styles[globalPos]);
-        if (bracketSet.has(globalPos)) classes.push("tok-bracket-match");
-        const className = classes.join(" ");
+      if (row.type === "fold") {
+        rowHtml = `<span class="tok-comment">${escapeHtml(rowText)}</span>`;
+        globalPos += rowText.length;
+      } else {
+        let currentClass = "";
+        let buffer = "";
 
-        if (className !== currentClass) {
-          if (buffer !== "") {
-            rowHtml += currentClass
-              ? `<span class="${currentClass}">${escapeHtml(buffer)}</span>`
-              : escapeHtml(buffer);
+        for (let i = 0; i < rowText.length; i += 1) {
+          const char = rowText[i];
+          const classes = getCharClass(char, tokenStyles[globalPos]);
+          if (bracketSet.has(globalPos)) classes.push("tok-bracket-match");
+          if (searchMask[globalPos]) classes.push("tok-search-hit");
+          const className = classes.join(" ");
+
+          if (className !== currentClass) {
+            if (buffer !== "") {
+              rowHtml += currentClass
+                ? `<span class="${currentClass}">${escapeHtml(buffer)}</span>`
+                : escapeHtml(buffer);
+            }
+            currentClass = className;
+            buffer = char;
+          } else {
+            buffer += char;
           }
-          currentClass = className;
-          buffer = char;
-        } else {
-          buffer += char;
+          globalPos += 1;
         }
-        globalPos += 1;
-      }
 
-      if (buffer !== "") {
-        rowHtml += currentClass
-          ? `<span class="${currentClass}">${escapeHtml(buffer)}</span>`
-          : escapeHtml(buffer);
+        if (buffer !== "") {
+          rowHtml += currentClass
+            ? `<span class="${currentClass}">${escapeHtml(buffer)}</span>`
+            : escapeHtml(buffer);
+        }
       }
 
       if (rowHtml === "") rowHtml = "&nbsp;";
       html.push(`<div class="${rowClasses.join(" ")}">${rowHtml}</div>`);
-      globalPos += 1;
+
+      if (rowIndex < projection.rows.length - 1) {
+        globalPos += 1;
+      }
     }
 
     return html.join("");
   }
 
-  function buildLineNumbers(file, activeLine) {
+  function buildLineNumbers(projection, activeRow) {
     let html = "";
-    for (let i = 1; i <= file.lineCount; i += 1) {
+    projection.rows.forEach((row, index) => {
       const classes = ["viewer-line-num"];
-      if (i === activeLine) classes.push("is-active");
-      if (file.modifiedLines.has(i)) classes.push("is-modified");
-      html += `<div class="${classes.join(" ")}">${i}</div>`;
-    }
+      if (index + 1 === activeRow) classes.push("is-active");
+      if (row.hasModified) classes.push("is-modified");
+      if (row.type === "fold") classes.push("is-fold-placeholder");
+
+      const foldCtrl = row.type === "code" && row.foldStart
+        ? `<button class="viewer-fold-toggle" type="button" data-start="${row.lineNumber}" aria-label="${row.folded ? "展开代码块" : "折叠代码块"}">${row.folded ? "▸" : "▾"}</button>`
+        : `<span class="viewer-fold-spacer"></span>`;
+      const label = row.type === "code" ? String(row.lineNumber) : "...";
+
+      html += `<div class="${classes.join(" ")}" data-row="${index + 1}"><span class="viewer-line-inner">${foldCtrl}<span class="viewer-line-label">${label}</span></span></div>`;
+    });
     return html;
   }
 
@@ -418,10 +593,10 @@
   function prepareFile(file) {
     if (file.ready) return file;
     file.lang = detectLang(file.path);
-    file.styles = tokenize(file.code, file.lang);
     file.modifiedLines = detectModifiedLines(file.path, file.code);
-    file.lineStarts = buildLineStarts(file.code);
-    file.lineCount = Math.max(1, file.code.split("\n").length);
+    file.linesOriginal = file.code.split("\n");
+    file.foldRanges = computeFoldRanges(file.linesOriginal);
+    file.collapsedStarts = new Set();
     file.ready = true;
     return file;
   }
@@ -443,23 +618,77 @@
     const highlight = viewer.querySelector(".viewer-highlight");
     const input = viewer.querySelector(".viewer-input");
     const path = viewer.querySelector(".viewer-path");
+    const searchInput = viewer.querySelector(".viewer-search-input");
+    const searchCount = viewer.querySelector(".viewer-search-count");
+    const searchButtons = Array.from(viewer.querySelectorAll(".viewer-search-btn"));
 
-    if (!tree || !tabs || !lines || !highlight || !input || !path) return;
+    if (!tree || !tabs || !lines || !highlight || !input || !path || !searchInput || !searchCount) return;
 
     input.setAttribute("wrap", "off");
 
+    const tabMenu = document.createElement("div");
+    tabMenu.className = "viewer-tab-menu";
+    tabMenu.hidden = true;
+    tabMenu.innerHTML = [
+      '<button type="button" data-action="single">关闭</button>',
+      '<button type="button" data-action="others">关闭其他</button>',
+      '<button type="button" data-action="all">关闭全部</button>'
+    ].join("");
+    viewer.appendChild(tabMenu);
+
     const openTabs = [];
-    let activeIndex = 0;
+    let activeIndex = null;
+    let currentProjection = null;
     let lockScroll = false;
+    let menuTabIndex = null;
+
+    function clearEditor() {
+      currentProjection = null;
+      input.value = "";
+      highlight.innerHTML = "";
+      lines.innerHTML = "";
+      path.textContent = "未打开文件";
+      searchCount.textContent = "0 / 0";
+      tree.querySelectorAll(".viewer-file-row").forEach((row) => row.classList.remove("active"));
+    }
+
+    function hideTabMenu() {
+      tabMenu.hidden = true;
+      menuTabIndex = null;
+    }
+
+    function showTabMenu(index, clientX, clientY) {
+      menuTabIndex = index;
+      tabMenu.hidden = false;
+      const rect = viewer.getBoundingClientRect();
+      const menuWidth = 160;
+      const menuHeight = 120;
+      const left = Math.min(Math.max(8, clientX - rect.left), Math.max(8, rect.width - menuWidth - 8));
+      const top = Math.min(Math.max(8, clientY - rect.top), Math.max(8, rect.height - menuHeight - 8));
+      tabMenu.style.left = `${left}px`;
+      tabMenu.style.top = `${top}px`;
+    }
 
     function syncTreeActive() {
       tree.querySelectorAll(".viewer-file-row").forEach((row) => {
-        row.classList.toggle("active", Number(row.dataset.index) === activeIndex);
+        row.classList.toggle("active", activeIndex !== null && Number(row.dataset.index) === activeIndex);
       });
     }
 
     function ensureTab(index) {
       if (!openTabs.includes(index)) openTabs.push(index);
+    }
+
+    function updateSearchCount(current, total) {
+      if (!total) {
+        searchCount.textContent = "0 / 0";
+        return;
+      }
+      if (current <= 0) {
+        searchCount.textContent = `0 / ${total}`;
+        return;
+      }
+      searchCount.textContent = `${current} / ${total}`;
     }
 
     function renderTabs() {
@@ -487,24 +716,16 @@
 
         close.addEventListener("click", (event) => {
           event.stopPropagation();
-          const tabPos = openTabs.indexOf(index);
-          if (tabPos === -1) return;
-          openTabs.splice(tabPos, 1);
-
-          if (!openTabs.length) {
-            openTabs.push(index);
-          }
-
-          if (activeIndex === index) {
-            const fallback = openTabs[Math.max(0, tabPos - 1)] || openTabs[0];
-            activeIndex = fallback;
-          }
-          openFile(activeIndex);
+          closeTab(index, "single");
         });
 
         button.addEventListener("click", () => {
-          activeIndex = index;
-          openFile(index);
+          setActiveFile(index, { ensureTab: true, resetCursor: false, keepScroll: true, focus: true });
+        });
+
+        button.addEventListener("contextmenu", (event) => {
+          event.preventDefault();
+          showTabMenu(index, event.clientX, event.clientY);
         });
 
         button.appendChild(name);
@@ -513,38 +734,176 @@
       });
     }
 
+    function getActiveFile() {
+      if (activeIndex === null) return null;
+      return prepareFile(files[activeIndex]);
+    }
+
+    function rebuildVisible(options) {
+      const opts = options || {};
+      const file = getActiveFile();
+      if (!file) {
+        clearEditor();
+        return;
+      }
+
+      const prevStart = input.selectionStart || 0;
+      const prevEnd = input.selectionEnd || 0;
+      const prevTop = input.scrollTop;
+      const prevLeft = input.scrollLeft;
+
+      currentProjection = projectFile(file);
+      input.value = currentProjection.visibleText;
+
+      const nextStart = opts.resetCursor ? 0 : Math.min(prevStart, input.value.length);
+      const nextEnd = opts.resetCursor ? 0 : Math.min(prevEnd, input.value.length);
+      input.setSelectionRange(nextStart, nextEnd);
+
+      if (opts.keepScroll) {
+        input.scrollTop = prevTop;
+        input.scrollLeft = prevLeft;
+      } else {
+        input.scrollTop = 0;
+        input.scrollLeft = 0;
+      }
+    }
+
     function updateRenderFromCaret() {
-      const file = prepareFile(files[activeIndex]);
-      if (!file) return;
+      const file = getActiveFile();
+      if (!file || !currentProjection) return;
 
-      const cursor = input.selectionStart || 0;
-      const activeLine = positionToLine(file.lineStarts, cursor);
-      const lineStart = file.lineStarts[activeLine - 1] || 0;
-      const col = cursor - lineStart + 1;
-      const bracketPair = findBracketPair(file.code, cursor);
+      const cursorStart = input.selectionStart || 0;
+      const cursorEnd = input.selectionEnd || cursorStart;
+      const visibleText = currentProjection.visibleText;
+      const activeRow = Math.min(
+        Math.max(1, positionToLine(currentProjection.visibleLineStarts, cursorStart)),
+        Math.max(1, currentProjection.rows.length)
+      );
+      const activeRowData = currentProjection.rows[activeRow - 1] || null;
+      const lineStart = currentProjection.visibleLineStarts[activeRow - 1] || 0;
+      const col = cursorStart - lineStart + 1;
 
-      highlight.innerHTML = buildHighlightedLines(file, activeLine, bracketPair);
-      lines.innerHTML = buildLineNumbers(file, activeLine);
-      path.textContent = `${file.path}    Ln ${activeLine}, Col ${col}`;
+      const tokenStyles = tokenize(visibleText, file.lang);
+      const bracketPair = findBracketPair(visibleText, cursorStart);
+
+      const searchTerm = searchInput.value.trim();
+      const searchMatches = getSearchMatches(visibleText, searchTerm);
+      const searchMask = buildSearchMask(visibleText.length, searchMatches);
+      const selectedMatchIndex = findSelectedMatchIndex(searchMatches, cursorStart, cursorEnd);
+
+      highlight.innerHTML = buildHighlightedRows(currentProjection, activeRow, bracketPair, tokenStyles, searchMask);
+      lines.innerHTML = buildLineNumbers(currentProjection, activeRow);
+
+      const lineDisplay = activeRowData && activeRowData.type === "code"
+        ? String(activeRowData.lineNumber)
+        : (activeRowData ? `${activeRowData.startLine}-${activeRowData.endLine}` : "0");
+      path.textContent = `${file.path}    Ln ${lineDisplay}, Col ${col}`;
 
       lines.scrollTop = input.scrollTop;
       highlight.scrollTop = input.scrollTop;
       highlight.scrollLeft = input.scrollLeft;
+
+      updateSearchCount(selectedMatchIndex + 1, searchMatches.length);
     }
 
-    function openFile(index) {
-      const file = prepareFile(files[index]);
-      if (!file) return;
+    function setActiveFile(index, options) {
+      if (index === null || index === undefined || !files[index]) return;
+      const opts = options || {};
 
       activeIndex = index;
-      ensureTab(index);
+      if (opts.ensureTab !== false) ensureTab(index);
       renderTabs();
       syncTreeActive();
+      hideTabMenu();
 
-      input.value = file.code;
-      input.setSelectionRange(0, 0);
-      input.scrollTop = 0;
-      input.scrollLeft = 0;
+      rebuildVisible({
+        resetCursor: !!opts.resetCursor,
+        keepScroll: !!opts.keepScroll
+      });
+      updateRenderFromCaret();
+
+      if (opts.focus !== false) {
+        input.focus({ preventScroll: true });
+      }
+    }
+
+    function closeTab(index, mode) {
+      const tabPos = openTabs.indexOf(index);
+      if (tabPos === -1) return;
+
+      if (mode === "others") {
+        openTabs.length = 0;
+        openTabs.push(index);
+        setActiveFile(index, { ensureTab: false, resetCursor: false, keepScroll: true, focus: false });
+        return;
+      }
+
+      if (mode === "all") {
+        openTabs.length = 0;
+        activeIndex = null;
+        renderTabs();
+        hideTabMenu();
+        clearEditor();
+        return;
+      }
+
+      openTabs.splice(tabPos, 1);
+
+      if (!openTabs.length) {
+        activeIndex = null;
+        renderTabs();
+        hideTabMenu();
+        clearEditor();
+        return;
+      }
+
+      if (activeIndex === index) {
+        const fallback = openTabs[Math.max(0, tabPos - 1)] || openTabs[0];
+        setActiveFile(fallback, { ensureTab: false, resetCursor: false, keepScroll: true, focus: false });
+      } else {
+        renderTabs();
+      }
+    }
+
+    function jumpSearch(direction) {
+      if (activeIndex === null || !currentProjection) return;
+      const term = searchInput.value.trim();
+      if (!term) return;
+
+      const matches = getSearchMatches(input.value, term);
+      if (!matches.length) {
+        updateRenderFromCaret();
+        return;
+      }
+
+      const start = input.selectionStart || 0;
+      const end = input.selectionEnd || start;
+      const selectedIndex = findSelectedMatchIndex(matches, start, end);
+      let targetIndex = -1;
+
+      if (direction > 0) {
+        if (selectedIndex >= 0) {
+          targetIndex = (selectedIndex + 1) % matches.length;
+        } else {
+          targetIndex = matches.findIndex((match) => match.start > start);
+          if (targetIndex === -1) targetIndex = 0;
+        }
+      } else {
+        if (selectedIndex >= 0) {
+          targetIndex = (selectedIndex - 1 + matches.length) % matches.length;
+        } else {
+          for (let i = matches.length - 1; i >= 0; i -= 1) {
+            if (matches[i].end < start) {
+              targetIndex = i;
+              break;
+            }
+          }
+          if (targetIndex === -1) targetIndex = matches.length - 1;
+        }
+      }
+
+      const target = matches[targetIndex];
+      input.setSelectionRange(target.start, target.end);
       updateRenderFromCaret();
       input.focus({ preventScroll: true });
     }
@@ -554,10 +913,27 @@
     root.className = "viewer-tree-root";
     renderTreeNode(buildModel(files), root, 0, (index) => {
       ensureTab(index);
-      activeIndex = index;
-      openFile(index);
+      setActiveFile(index, { ensureTab: true, resetCursor: true, keepScroll: false, focus: true });
     });
     tree.appendChild(root);
+
+    tabMenu.addEventListener("click", (event) => {
+      const target = event.target;
+      if (!(target instanceof HTMLElement)) return;
+      const action = target.getAttribute("data-action");
+      if (!action || menuTabIndex === null) return;
+      closeTab(menuTabIndex, action);
+      hideTabMenu();
+    });
+
+    document.addEventListener("mousedown", (event) => {
+      if (!tabMenu.hidden && !tabMenu.contains(event.target)) {
+        hideTabMenu();
+      }
+    });
+
+    window.addEventListener("blur", hideTabMenu);
+    window.addEventListener("resize", hideTabMenu);
 
     input.addEventListener("scroll", () => {
       if (lockScroll) return;
@@ -573,6 +949,76 @@
     input.addEventListener("mouseup", updateRenderFromCaret);
     input.addEventListener("select", updateRenderFromCaret);
 
-    openFile(0);
+    input.addEventListener("keydown", (event) => {
+      if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === "f") {
+        event.preventDefault();
+        searchInput.focus();
+        searchInput.select();
+        return;
+      }
+
+      if (event.key === "F3") {
+        event.preventDefault();
+        jumpSearch(event.shiftKey ? -1 : 1);
+      }
+    });
+
+    lines.addEventListener("click", (event) => {
+      const target = event.target instanceof Element ? event.target : null;
+      if (!target) return;
+
+      const foldButton = target.closest(".viewer-fold-toggle");
+      if (foldButton) {
+        const startLine = Number(foldButton.getAttribute("data-start"));
+        const file = getActiveFile();
+        if (!file || !startLine) return;
+
+        if (file.collapsedStarts.has(startLine)) {
+          file.collapsedStarts.delete(startLine);
+        } else {
+          file.collapsedStarts.add(startLine);
+        }
+
+        rebuildVisible({ resetCursor: false, keepScroll: true });
+        updateRenderFromCaret();
+        return;
+      }
+
+      const row = target.closest(".viewer-line-num");
+      if (!row || !currentProjection) return;
+      const rowIndex = Number(row.getAttribute("data-row"));
+      if (!rowIndex || currentProjection.visibleLineStarts[rowIndex - 1] === undefined) return;
+
+      const targetPos = currentProjection.visibleLineStarts[rowIndex - 1];
+      input.setSelectionRange(targetPos, targetPos);
+      updateRenderFromCaret();
+      input.focus({ preventScroll: true });
+    });
+
+    searchInput.addEventListener("input", () => {
+      updateRenderFromCaret();
+    });
+
+    searchInput.addEventListener("keydown", (event) => {
+      if (event.key === "Enter") {
+        event.preventDefault();
+        jumpSearch(event.shiftKey ? -1 : 1);
+      } else if (event.key === "Escape") {
+        event.preventDefault();
+        searchInput.value = "";
+        updateRenderFromCaret();
+        input.focus({ preventScroll: true });
+      }
+    });
+
+    searchButtons.forEach((btn) => {
+      btn.addEventListener("click", () => {
+        const direction = Number(btn.getAttribute("data-search-nav")) || 1;
+        jumpSearch(direction);
+      });
+    });
+
+    ensureTab(0);
+    setActiveFile(0, { ensureTab: true, resetCursor: true, keepScroll: false, focus: false });
   });
 })();

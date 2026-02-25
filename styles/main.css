@@ -1873,6 +1873,154 @@ details summary {
   border-radius: 3px;
 }
 
+.guide-main.guide-main-wide .tok-search-hit {
+  background: rgba(126, 255, 190, 0.28);
+  color: #dfffea;
+  border-radius: 2px;
+}
+
+.guide-main.guide-main-wide .viewer-workbench {
+  position: relative;
+}
+
+.guide-main.guide-main-wide .viewer-tabs {
+  flex: 1 1 auto;
+}
+
+.guide-main.guide-main-wide .viewer-search {
+  margin-left: auto;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.24rem;
+  border: 1px solid #385471;
+  border-radius: 8px;
+  background: #0f1823;
+  padding: 0.18rem 0.24rem;
+}
+
+.guide-main.guide-main-wide .viewer-search-input {
+  width: 176px;
+  border: 0;
+  outline: none;
+  background: transparent;
+  color: #edf6ff;
+  font: inherit;
+  font-size: 0.8rem;
+}
+
+.guide-main.guide-main-wide .viewer-search-input::placeholder {
+  color: #8ea7c2;
+}
+
+.guide-main.guide-main-wide .viewer-search-btn {
+  border: 1px solid #3f5d7d;
+  border-radius: 6px;
+  background: #142132;
+  color: #eaf4ff;
+  font-size: 0.74rem;
+  line-height: 1;
+  width: 20px;
+  height: 20px;
+  cursor: pointer;
+}
+
+.guide-main.guide-main-wide .viewer-search-btn:hover {
+  border-color: #6591bf;
+}
+
+.guide-main.guide-main-wide .viewer-search-count {
+  min-width: 48px;
+  color: #9bb3cb;
+  font-size: 0.74rem;
+  text-align: right;
+  font-family: "Chakra Petch", "Noto Sans SC", sans-serif;
+}
+
+.guide-main.guide-main-wide .viewer-line-num {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+}
+
+.guide-main.guide-main-wide .viewer-line-inner {
+  display: inline-flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.16rem;
+  min-width: 100%;
+}
+
+.guide-main.guide-main-wide .viewer-line-label {
+  min-width: 28px;
+}
+
+.guide-main.guide-main-wide .viewer-fold-toggle,
+.guide-main.guide-main-wide .viewer-fold-spacer {
+  width: 14px;
+  height: 14px;
+  flex: 0 0 auto;
+}
+
+.guide-main.guide-main-wide .viewer-fold-spacer {
+  display: inline-block;
+}
+
+.guide-main.guide-main-wide .viewer-fold-toggle {
+  border: 0;
+  border-radius: 4px;
+  background: transparent;
+  color: #8ca4be;
+  font-size: 0.7rem;
+  padding: 0;
+  line-height: 14px;
+  cursor: pointer;
+}
+
+.guide-main.guide-main-wide .viewer-fold-toggle:hover {
+  background: rgba(144, 192, 244, 0.22);
+  color: #dff0ff;
+}
+
+.guide-main.guide-main-wide .viewer-line-num.is-fold-placeholder {
+  color: #6d8198;
+}
+
+.guide-main.guide-main-wide .viewer-code-line.is-fold-placeholder {
+  background: rgba(136, 166, 196, 0.08);
+}
+
+.guide-main.guide-main-wide .viewer-code-line.is-fold-placeholder .tok-comment {
+  color: #8ea5bd;
+}
+
+.guide-main.guide-main-wide .viewer-tab-menu {
+  position: absolute;
+  z-index: 12;
+  width: 152px;
+  border: 1px solid #4a6481;
+  border-radius: 10px;
+  background: #101b29;
+  box-shadow: 0 14px 24px rgba(0, 0, 0, 0.36);
+  padding: 0.2rem;
+}
+
+.guide-main.guide-main-wide .viewer-tab-menu button {
+  width: 100%;
+  border: 0;
+  background: transparent;
+  color: #e7f3ff;
+  text-align: left;
+  font: inherit;
+  font-size: 0.82rem;
+  border-radius: 7px;
+  padding: 0.36rem 0.48rem;
+  cursor: pointer;
+}
+
+.guide-main.guide-main-wide .viewer-tab-menu button:hover {
+  background: rgba(123, 173, 235, 0.2);
+}
+
 @media (max-width: 1100px) {
   .guide-main.guide-main-wide {
     width: 96vw;
@@ -1899,6 +2047,14 @@ details summary {
 
   .guide-main.guide-main-wide .viewer-tab-name {
     max-width: 44vw;
+  }
+
+  .guide-main.guide-main-wide .viewer-search-input {
+    width: 120px;
+  }
+
+  .guide-main.guide-main-wide .viewer-search-count {
+    min-width: 42px;
   }
 }
 /* IDE Viewer v2 (IDE-like) */
