@@ -1,6 +1,5 @@
 ﻿(function () {
   const viewers = document.querySelectorAll('[data-ide-viewer]');
-
   if (!viewers.length) return;
 
   const KEYWORDS = {
@@ -63,7 +62,7 @@
     text = escapeHtml(text);
 
     const keywords = KEYWORDS[lang] || [];
-    if (keywords.length > 0) {
+    if (keywords.length) {
       const pattern = new RegExp(`\\b(${keywords.join('|')})\\b`, 'g');
       stashEscaped(pattern, 'tok-keyword');
     }
@@ -88,11 +87,13 @@
     return text.replace(/__TOK_(\d+)__/g, (_, i) => tokens[Number(i)] || '');
   }
 
-  function buildTree(files) {
+  function buildModel(files) {
     const root = { folders: new Map(), files: [] };
 
     files.forEach((file, index) => {
       const parts = file.path.split('/').filter(Boolean);
+      if (!parts.length) return;
+
       let node = root;
       for (let i = 0; i < parts.length - 1; i += 1) {
         const part = parts[i];
@@ -101,98 +102,111 @@
         }
         node = node.folders.get(part);
       }
+
       node.files.push({ name: parts[parts.length - 1], index });
     });
 
     return root;
   }
 
-  function renderTree(node, container, depth, onOpen) {
-    const folderEntries = Array.from(node.folders.entries()).sort((a, b) => a[0].localeCompare(b[0]));
-    folderEntries.forEach(([name, folder]) => {
-      const details = document.createElement('details');
-      details.className = 'viewer-folder';
-      if (depth < 1) details.open = true;
+  function renderTreeNode(node, container, depth, onOpenFile) {
+    const folders = Array.from(node.folders.entries()).sort((a, b) => a[0].localeCompare(b[0]));
+    const files = node.files.slice().sort((a, b) => a.name.localeCompare(b.name));
 
-      const summary = document.createElement('summary');
-      summary.style.setProperty('--indent', `${depth * 14}px`);
-      summary.textContent = name;
-      details.appendChild(summary);
+    folders.forEach(([name, child]) => {
+      const group = document.createElement('div');
+      group.className = 'viewer-folder-group';
+
+      const folderRow = document.createElement('button');
+      folderRow.type = 'button';
+      folderRow.className = 'viewer-node viewer-folder-row';
+      folderRow.style.setProperty('--indent', `${depth * 14}px`);
+      folderRow.innerHTML = `<span class="viewer-caret">▾</span><span class="viewer-label">${name}</span>`;
 
       const children = document.createElement('div');
-      children.className = 'viewer-folder-children';
-      renderTree(folder, children, depth + 1, onOpen);
-      details.appendChild(children);
+      children.className = 'viewer-children';
+      renderTreeNode(child, children, depth + 1, onOpenFile);
 
-      container.appendChild(details);
+      const openByDefault = depth < 1;
+      folderRow.classList.toggle('closed', !openByDefault);
+      children.hidden = !openByDefault;
+
+      folderRow.addEventListener('click', () => {
+        const isClosed = folderRow.classList.toggle('closed');
+        children.hidden = isClosed;
+      });
+
+      group.appendChild(folderRow);
+      group.appendChild(children);
+      container.appendChild(group);
     });
 
-    node.files.sort((a, b) => a.name.localeCompare(b.name)).forEach((file) => {
-      const btn = document.createElement('button');
-      btn.type = 'button';
-      btn.className = 'viewer-file';
-      btn.dataset.index = String(file.index);
-      btn.style.setProperty('--indent', `${depth * 14 + 10}px`);
-      btn.textContent = file.name;
-      btn.addEventListener('click', () => onOpen(file.index));
-      container.appendChild(btn);
+    files.forEach((file) => {
+      const fileRow = document.createElement('button');
+      fileRow.type = 'button';
+      fileRow.className = 'viewer-node viewer-file-row';
+      fileRow.dataset.index = String(file.index);
+      fileRow.style.setProperty('--indent', `${depth * 14 + 10}px`);
+      fileRow.innerHTML = `<span class="viewer-file-dot">•</span><span class="viewer-label">${file.name}</span>`;
+      fileRow.addEventListener('click', () => onOpenFile(file.index));
+      container.appendChild(fileRow);
     });
   }
 
   viewers.forEach((viewer) => {
-    const scripts = Array.from(viewer.querySelectorAll('script[data-file]'));
-    if (!scripts.length) return;
+    const templateScripts = Array.from(viewer.querySelectorAll('script[data-file]'));
+    if (!templateScripts.length) return;
 
-    const files = scripts.map((s) => ({
-      path: s.dataset.file || 'unknown.txt',
-      code: (s.textContent || '').replace(/\r\n/g, '\n').trimEnd()
+    const files = templateScripts.map((script) => ({
+      path: script.dataset.file || 'unknown.txt',
+      code: (script.textContent || '').replace(/\r\n/g, '\n').trimEnd()
     }));
 
-    scripts.forEach((s) => s.remove());
+    templateScripts.forEach((script) => script.remove());
 
-    const treeEl = viewer.querySelector('.viewer-tree');
-    const tabEl = viewer.querySelector('.viewer-tab');
-    const linesEl = viewer.querySelector('.viewer-lines');
-    const codeEl = viewer.querySelector('.viewer-code');
-    const scrollEl = viewer.querySelector('.viewer-code-scroll');
-    const pathEl = viewer.querySelector('.viewer-path');
+    const tree = viewer.querySelector('.viewer-tree');
+    const tab = viewer.querySelector('.viewer-tab');
+    const lines = viewer.querySelector('.viewer-lines');
+    const code = viewer.querySelector('.viewer-code');
+    const codeScroll = viewer.querySelector('.viewer-code-scroll');
+    const path = viewer.querySelector('.viewer-path');
 
-    if (!treeEl || !tabEl || !linesEl || !codeEl || !scrollEl || !pathEl) return;
+    if (!tree || !tab || !lines || !code || !codeScroll || !path) return;
 
-    const state = { active: 0 };
-
-    function renderLines(code) {
-      const count = Math.max(1, code.split('\n').length);
-      let out = '';
-      for (let i = 1; i <= count; i += 1) out += `<span>${i}</span>`;
-      linesEl.innerHTML = out;
-      linesEl.scrollTop = scrollEl.scrollTop;
+    function renderLineNumbers(content) {
+      const count = Math.max(1, content.split('\n').length);
+      let html = '';
+      for (let i = 1; i <= count; i += 1) {
+        html += `<div>${i}</div>`;
+      }
+      lines.innerHTML = html;
+      lines.scrollTop = codeScroll.scrollTop;
     }
 
-    function setActive(index) {
+    function openFile(index) {
       const file = files[index];
       if (!file) return;
-      state.active = index;
-      tabEl.textContent = file.path.split('/').pop();
-      pathEl.textContent = file.path;
-      codeEl.innerHTML = `${highlightCode(file.code, file.path)}\n`;
-      renderLines(file.code);
 
-      treeEl.querySelectorAll('.viewer-file').forEach((el) => {
-        el.classList.toggle('active', Number(el.dataset.index) === index);
+      tab.textContent = file.path.split('/').pop();
+      path.textContent = file.path;
+      code.innerHTML = `${highlightCode(file.code, file.path)}\n`;
+      renderLineNumbers(file.code);
+
+      tree.querySelectorAll('.viewer-file-row').forEach((row) => {
+        row.classList.toggle('active', Number(row.dataset.index) === index);
       });
     }
 
-    treeEl.innerHTML = '';
-    const treeRoot = document.createElement('div');
-    treeRoot.className = 'viewer-tree-root';
-    renderTree(buildTree(files), treeRoot, 0, setActive);
-    treeEl.appendChild(treeRoot);
+    tree.innerHTML = '';
+    const root = document.createElement('div');
+    root.className = 'viewer-tree-root';
+    renderTreeNode(buildModel(files), root, 0, openFile);
+    tree.appendChild(root);
 
-    scrollEl.addEventListener('scroll', () => {
-      linesEl.scrollTop = scrollEl.scrollTop;
+    codeScroll.addEventListener('scroll', () => {
+      lines.scrollTop = codeScroll.scrollTop;
     });
 
-    setActive(0);
+    openFile(0);
   });
 })();
