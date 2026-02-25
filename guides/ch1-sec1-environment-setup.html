@@ -59,7 +59,7 @@
     </div>
   </aside>
 
-  <main class="guide-main">
+  <main class="guide-main guide-main-wide">
     <a class="breadcrumb" href="chapter-1-intro.html">← 返回上一页</a>
 
     <header class="guide-hero">
@@ -146,13 +146,14 @@ public class Tutorial { ... }</code></pre>
             <span class="viewer-dot red"></span>
             <span class="viewer-dot amber"></span>
             <span class="viewer-dot green"></span>
-            <span class="viewer-tab"></span>
+            <div class="viewer-tabs" role="tablist" aria-label="打开的文件标签"></div>
           </div>
 
           <div class="viewer-code-area">
-            <pre class="viewer-lines" aria-hidden="true"></pre>
+            <div class="viewer-lines" aria-hidden="true"></div>
             <div class="viewer-code-scroll">
-              <pre class="viewer-code"></pre>
+              <div class="viewer-highlight" aria-hidden="true"></div>
+              <textarea class="viewer-input" spellcheck="false" readonly aria-label="代码查看器"></textarea>
             </div>
           </div>
 
