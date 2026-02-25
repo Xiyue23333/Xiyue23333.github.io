@@ -1318,3 +1318,57 @@ body.drawer-open {
   white-space: pre-wrap;
   word-break: break-word;
 }
+
+/* Section Tutorial */
+.notice-warning {
+  margin-top: 0.75rem;
+  border: 1px solid #4ee28f;
+  background: rgba(78, 226, 143, 0.12);
+  border-radius: 10px;
+  padding: 0.62rem 0.72rem;
+  color: #f2fff8;
+}
+
+.step-list {
+  margin: 0.6rem 0 0 1.1rem;
+}
+
+.step-list li {
+  margin-top: 0.36rem;
+}
+
+.file-grid {
+  margin-top: 0.8rem;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.8rem;
+}
+
+.file-card {
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 0.82rem;
+  background: rgba(5, 11, 9, 0.32);
+}
+
+.file-card h3 {
+  margin: 0;
+}
+
+.file-card pre {
+  margin-top: 0.55rem;
+}
+
+details {
+  margin-top: 0.7rem;
+}
+
+details summary {
+  color: #f2fff8;
+}
+
+@media (max-width: 860px) {
+  .file-grid {
+    grid-template-columns: 1fr;
+  }
+}

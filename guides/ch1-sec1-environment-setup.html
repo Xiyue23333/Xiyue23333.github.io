@@ -40,7 +40,7 @@
           <span>第一章：初窥门径</span>
           <span class="drawer-caret" aria-hidden="true">▾</span>
         </button>
-                <nav class="drawer-group-list" id="drawer-ch1-list">
+        <nav class="drawer-group-list" id="drawer-ch1-list">
           <a href="chapter-1-intro.html">章节总览</a>
           <a href="ch1-sec1-environment-setup.html">第一节：开发环境构建</a>
           <a href="ch1-sec2-read-official-code.html">第二节：学会查看官方代码</a>
@@ -58,35 +58,526 @@
       </section>
     </div>
   </aside>
+
   <main class="guide-main">
-    <a class="breadcrumb" href="../index.html">← 返回首页</a>
+    <a class="breadcrumb" href="chapter-1-intro.html">← 返回上一页</a>
 
     <header class="guide-hero">
       <p class="eyebrow">CHAPTER 01 · SECTION 01</p>
       <h1>第一节：开发环境构建</h1>
       <div class="meta">
-        <span>状态：框架已搭建</span>
-        <span>内容：待导入教程 Mod</span>
+        <span>状态：已填充完整教程</span>
+        <span>来源：E:\教程mod</span>
       </div>
     </header>
 
     <section class="section">
-      <h2>页面说明</h2>
-      <p>本节仅创建页面骨架，后续将补充 JDK、IDE、模板工程与运行配置等内容。</p>
+      <h2>本节目标</h2>
+      <p>完成 Forge 1.20.1 MDK 项目创建、Mod 主类与包路径重命名、Gradle 与 Parchment 映射配置，并成功在 IDEA 中重构 Gradle。</p>
+      <p class="notice-warning"><strong>重点提醒：</strong>打开工程文件前，请先优先打开 VPN，再进行依赖下载与 Gradle 初始化。</p>
     </section>
 
     <section class="section">
-      <h2>结构占位</h2>
-      <ul>
-  <li>小节标题区</li>
-  <li>步骤区（待补充）</li>
-  <li>注意事项区（待补充）</li>
-</ul>
+      <h2>第一点：下载 MDK 并创建工程</h2>
+      <ol class="step-list">
+        <li>打开 Forge 官方 MDK 下载页：<a href="https://files.minecraftforge.net/net/minecraftforge/forge/" target="_blank" rel="noopener noreferrer">https://files.minecraftforge.net/net/minecraftforge/forge/</a></li>
+        <li>下载你所需版本的 MDK（本教程使用 1.20.1）。</li>
+        <li>新建一个空文件夹，将下载的 MDK 压缩包解压到该文件夹。</li>
+        <li>使用 IDE（IntelliJ IDEA）打开该文件夹，开始开发环境构建。</li>
+      </ol>
     </section>
 
-    <section class="section placeholder-section">
-      <h2>正文内容（待补充）</h2>
-      <p>这里暂不放教程正文，后续导入你实际的教程内容与代码示例。</p>
+    <section class="section">
+      <h2>第二点：修改主类与文件夹命名</h2>
+      <ol class="step-list">
+        <li>在 <code>src/main/java/com/example/examplemod/ExampleMod.java</code> 中，将 <code>public static final String MODID = "examplemod";</code> 改为 <code>tutorial</code>。</li>
+        <li>对 <code>ExampleMod</code> 类进行重命名，教程中改为 <code>Tutorial</code>。</li>
+        <li>重命名包路径：将 <code>example/examplemod</code> 调整为教程包路径（如 <code>com/xiyue/tutorial</code>）。</li>
+      </ol>
+      <p><strong>命名规范：</strong>文件夹命名不能有大写，包路径全部小写；类文件可以大写命名（例如 <code>ExampleMod</code>、<code>Tutorial</code>）。</p>
+
+      <h3>示例（修改前）</h3>
+      <pre><code>public static final String MODID = "examplemod";
+public class ExampleMod { ... }</code></pre>
+
+      <h3>示例（教程目标）</h3>
+      <pre><code>public static final String MODID = "tutorial";
+public class Tutorial { ... }</code></pre>
+    </section>
+
+    <section class="section">
+      <h2>第三点：Gradle 与映射配置</h2>
+      <h3>步骤一：gradle.properties</h3>
+      <p>推荐使用 <strong>Parchment（羊皮纸）映射</strong>。在官方注释中的链接可用 <strong>Ctrl + 左键</strong> 直接打开：
+        <a href="https://parchmentmc.org/docs/getting-started" target="_blank" rel="noopener noreferrer">https://parchmentmc.org/docs/getting-started</a>。</p>
+      <ul class="step-list">
+        <li><code>mapping_channel=parchment</code></li>
+        <li><code>mapping_version=2023.09.03-1.20.1</code>（本教程版本）</li>
+        <li><code>mod_id</code> 要和主类中的 <code>MODID</code> 一致（教程为 <code>tutorial</code>）</li>
+        <li><code>mod_name</code> 按需自定义</li>
+        <li><code>mod_license</code> 建议使用 <code>MIT</code></li>
+        <li><code>mod_group_id</code> 建议使用包路径形式（教程：<code>com.xiyue.tutorial</code>）</li>
+      </ul>
+
+      <h3>步骤二：应用 Parchment 到 Gradle</h3>
+      <ol class="step-list">
+        <li>在 Parchment 官网的 <strong>Install the ParchmentMC maven repository</strong> 处复制：
+          <pre><code>maven { url = 'https://maven.parchmentmc.org' }</code></pre>
+          并添加到 <code>settings.gradle</code>（教程文件已配置好）。
+        </li>
+        <li>在官网 <strong>Apply the Librarian plugin</strong> 处复制：
+          <pre><code>id 'org.parchmentmc.librarian.forgegradle' version '1.+'</code></pre>
+          添加到 <code>build.gradle</code> 的 <code>id 'net.minecraftforge.gradle' version '[6.0,6.2)'</code> 下方，并放在插件段最下面。
+        </li>
+      </ol>
+      <p class="notice-warning"><strong>最后一步：</strong>在 IDE 右侧侧栏点击蓝色大象（Gradle）图标，执行 Gradle 重构/刷新，成功后即可开始编写模组。</p>
+    </section>
+
+    <section class="section">
+      <h2>IDE 工程视图（来自 E:\教程mod）</h2>
+      <div class="file-grid">
+        <article class="file-card">
+          <h3>核心 Java 文件</h3>
+          <pre><code>src/main/java/com/example/examplemod/ExampleMod.java
+src/main/java/com/example/examplemod/Config.java</code></pre>
+        </article>
+        <article class="file-card">
+          <h3>核心 Gradle 文件</h3>
+          <pre><code>gradle.properties
+settings.gradle
+build.gradle</code></pre>
+        </article>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2>基础文件（完整内容）</h2>
+
+      <details open>
+        <summary><strong>ExampleMod.java</strong>（当前工程内容）</summary>
+        <pre><code>package com.example.examplemod;
+
+import com.mojang.logging.LogUtils;
+import net.minecraft.client.Minecraft;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.world.food.FoodProperties;
+import net.minecraft.world.item.BlockItem;
+import net.minecraft.world.item.CreativeModeTab;
+import net.minecraft.world.item.CreativeModeTabs;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.state.BlockBehaviour;
+import net.minecraft.world.level.material.MapColor;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.event.BuildCreativeModeTabContentsEvent;
+import net.minecraftforge.event.server.ServerStartingEvent;
+import net.minecraftforge.eventbus.api.IEventBus;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.config.ModConfig;
+import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
+import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
+import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+import net.minecraftforge.registries.DeferredRegister;
+import net.minecraftforge.registries.ForgeRegistries;
+import net.minecraftforge.registries.RegistryObject;
+import org.slf4j.Logger;
+
+// The value here should match an entry in the META-INF/mods.toml file
+@Mod(ExampleMod.MODID)
+public class ExampleMod
+{
+    // Define mod id in a common place for everything to reference
+    public static final String MODID = "examplemod";
+    // Directly reference a slf4j logger
+    private static final Logger LOGGER = LogUtils.getLogger();
+    // Create a Deferred Register to hold Blocks which will all be registered under the "examplemod" namespace
+    public static final DeferredRegister&lt;Block&gt; BLOCKS = DeferredRegister.create(ForgeRegistries.BLOCKS, MODID);
+    // Create a Deferred Register to hold Items which will all be registered under the "examplemod" namespace
+    public static final DeferredRegister&lt;Item&gt; ITEMS = DeferredRegister.create(ForgeRegistries.ITEMS, MODID);
+    // Create a Deferred Register to hold CreativeModeTabs which will all be registered under the "examplemod" namespace
+    public static final DeferredRegister&lt;CreativeModeTab&gt; CREATIVE_MODE_TABS = DeferredRegister.create(Registries.CREATIVE_MODE_TAB, MODID);
+
+    // Creates a new Block with the id "examplemod:example_block", combining the namespace and path
+    public static final RegistryObject&lt;Block&gt; EXAMPLE_BLOCK = BLOCKS.register("example_block", () -&gt; new Block(BlockBehaviour.Properties.of().mapColor(MapColor.STONE)));
+    // Creates a new BlockItem with the id "examplemod:example_block", combining the namespace and path
+    public static final RegistryObject&lt;Item&gt; EXAMPLE_BLOCK_ITEM = ITEMS.register("example_block", () -&gt; new BlockItem(EXAMPLE_BLOCK.get(), new Item.Properties()));
+
+    // Creates a new food item with the id "examplemod:example_id", nutrition 1 and saturation 2
+    public static final RegistryObject&lt;Item&gt; EXAMPLE_ITEM = ITEMS.register("example_item", () -&gt; new Item(new Item.Properties().food(new FoodProperties.Builder()
+            .alwaysEat().nutrition(1).saturationMod(2f).build())));
+
+    // Creates a creative tab with the id "examplemod:example_tab" for the example item, that is placed after the combat tab
+    public static final RegistryObject&lt;CreativeModeTab&gt; EXAMPLE_TAB = CREATIVE_MODE_TABS.register("example_tab", () -&gt; CreativeModeTab.builder()
+            .withTabsBefore(CreativeModeTabs.COMBAT)
+            .icon(() -&gt; EXAMPLE_ITEM.get().getDefaultInstance())
+            .displayItems((parameters, output) -&gt; {
+                output.accept(EXAMPLE_ITEM.get()); // Add the example item to the tab. For your own tabs, this method is preferred over the event
+            }).build());
+
+    public ExampleMod(FMLJavaModLoadingContext context)
+    {
+        IEventBus modEventBus = context.getModEventBus();
+
+        // Register the commonSetup method for modloading
+        modEventBus.addListener(this::commonSetup);
+
+        // Register the Deferred Register to the mod event bus so blocks get registered
+        BLOCKS.register(modEventBus);
+        // Register the Deferred Register to the mod event bus so items get registered
+        ITEMS.register(modEventBus);
+        // Register the Deferred Register to the mod event bus so tabs get registered
+        CREATIVE_MODE_TABS.register(modEventBus);
+
+        // Register ourselves for server and other game events we are interested in
+        MinecraftForge.EVENT_BUS.register(this);
+
+        // Register the item to a creative tab
+        modEventBus.addListener(this::addCreative);
+
+        // Register our mod's ForgeConfigSpec so that Forge can create and load the config file for us
+        context.registerConfig(ModConfig.Type.COMMON, Config.SPEC);
+    }
+
+    private void commonSetup(final FMLCommonSetupEvent event)
+    {
+        // Some common setup code
+        LOGGER.info("HELLO FROM COMMON SETUP");
+
+        if (Config.logDirtBlock)
+            LOGGER.info("DIRT BLOCK &gt;&gt; {}", ForgeRegistries.BLOCKS.getKey(Blocks.DIRT));
+
+        LOGGER.info(Config.magicNumberIntroduction + Config.magicNumber);
+
+        Config.items.forEach((item) -&gt; LOGGER.info("ITEM &gt;&gt; {}", item.toString()));
+    }
+
+    // Add the example block item to the building blocks tab
+    private void addCreative(BuildCreativeModeTabContentsEvent event)
+    {
+        if (event.getTabKey() == CreativeModeTabs.BUILDING_BLOCKS)
+            event.accept(EXAMPLE_BLOCK_ITEM);
+    }
+
+    // You can use SubscribeEvent and let the Event Bus discover methods to call
+    @SubscribeEvent
+    public void onServerStarting(ServerStartingEvent event)
+    {
+        // Do something when the server starts
+        LOGGER.info("HELLO from server starting");
+    }
+
+    // You can use EventBusSubscriber to automatically register all static methods in the class annotated with @SubscribeEvent
+    @Mod.EventBusSubscriber(modid = MODID, bus = Mod.EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
+    public static class ClientModEvents
+    {
+        @SubscribeEvent
+        public static void onClientSetup(FMLClientSetupEvent event)
+        {
+            // Some client setup code
+            LOGGER.info("HELLO FROM CLIENT SETUP");
+            LOGGER.info("MINECRAFT NAME &gt;&gt; {}", Minecraft.getInstance().getUser().getName());
+        }
+    }
+}
+</code></pre>
+      </details>
+
+      <details>
+        <summary><strong>gradle.properties</strong></summary>
+        <pre><code># Sets default memory used for gradle commands. Can be overridden by user or command line properties.
+# This is required to provide enough memory for the Minecraft decompilation process.
+org.gradle.jvmargs=-Xmx3G
+org.gradle.daemon=false
+
+
+## Environment Properties
+
+# The Minecraft version must agree with the Forge version to get a valid artifact
+minecraft_version=1.20.1
+# The Minecraft version range can use any release version of Minecraft as bounds.
+# Snapshots, pre-releases, and release candidates are not guaranteed to sort properly
+# as they do not follow standard versioning conventions.
+minecraft_version_range=[1.20.1,1.21)
+# The Forge version must agree with the Minecraft version to get a valid artifact
+forge_version=47.4.10
+# The Forge version range can use any version of Forge as bounds or match the loader version range
+forge_version_range=[47,)
+# The loader version range can only use the major version of Forge/FML as bounds
+loader_version_range=[47,)
+# The mapping channel to use for mappings.
+# The default set of supported mapping channels are ["official", "snapshot", "snapshot_nodoc", "stable", "stable_nodoc"].
+# Additional mapping channels can be registered through the "channelProviders" extension in a Gradle plugin.
+#
+# | Channel   | Version              |                                                                                |
+# |-----------|----------------------|--------------------------------------------------------------------------------|
+# | official  | MCVersion            | Official field/method names from Mojang mapping files                          |
+# | parchment | YYYY.MM.DD-MCVersion | Open community-sourced parameter names and javadocs layered on top of official |
+#
+# You must be aware of the Mojang license when using the 'official' or 'parchment' mappings.
+# See more information here: https://github.com/MinecraftForge/MCPConfig/blob/master/Mojang.md
+#
+# Parchment is an unofficial project maintained by ParchmentMC, separate from Minecraft Forge.
+# Additional setup is needed to use their mappings, see https://parchmentmc.org/docs/getting-started
+mapping_channel=parchment
+# The mapping version to query from the mapping channel.
+# This must match the format required by the mapping channel.
+mapping_version=2023.09.03-1.20.1
+
+
+## Mod Properties
+
+# The unique mod identifier for the mod. Must be lowercase in English locale. Must fit the regex [a-z][a-z0-9_]{1,63}
+# Must match the String constant located in the main mod class annotated with @Mod.
+mod_id=tutorial
+# The human-readable display name for the mod.
+mod_name=Tutorial Mod
+# The license of the mod. Review your options at https://choosealicense.com/. All Rights Reserved is the default.
+mod_license=MIT
+# The mod version. See https://semver.org/
+mod_version=1.0.0
+# The group ID for the mod. It is only important when publishing as an artifact to a Maven repository.
+# This should match the base package used for the mod sources.
+# See https://maven.apache.org/guides/mini/guide-naming-conventions.html
+mod_group_id=com.xiyue.tutorial
+# The authors of the mod. This is a simple text string that is used for display purposes in the mod list.
+mod_authors=xiyue233
+# The description of the mod. This is a simple multiline text string that is used for display purposes in the mod list.
+mod_description=Example mod description.\nNewline characters can be used and will be replaced properly.</code></pre>
+      </details>
+
+      <details>
+        <summary><strong>settings.gradle</strong></summary>
+        <pre><code>pluginManagement {
+    repositories {
+        gradlePluginPortal()
+        maven {
+            name = 'MinecraftForge'
+            url = 'https://maven.minecraftforge.net/'
+        }
+        maven { url = 'https://maven.parchmentmc.org' }
+    }
+}
+
+plugins {
+    id 'org.gradle.toolchains.foojay-resolver-convention' version '0.7.0'
+}</code></pre>
+      </details>
+
+      <details>
+        <summary><strong>build.gradle</strong></summary>
+        <pre><code>plugins {
+    id 'eclipse'
+    id 'idea'
+    id 'maven-publish'
+    id 'net.minecraftforge.gradle' version '[6.0,6.2)'
+    id 'org.parchmentmc.librarian.forgegradle' version '1.+'
+}
+
+version = mod_version
+group = mod_group_id
+
+base {
+    archivesName = mod_id
+}
+
+// Mojang ships Java 17 to end users in 1.18+, so your mod should target Java 17.
+java.toolchain.languageVersion = JavaLanguageVersion.of(17)
+
+println "Java: ${System.getProperty 'java.version'}, JVM: ${System.getProperty 'java.vm.version'} (${System.getProperty 'java.vendor'}), Arch: ${System.getProperty 'os.arch'}"
+minecraft {
+    // The mappings can be changed at any time and must be in the following format.
+    // Channel:   Version:
+    // official   MCVersion             Official field/method names from Mojang mapping files
+    // parchment  YYYY.MM.DD-MCVersion  Open community-sourced parameter names and javadocs layered on top of official
+    //
+    // You must be aware of the Mojang license when using the 'official' or 'parchment' mappings.
+    // See more information here: https://github.com/MinecraftForge/MCPConfig/blob/master/Mojang.md
+    //
+    // Parchment is an unofficial project maintained by ParchmentMC, separate from MinecraftForge
+    // Additional setup is needed to use their mappings: https://parchmentmc.org/docs/getting-started
+    //
+    // Use non-default mappings at your own risk. They may not always work.
+    // Simply re-run your setup task after changing the mappings to update your workspace.
+    mappings channel: mapping_channel, version: mapping_version
+
+    // When true, this property will have all Eclipse/IntelliJ IDEA run configurations run the "prepareX" task for the given run configuration before launching the game.
+    // In most cases, it is not necessary to enable.
+    // enableEclipsePrepareRuns = true
+    // enableIdeaPrepareRuns = true
+
+    // This property allows configuring Gradle's ProcessResources task(s) to run on IDE output locations before launching the game.
+    // It is REQUIRED to be set to true for this template to function.
+    // See https://docs.gradle.org/current/dsl/org.gradle.language.jvm.tasks.ProcessResources.html
+    copyIdeResources = true
+
+    // When true, this property will add the folder name of all declared run configurations to generated IDE run configurations.
+    // The folder name can be set on a run configuration using the "folderName" property.
+    // By default, the folder name of a run configuration is the name of the Gradle project containing it.
+    // generateRunFolders = true
+
+    // This property enables access transformers for use in development.
+    // They will be applied to the Minecraft artifact.
+    // The access transformer file can be anywhere in the project.
+    // However, it must be at "META-INF/accesstransformer.cfg" in the final mod jar to be loaded by Forge.
+    // This default location is a best practice to automatically put the file in the right place in the final jar.
+    // See https://docs.minecraftforge.net/en/latest/advanced/accesstransformers/ for more information.
+    // accessTransformer = file('src/main/resources/META-INF/accesstransformer.cfg')
+
+    // Default run configurations.
+    // These can be tweaked, removed, or duplicated as needed.
+    runs {
+        // applies to all the run configs below
+        configureEach {
+            workingDirectory project.file('run')
+
+            // Recommended logging data for a userdev environment
+            // The markers can be added/remove as needed separated by commas.
+            // "SCAN": For mods scan.
+            // "REGISTRIES": For firing of registry events.
+            // "REGISTRYDUMP": For getting the contents of all registries.
+            property 'forge.logging.markers', 'REGISTRIES'
+
+            // Recommended logging level for the console
+            // You can set various levels here.
+            // Please read: https://stackoverflow.com/questions/2031163/when-to-use-the-different-log-levels
+            property 'forge.logging.console.level', 'debug'
+
+            mods {
+                "${mod_id}" {
+                    source sourceSets.main
+                }
+            }
+        }
+
+        client {
+            // Comma-separated list of namespaces to load gametests from. Empty = all namespaces.
+            property 'forge.enabledGameTestNamespaces', mod_id
+        }
+
+        server {
+            property 'forge.enabledGameTestNamespaces', mod_id
+            args '--nogui'
+        }
+
+        // This run config launches GameTestServer and runs all registered gametests, then exits.
+        // By default, the server will crash when no gametests are provided.
+        // The gametest system is also enabled by default for other run configs under the /test command.
+        gameTestServer {
+            property 'forge.enabledGameTestNamespaces', mod_id
+        }
+
+        data {
+            // example of overriding the workingDirectory set in configureEach above
+            workingDirectory project.file('run-data')
+
+            // Specify the modid for data generation, where to output the resulting resource, and where to look for existing resources.
+            args '--mod', mod_id, '--all', '--output', file('src/generated/resources/'), '--existing', file('src/main/resources/')
+        }
+    }
+}
+
+// Include resources generated by data generators.
+sourceSets.main.resources { srcDir 'src/generated/resources' }
+
+repositories {
+    // Put repositories for dependencies here
+    // ForgeGradle automatically adds the Forge maven and Maven Central for you
+
+    // If you have mod jar dependencies in ./libs, you can declare them as a repository like so.
+    // See https://docs.gradle.org/current/userguide/declaring_repositories.html#sub:flat_dir_resolver
+    // flatDir {
+    //     dir 'libs'
+    // }
+}
+
+dependencies {
+    // Specify the version of Minecraft to use.
+    // Any artifact can be supplied so long as it has a "userdev" classifier artifact and is a compatible patcher artifact.
+    // The "userdev" classifier will be requested and setup by ForgeGradle.
+    // If the group id is "net.minecraft" and the artifact id is one of ["client", "server", "joined"],
+    // then special handling is done to allow a setup of a vanilla dependency without the use of an external repository.
+    minecraft "net.minecraftforge:forge:${minecraft_version}-${forge_version}"
+
+    // Example mod dependency with JEI - using fg.deobf() ensures the dependency is remapped to your development mappings
+    // The JEI API is declared for compile time use, while the full JEI artifact is used at runtime
+    // compileOnly fg.deobf("mezz.jei:jei-${mc_version}-common-api:${jei_version}")
+    // compileOnly fg.deobf("mezz.jei:jei-${mc_version}-forge-api:${jei_version}")
+    // runtimeOnly fg.deobf("mezz.jei:jei-${mc_version}-forge:${jei_version}")
+
+    // Example mod dependency using a mod jar from ./libs with a flat dir repository
+    // This maps to ./libs/coolmod-${mc_version}-${coolmod_version}.jar
+    // The group id is ignored when searching -- in this case, it is "blank"
+    // implementation fg.deobf("blank:coolmod-${mc_version}:${coolmod_version}")
+
+    // For more info:
+    // http://www.gradle.org/docs/current/userguide/artifact_dependencies_tutorial.html
+    // http://www.gradle.org/docs/current/userguide/dependency_management.html
+}
+
+// This block of code expands all declared replace properties in the specified resource targets.
+// A missing property will result in an error. Properties are expanded using ${} Groovy notation.
+// When "copyIdeResources" is enabled, this will also run before the game launches in IDE environments.
+// See https://docs.gradle.org/current/dsl/org.gradle.language.jvm.tasks.ProcessResources.html
+tasks.named('processResources', ProcessResources).configure {
+    var replaceProperties = [
+            minecraft_version: minecraft_version, minecraft_version_range: minecraft_version_range,
+            forge_version: forge_version, forge_version_range: forge_version_range,
+            loader_version_range: loader_version_range,
+            mod_id: mod_id, mod_name: mod_name, mod_license: mod_license, mod_version: mod_version,
+            mod_authors: mod_authors, mod_description: mod_description,
+    ]
+    inputs.properties replaceProperties
+
+    filesMatching(['META-INF/mods.toml', 'pack.mcmeta']) {
+        expand replaceProperties + [project: project]
+    }
+}
+
+// Example for how to get properties into the manifest for reading at runtime.
+tasks.named('jar', Jar).configure {
+    manifest {
+        attributes([
+                'Specification-Title'     : mod_id,
+                'Specification-Vendor'    : mod_authors,
+                'Specification-Version'   : '1', // We are version 1 of ourselves
+                'Implementation-Title'    : project.name,
+                'Implementation-Version'  : project.jar.archiveVersion,
+                'Implementation-Vendor'   : mod_authors,
+                'Implementation-Timestamp': new Date().format("yyyy-MM-dd'T'HH:mm:ssZ")
+        ])
+    }
+
+    // This is the preferred method to reobfuscate your jar file
+    finalizedBy 'reobfJar'
+}
+
+// However if you are in a multi-project build, dev time needs unobfed jar files, so you can delay the obfuscation until publishing by doing:
+// tasks.named('publish').configure {
+//     dependsOn 'reobfJar'
+// }
+
+// Example configuration to allow publishing using the maven-publish plugin
+publishing {
+    publications {
+        register('mavenJava', MavenPublication) {
+            artifact jar
+        }
+    }
+    repositories {
+        maven {
+            url "file://${project.projectDir}/mcmodsrepo"
+        }
+    }
+}
+
+tasks.withType(JavaCompile).configureEach {
+    options.encoding = 'UTF-8' // Use the UTF-8 charset for Java compilation
+}
+</code></pre>
+      </details>
     </section>
 
     <nav class="guide-nav">
@@ -94,8 +585,7 @@
       <a href="ch1-sec2-read-official-code.html">下一页</a>
     </nav>
   </main>
+
   <script src="../scripts/main.js"></script>
 </body>
 </html>
-
-
