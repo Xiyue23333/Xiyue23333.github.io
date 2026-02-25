@@ -66,7 +66,7 @@
       <p class="eyebrow">CHAPTER 01 · SECTION 01</p>
       <h1>第一节：开发环境构建</h1>
       <div class="meta">
-        <span>状态：已填充完整教程</span>
+        <span>状态：完整教程</span>
         <span>来源：E:\教程mod</span>
       </div>
     </header>
@@ -90,72 +90,78 @@
     <section class="section">
       <h2>第二点：修改主类与文件夹命名</h2>
       <ol class="step-list">
-        <li>在 <code>src/main/java/com/example/examplemod/ExampleMod.java</code> 中，将 <code>public static final String MODID = "examplemod";</code> 改为 <code>tutorial</code>。</li>
-        <li>对 <code>ExampleMod</code> 类进行重命名，教程中改为 <code>Tutorial</code>。</li>
-        <li>重命名包路径：将 <code>example/examplemod</code> 调整为教程包路径（如 <code>com/xiyue/tutorial</code>）。</li>
+        <li>在 <code>src/main/java/com/example/ExampleMod.java</code>（或你的当前主类文件）中，将 <code>public static final String MODID = "examplemod";</code> 修改为自己的 <code>mod_id</code>，教程示例为 <code>tutorial</code>。</li>
+        <li>右键重命名主类（教程示例：<code>ExampleMod</code> → <code>Tutorial</code>）。</li>
+        <li>重命名包路径（教程示例：<code>example/examplemod</code> → <code>com/xiyue/tutorial</code>）。你当前工程已是 <code>com/xiyue/tutorialmod</code>。</li>
       </ol>
-      <p><strong>命名规范：</strong>文件夹命名不能有大写，包路径全部小写；类文件可以大写命名（例如 <code>ExampleMod</code>、<code>Tutorial</code>）。</p>
+      <p><strong>命名规范：</strong>文件夹命名不能有大写；类文件可以有大写（如 <code>ExampleMod</code>、<code>Tutorial</code>）。</p>
+      <pre><code>// 修改前
+public static final String MODID = "examplemod";
+public class ExampleMod { ... }
 
-      <h3>示例（修改前）</h3>
-      <pre><code>public static final String MODID = "examplemod";
-public class ExampleMod { ... }</code></pre>
-
-      <h3>示例（教程目标）</h3>
-      <pre><code>public static final String MODID = "tutorial";
+// 教程目标
+public static final String MODID = "tutorial";
 public class Tutorial { ... }</code></pre>
     </section>
 
     <section class="section">
-      <h2>第三点：Gradle 与映射配置</h2>
+      <h2>第三点：Gradle 与羊皮纸映射配置</h2>
       <h3>步骤一：gradle.properties</h3>
-      <p>推荐使用 <strong>Parchment（羊皮纸）映射</strong>。在官方注释中的链接可用 <strong>Ctrl + 左键</strong> 直接打开：
-        <a href="https://parchmentmc.org/docs/getting-started" target="_blank" rel="noopener noreferrer">https://parchmentmc.org/docs/getting-started</a>。</p>
+      <p>推荐使用羊皮纸映射（Parchment）。在官方注释中 <strong>Ctrl + 左键</strong> 打开：
+        <a href="https://parchmentmc.org/docs/getting-started" target="_blank" rel="noopener noreferrer">https://parchmentmc.org/docs/getting-started</a></p>
       <ul class="step-list">
         <li><code>mapping_channel=parchment</code></li>
-        <li><code>mapping_version=2023.09.03-1.20.1</code>（本教程版本）</li>
-        <li><code>mod_id</code> 要和主类中的 <code>MODID</code> 一致（教程为 <code>tutorial</code>）</li>
+        <li><code>mapping_version=2023.09.03-1.20.1</code></li>
+        <li><code>mod_id</code> 与 <code>MODID</code> 保持一致</li>
         <li><code>mod_name</code> 按需自定义</li>
-        <li><code>mod_license</code> 建议使用 <code>MIT</code></li>
-        <li><code>mod_group_id</code> 建议使用包路径形式（教程：<code>com.xiyue.tutorial</code>）</li>
+        <li><code>mod_license</code> 建议为 <code>MIT</code></li>
+        <li><code>mod_group_id</code> 使用命名路径（教程示例：<code>com.xiyue.tutorial</code>）</li>
       </ul>
 
       <h3>步骤二：应用 Parchment 到 Gradle</h3>
       <ol class="step-list">
-        <li>在 Parchment 官网的 <strong>Install the ParchmentMC maven repository</strong> 处复制：
+        <li>在官网找到 <strong>Install the ParchmentMC maven repository</strong>，复制
           <pre><code>maven { url = 'https://maven.parchmentmc.org' }</code></pre>
-          并添加到 <code>settings.gradle</code>（教程文件已配置好）。
+          添加到 <code>settings.gradle</code>（你的教程工程已配置）。
         </li>
-        <li>在官网 <strong>Apply the Librarian plugin</strong> 处复制：
+        <li>在官网找到 <strong>Apply the Librarian plugin</strong>，复制
           <pre><code>id 'org.parchmentmc.librarian.forgegradle' version '1.+'</code></pre>
-          添加到 <code>build.gradle</code> 的 <code>id 'net.minecraftforge.gradle' version '[6.0,6.2)'</code> 下方，并放在插件段最下面。
+          放到 <code>build.gradle</code> 的插件块中，位置在
+          <code>id 'net.minecraftforge.gradle' version '[6.0,6.2)'</code> 下方，并确保在该块最下方。
         </li>
       </ol>
-      <p class="notice-warning"><strong>最后一步：</strong>在 IDE 右侧侧栏点击蓝色大象（Gradle）图标，执行 Gradle 重构/刷新，成功后即可开始编写模组。</p>
+      <p class="notice-warning"><strong>最后一步：</strong>点击 IDEA 右侧侧边栏蓝色大象（Gradle）图标重构 Gradle。重构成功后即可开始编写模组。</p>
     </section>
 
     <section class="section">
-      <h2>IDE 工程视图（来自 E:\教程mod）</h2>
-      <div class="file-grid">
-        <article class="file-card">
-          <h3>核心 Java 文件</h3>
-          <pre><code>src/main/java/com/example/examplemod/ExampleMod.java
-src/main/java/com/example/examplemod/Config.java</code></pre>
-        </article>
-        <article class="file-card">
-          <h3>核心 Gradle 文件</h3>
-          <pre><code>gradle.properties
-settings.gradle
-build.gradle</code></pre>
-        </article>
-      </div>
-    </section>
+      <h2>IDE 工程视图（左选文件，右看代码）</h2>
+      <div class="viewer-workbench" data-ide-viewer>
+        <aside class="viewer-sidebar">
+          <p class="viewer-side-title">项目文件</p>
+          <div class="viewer-tree"></div>
+        </aside>
 
-    <section class="section">
-      <h2>基础文件（完整内容）</h2>
+        <section class="viewer-editor">
+          <div class="viewer-topbar">
+            <span class="viewer-dot red"></span>
+            <span class="viewer-dot amber"></span>
+            <span class="viewer-dot green"></span>
+            <span class="viewer-tab"></span>
+          </div>
 
-      <details open>
-        <summary><strong>ExampleMod.java</strong>（当前工程内容）</summary>
-        <pre><code>package com.example.examplemod;
+          <div class="viewer-code-area">
+            <pre class="viewer-lines" aria-hidden="true"></pre>
+            <div class="viewer-code-scroll">
+              <pre class="viewer-code"></pre>
+            </div>
+          </div>
+
+          <div class="viewer-status">
+            <span class="viewer-path"></span>
+          </div>
+        </section>
+
+        <script type="text/plain" data-file="src/main/java/com/xiyue/tutorialmod/TutorialMod.java">package com.xiyue.tutorialmod;
 
 import com.mojang.logging.LogUtils;
 import net.minecraft.client.Minecraft;
@@ -186,38 +192,38 @@ import net.minecraftforge.registries.RegistryObject;
 import org.slf4j.Logger;
 
 // The value here should match an entry in the META-INF/mods.toml file
-@Mod(ExampleMod.MODID)
-public class ExampleMod
+@Mod(TutorialMod.MODID)
+public class TutorialMod
 {
     // Define mod id in a common place for everything to reference
-    public static final String MODID = "examplemod";
+    public static final String MODID = "tutorial";
     // Directly reference a slf4j logger
     private static final Logger LOGGER = LogUtils.getLogger();
     // Create a Deferred Register to hold Blocks which will all be registered under the "examplemod" namespace
-    public static final DeferredRegister&lt;Block&gt; BLOCKS = DeferredRegister.create(ForgeRegistries.BLOCKS, MODID);
+    public static final DeferredRegister<Block> BLOCKS = DeferredRegister.create(ForgeRegistries.BLOCKS, MODID);
     // Create a Deferred Register to hold Items which will all be registered under the "examplemod" namespace
-    public static final DeferredRegister&lt;Item&gt; ITEMS = DeferredRegister.create(ForgeRegistries.ITEMS, MODID);
+    public static final DeferredRegister<Item> ITEMS = DeferredRegister.create(ForgeRegistries.ITEMS, MODID);
     // Create a Deferred Register to hold CreativeModeTabs which will all be registered under the "examplemod" namespace
-    public static final DeferredRegister&lt;CreativeModeTab&gt; CREATIVE_MODE_TABS = DeferredRegister.create(Registries.CREATIVE_MODE_TAB, MODID);
+    public static final DeferredRegister<CreativeModeTab> CREATIVE_MODE_TABS = DeferredRegister.create(Registries.CREATIVE_MODE_TAB, MODID);
 
     // Creates a new Block with the id "examplemod:example_block", combining the namespace and path
-    public static final RegistryObject&lt;Block&gt; EXAMPLE_BLOCK = BLOCKS.register("example_block", () -&gt; new Block(BlockBehaviour.Properties.of().mapColor(MapColor.STONE)));
+    public static final RegistryObject<Block> EXAMPLE_BLOCK = BLOCKS.register("example_block", () -> new Block(BlockBehaviour.Properties.of().mapColor(MapColor.STONE)));
     // Creates a new BlockItem with the id "examplemod:example_block", combining the namespace and path
-    public static final RegistryObject&lt;Item&gt; EXAMPLE_BLOCK_ITEM = ITEMS.register("example_block", () -&gt; new BlockItem(EXAMPLE_BLOCK.get(), new Item.Properties()));
+    public static final RegistryObject<Item> EXAMPLE_BLOCK_ITEM = ITEMS.register("example_block", () -> new BlockItem(EXAMPLE_BLOCK.get(), new Item.Properties()));
 
     // Creates a new food item with the id "examplemod:example_id", nutrition 1 and saturation 2
-    public static final RegistryObject&lt;Item&gt; EXAMPLE_ITEM = ITEMS.register("example_item", () -&gt; new Item(new Item.Properties().food(new FoodProperties.Builder()
+    public static final RegistryObject<Item> EXAMPLE_ITEM = ITEMS.register("example_item", () -> new Item(new Item.Properties().food(new FoodProperties.Builder()
             .alwaysEat().nutrition(1).saturationMod(2f).build())));
 
     // Creates a creative tab with the id "examplemod:example_tab" for the example item, that is placed after the combat tab
-    public static final RegistryObject&lt;CreativeModeTab&gt; EXAMPLE_TAB = CREATIVE_MODE_TABS.register("example_tab", () -&gt; CreativeModeTab.builder()
+    public static final RegistryObject<CreativeModeTab> EXAMPLE_TAB = CREATIVE_MODE_TABS.register("example_tab", () -> CreativeModeTab.builder()
             .withTabsBefore(CreativeModeTabs.COMBAT)
-            .icon(() -&gt; EXAMPLE_ITEM.get().getDefaultInstance())
-            .displayItems((parameters, output) -&gt; {
+            .icon(() -> EXAMPLE_ITEM.get().getDefaultInstance())
+            .displayItems((parameters, output) -> {
                 output.accept(EXAMPLE_ITEM.get()); // Add the example item to the tab. For your own tabs, this method is preferred over the event
             }).build());
 
-    public ExampleMod(FMLJavaModLoadingContext context)
+    public TutorialMod(FMLJavaModLoadingContext context)
     {
         IEventBus modEventBus = context.getModEventBus();
 
@@ -247,11 +253,11 @@ public class ExampleMod
         LOGGER.info("HELLO FROM COMMON SETUP");
 
         if (Config.logDirtBlock)
-            LOGGER.info("DIRT BLOCK &gt;&gt; {}", ForgeRegistries.BLOCKS.getKey(Blocks.DIRT));
+            LOGGER.info("DIRT BLOCK >> {}", ForgeRegistries.BLOCKS.getKey(Blocks.DIRT));
 
         LOGGER.info(Config.magicNumberIntroduction + Config.magicNumber);
 
-        Config.items.forEach((item) -&gt; LOGGER.info("ITEM &gt;&gt; {}", item.toString()));
+        Config.items.forEach((item) -> LOGGER.info("ITEM >> {}", item.toString()));
     }
 
     // Add the example block item to the building blocks tab
@@ -278,16 +284,150 @@ public class ExampleMod
         {
             // Some client setup code
             LOGGER.info("HELLO FROM CLIENT SETUP");
-            LOGGER.info("MINECRAFT NAME &gt;&gt; {}", Minecraft.getInstance().getUser().getName());
+            LOGGER.info("MINECRAFT NAME >> {}", Minecraft.getInstance().getUser().getName());
         }
     }
 }
-</code></pre>
-      </details>
+</script>
+        <script type="text/plain" data-file="src/main/java/com/xiyue/tutorialmod/Config.java">package com.xiyue.tutorialmod;
 
-      <details>
-        <summary><strong>gradle.properties</strong></summary>
-        <pre><code># Sets default memory used for gradle commands. Can be overridden by user or command line properties.
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.Item;
+import net.minecraftforge.common.ForgeConfigSpec;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.event.config.ModConfigEvent;
+import net.minecraftforge.registries.ForgeRegistries;
+
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
+
+// An example config class. This is not required, but it's a good idea to have one to keep your config organized.
+// Demonstrates how to use Forge's config APIs
+@Mod.EventBusSubscriber(modid = TutorialMod.MODID, bus = Mod.EventBusSubscriber.Bus.MOD)
+public class Config
+{
+    private static final ForgeConfigSpec.Builder BUILDER = new ForgeConfigSpec.Builder();
+
+    private static final ForgeConfigSpec.BooleanValue LOG_DIRT_BLOCK = BUILDER
+            .comment("Whether to log the dirt block on common setup")
+            .define("logDirtBlock", true);
+
+    private static final ForgeConfigSpec.IntValue MAGIC_NUMBER = BUILDER
+            .comment("A magic number")
+            .defineInRange("magicNumber", 42, 0, Integer.MAX_VALUE);
+
+    public static final ForgeConfigSpec.ConfigValue<String> MAGIC_NUMBER_INTRODUCTION = BUILDER
+            .comment("What you want the introduction message to be for the magic number")
+            .define("magicNumberIntroduction", "The magic number is... ");
+
+    // a list of strings that are treated as resource locations for items
+    private static final ForgeConfigSpec.ConfigValue<List<? extends String>> ITEM_STRINGS = BUILDER
+            .comment("A list of items to log on common setup.")
+            .defineListAllowEmpty("items", List.of("minecraft:iron_ingot"), Config::validateItemName);
+
+    static final ForgeConfigSpec SPEC = BUILDER.build();
+
+    public static boolean logDirtBlock;
+    public static int magicNumber;
+    public static String magicNumberIntroduction;
+    public static Set<Item> items;
+
+    private static boolean validateItemName(final Object obj)
+    {
+        return obj instanceof final String itemName && ForgeRegistries.ITEMS.containsKey(new ResourceLocation(itemName));
+    }
+
+    @SubscribeEvent
+    static void onLoad(final ModConfigEvent event)
+    {
+        logDirtBlock = LOG_DIRT_BLOCK.get();
+        magicNumber = MAGIC_NUMBER.get();
+        magicNumberIntroduction = MAGIC_NUMBER_INTRODUCTION.get();
+
+        // convert the list of strings into a set of items
+        items = ITEM_STRINGS.get().stream()
+                .map(itemName -> ForgeRegistries.ITEMS.getValue(new ResourceLocation(itemName)))
+                .collect(Collectors.toSet());
+    }
+}
+</script>
+        <script type="text/plain" data-file="src/main/resources/META-INF/mods.toml"># This is an example mods.toml file. It contains the data relating to the loading mods.
+# There are several mandatory fields (#mandatory), and many more that are optional (#optional).
+# The overall format is standard TOML format, v0.5.0.
+# Note that there are a couple of TOML lists in this file.
+# Find more information on toml format here:  https://github.com/toml-lang/toml
+# The name of the mod loader type to load - for regular FML @Mod mods it should be javafml
+modLoader="javafml" #mandatory
+# A version range to match for said mod loader - for regular FML @Mod it will be the forge version
+loaderVersion="${loader_version_range}" #mandatory This is typically bumped every Minecraft version by Forge. See our download page for lists of versions.
+# The license for you mod. This is mandatory metadata and allows for easier comprehension of your redistributive properties.
+# Review your options at https://choosealicense.com/. All rights reserved is the default copyright stance, and is thus the default here.
+license="${mod_license}"
+# A URL to refer people to when problems occur with this mod
+#issueTrackerURL="https://change.me.to.your.issue.tracker.example.invalid/" #optional
+# If your mod is purely client-side and has no multiplayer functionality (be it dedicated servers or Open to LAN),
+# set this to true, and Forge will set the correct displayTest for you and skip loading your mod on dedicated servers.
+#clientSideOnly=true #optional - defaults to false if absent
+# A list of mods - how many allowed here is determined by the individual mod loader
+[[mods]] #mandatory
+# The modid of the mod
+modId="${mod_id}" #mandatory
+# The version number of the mod
+version="${mod_version}" #mandatory
+# A display name for the mod
+displayName="${mod_name}" #mandatory
+# A URL to query for updates for this mod. See the JSON update specification https://docs.minecraftforge.net/en/latest/misc/updatechecker/
+#updateJSONURL="https://change.me.example.invalid/updates.json" #optional
+# A URL for the "homepage" for this mod, displayed in the mod UI
+#displayURL="https://change.me.to.your.mods.homepage.example.invalid/" #optional
+# A file name (in the root of the mod JAR) containing a logo for display
+#logoFile="examplemod.png" #optional
+# A text field displayed in the mod UI
+#credits="" #optional
+# A text field displayed in the mod UI
+authors="${mod_authors}" #optional
+# Display Test controls the display for your mod in the server connection screen
+# MATCH_VERSION means that your mod will cause a red X if the versions on client and server differ. This is the default behaviour and should be what you choose if you have server and client elements to your mod.
+# IGNORE_SERVER_VERSION means that your mod will not cause a red X if it's present on the server but not on the client. This is what you should use if you're a server only mod.
+# IGNORE_ALL_VERSION means that your mod will not cause a red X if it's present on the client or the server. This is a special case and should only be used if your mod has no server component.
+# NONE means that no display test is set on your mod. You need to do this yourself, see IExtensionPoint.DisplayTest for more information. You can define any scheme you wish with this value.
+# IMPORTANT NOTE: this is NOT an instruction as to which environments (CLIENT or DEDICATED SERVER) your mod loads on. Your mod should load (and maybe do nothing!) whereever it finds itself.
+#displayTest="MATCH_VERSION" # if nothing is specified, MATCH_VERSION is the default when clientSideOnly=false, otherwise IGNORE_ALL_VERSION when clientSideOnly=true (#optional)
+
+# The description text for the mod (multi line!) (#mandatory)
+description='''${mod_description}'''
+# A dependency - use the . to indicate dependency for a specific modid. Dependencies are optional.
+[[dependencies.${mod_id}]] #optional
+    # the modid of the dependency
+    modId="forge" #mandatory
+    # Does this dependency have to exist - if not, ordering below must be specified
+    mandatory=true #mandatory
+    # The version range of the dependency
+    versionRange="${forge_version_range}" #mandatory
+    # An ordering relationship for the dependency - BEFORE or AFTER required if the dependency is not mandatory
+    # BEFORE - This mod is loaded BEFORE the dependency
+    # AFTER - This mod is loaded AFTER the dependency
+    ordering="NONE"
+    # Side this dependency is applied on - BOTH, CLIENT, or SERVER
+    side="BOTH"
+# Here's another dependency
+[[dependencies.${mod_id}]]
+    modId="minecraft"
+    mandatory=true
+    # This version range declares a minimum of the current minecraft version up to but not including the next major version
+    versionRange="${minecraft_version_range}"
+    ordering="NONE"
+    side="BOTH"
+
+# Features are specific properties of the game environment, that you may want to declare you require. This example declares
+# that your mod requires GL version 3.2 or higher. Other features will be added. They are side aware so declaring this won't
+# stop your mod loading on the server for example.
+#[features.${mod_id}]
+#openGLVersion="[3.2,)"
+</script>
+        <script type="text/plain" data-file="gradle.properties"># Sets default memory used for gradle commands. Can be overridden by user or command line properties.
 # This is required to provide enough memory for the Minecraft decompilation process.
 org.gradle.jvmargs=-Xmx3G
 org.gradle.daemon=false
@@ -345,12 +485,8 @@ mod_group_id=com.xiyue.tutorial
 # The authors of the mod. This is a simple text string that is used for display purposes in the mod list.
 mod_authors=xiyue233
 # The description of the mod. This is a simple multiline text string that is used for display purposes in the mod list.
-mod_description=Example mod description.\nNewline characters can be used and will be replaced properly.</code></pre>
-      </details>
-
-      <details>
-        <summary><strong>settings.gradle</strong></summary>
-        <pre><code>pluginManagement {
+mod_description=Example mod description.\nNewline characters can be used and will be replaced properly.</script>
+        <script type="text/plain" data-file="settings.gradle">pluginManagement {
     repositories {
         gradlePluginPortal()
         maven {
@@ -363,12 +499,8 @@ mod_description=Example mod description.\nNewline characters can be used and wil
 
 plugins {
     id 'org.gradle.toolchains.foojay-resolver-convention' version '0.7.0'
-}</code></pre>
-      </details>
-
-      <details>
-        <summary><strong>build.gradle</strong></summary>
-        <pre><code>plugins {
+}</script>
+        <script type="text/plain" data-file="build.gradle">plugins {
     id 'eclipse'
     id 'idea'
     id 'maven-publish'
@@ -576,8 +708,13 @@ publishing {
 tasks.withType(JavaCompile).configureEach {
     options.encoding = 'UTF-8' // Use the UTF-8 charset for Java compilation
 }
-</code></pre>
-      </details>
+</script>
+      </div>
+    </section>
+
+    <section class="section placeholder-section">
+      <h2>本节结语</h2>
+      <p>第一章第一节结束。环境构建完成后，下一节进入“学会查看官方代码”。</p>
     </section>
 
     <nav class="guide-nav">
@@ -587,5 +724,6 @@ tasks.withType(JavaCompile).configureEach {
   </main>
 
   <script src="../scripts/main.js"></script>
+  <script src="../scripts/ide-viewer.js"></script>
 </body>
 </html>
