@@ -58,35 +58,131 @@
       </section>
     </div>
   </aside>
-  <main class="guide-main">
+  <main class="guide-main guide-main-wide">
     <a class="breadcrumb" href="../index.html">← 返回首页</a>
 
     <header class="guide-hero">
       <p class="eyebrow">CHAPTER 01 · SECTION 02</p>
       <h1>第二节：学会查看官方代码</h1>
       <div class="meta">
-        <span>状态：框架已搭建</span>
-        <span>内容：待导入教程 Mod</span>
+        <span>状态：完整教程</span>
+        <span>示例来源：E:\官方文件\client-extra</span>
       </div>
     </header>
 
     <section class="section">
-      <h2>页面说明</h2>
-      <p>本节仅创建页面骨架，后续将补充官方代码定位、阅读顺序与调试方法。</p>
+      <h2>本节目标</h2>
+      <ul class="step-list">
+        <li>知道“官方文件”都放在哪（客户端 jar / client-extra / data pack / assets）。</li>
+        <li>学会在 IDEA 里快速定位：从你写的代码跳到官方类、搜索资源文件、对照 key/路径。</li>
+        <li>掌握最常用的入口与阅读路线：从“你要做的效果”反推到“官方是怎么做的”。</li>
+      </ul>
+      <p class="notice-warning"><strong>重要提醒：</strong>Minecraft 官方文件（含资源与数据）受版权保护，不建议把完整内容上传到公开仓库或 GitHub Pages。本页提供方法与“本地生成”方案，用于你自己电脑离线学习。</p>
     </section>
 
     <section class="section">
-      <h2>结构占位</h2>
+      <h2>官方文件在哪？（以 1.20.1 为例）</h2>
+      <p>你电脑里的示例路径是 <code>E:\官方文件\client-extra</code>。它主要包含：</p>
       <ul>
-  <li>源码入口区</li>
-  <li>阅读路径区（待补充）</li>
-  <li>关键类说明区（待补充）</li>
-</ul>
+        <li><code>assets/</code>：客户端资源（语言文件、纹理、着色器、字体、音效等）。</li>
+        <li><code>data/</code>：数据驱动内容（世界生成、结构、标签、战利品表等）。</li>
+        <li><code>version.json</code>：版本相关信息。</li>
+      </ul>
+      <p>在模组开发里，你最常“抄作业”的不是 Java 源码，而是这些 <strong>资源/数据文件的结构与写法</strong>：路径怎么命名、key 怎么写、json 字段代表什么。</p>
+    </section>
+
+    <section class="section">
+      <h2>在 IDEA 里怎么查？（最快用法）</h2>
+      <ol class="step-list">
+        <li><strong>从你写的代码跳到官方类：</strong>对着类名/方法名按 <code>Ctrl + B</code>（或 <code>Ctrl + Click</code>）。</li>
+        <li><strong>全局搜索：</strong><code>Ctrl + Shift + F</code> 搜索字符串（比如一个翻译 key、一个资源路径、一个注册名）。</li>
+        <li><strong>按类名搜：</strong><code>Ctrl + N</code> 搜类；按文件名搜 <code>Ctrl + Shift + N</code>（找 json/纹理/着色器很常用）。</li>
+        <li><strong>看资源路径：</strong>记住两大根目录：<code>assets/&lt;命名空间&gt;/</code> 与 <code>data/&lt;命名空间&gt;/</code>。</li>
+      </ol>
+      <p>建议的练习方式：先定一个目标（例如“我要加一个语言翻译 key”或“我要看世界生成 noise_settings 怎么写”），然后用搜索把官方写法找出来，对照着写。</p>
+    </section>
+
+    <section class="section">
+      <h2>本地 IDE 工程视图（左选文件，右看内容）</h2>
+      <p>下面这个窗口默认展示的是“示例/占位文件”。如果你在本机运行生成脚本，它会把 <code>E:\官方文件\client-extra</code> 的选定文件嵌入到本页的 <code>.local.html</code> 版本里，达到和第一节一样的离线阅读体验。</p>
+      <ol class="step-list">
+        <li>在站点根目录运行：<code>powershell -ExecutionPolicy Bypass -File scripts\generate-client-extra-local.ps1</code></li>
+        <li>生成文件：<code>guides/ch1-sec2-read-official-code.local.html</code></li>
+        <li>用浏览器打开该 <code>.local.html</code> 页面即可离线查看（不要上传到公开仓库）。</li>
+      </ol>
+
+      <div class="viewer-workbench" data-ide-viewer>
+        <aside class="viewer-sidebar">
+          <p class="viewer-side-title">client-extra（本地生成）</p>
+          <div class="viewer-tree"></div>
+        </aside>
+
+        <section class="viewer-editor">
+          <div class="viewer-topbar">
+            <span class="viewer-dot red"></span>
+            <span class="viewer-dot amber"></span>
+            <span class="viewer-dot green"></span>
+            <div class="viewer-tabs" role="tablist" aria-label="打开的文件标签"></div>
+            <div class="viewer-search" role="search">
+              <input class="viewer-search-input" type="search" placeholder="搜索内容 (Ctrl+F)" aria-label="搜索内容">
+              <button class="viewer-search-btn" type="button" data-search-nav="-1" aria-label="上一个搜索结果">↑</button>
+              <button class="viewer-search-btn" type="button" data-search-nav="1" aria-label="下一个搜索结果">↓</button>
+              <span class="viewer-search-count" aria-live="polite">0 / 0</span>
+            </div>
+          </div>
+
+          <div class="viewer-code-area">
+            <div class="viewer-lines" aria-hidden="true"></div>
+            <div class="viewer-code-scroll">
+              <div class="viewer-highlight" aria-hidden="true"></div>
+              <textarea class="viewer-input" spellcheck="false" readonly aria-label="内容查看器"></textarea>
+            </div>
+          </div>
+
+          <div class="viewer-status">
+            <span class="viewer-path"></span>
+          </div>
+        </section>
+
+        <!-- OFFICIAL_VIEWER_TEMPLATES_START -->
+        <script type="text/plain" data-file="README.txt">本页默认不内置 Minecraft 官方文件内容（版权原因）。
+
+在你自己的电脑上，你可以生成离线版页面，把 E:\官方文件\client-extra 的内容嵌入到 IDE 查看器里：
+
+1) 打开站点根目录（本仓库根目录）
+2) 运行：
+   powershell -ExecutionPolicy Bypass -File scripts\generate-client-extra-local.ps1
+3) 打开生成的：
+   guides/ch1-sec2-read-official-code.local.html
+
+提示：
+- 生成的 .local.html 已在 .gitignore 中忽略，请不要上传到公开仓库。</script>
+
+        <script type="text/plain" data-file="assets/minecraft/lang/example_zh_cn.json">{
+  "menu.singleplayer": "单人游戏（示例）",
+  "menu.multiplayer": "多人游戏（示例）",
+  "options.title": "选项（示例）",
+  "item.tutorial.example_item": "示例物品（你的模组）"
+}</script>
+
+        <script type="text/plain" data-file="data/minecraft/worldgen/noise_settings/example_overworld.json">{
+  "sea_level": 63,
+  "default_block": { "Name": "minecraft:stone" },
+  "default_fluid": { "Name": "minecraft:water", "Properties": { "level": "0" } },
+  "noise": { "height": 384, "size_horizontal": 1, "size_vertical": 2 }
+}</script>
+        <!-- OFFICIAL_VIEWER_TEMPLATES_END -->
+      </div>
     </section>
 
     <section class="section placeholder-section">
-      <h2>正文内容（待补充）</h2>
-      <p>这里暂不放教程正文，后续导入你实际的教程内容与代码示例。</p>
+      <h2>阅读路线建议（照着练）</h2>
+      <ul>
+        <li><strong>想改显示文本：</strong>先找 <code>assets/*/lang/*.json</code>，学会 key 命名与复用。</li>
+        <li><strong>想抄一个 UI 贴图/布局：</strong>先找 <code>assets/minecraft/textures/</code> 与相关 json（模型/字体/GUI）。</li>
+        <li><strong>想做世界生成：</strong>先找 <code>data/minecraft/worldgen/</code>，从 <code>noise_settings</code>、<code>density_function</code> 开始看。</li>
+        <li><strong>想知道某个行为怎么触发：</strong>在你写的事件/物品/方块代码里按 <code>Ctrl + B</code> 跳到被调用处，再向上追调用链。</li>
+      </ul>
     </section>
 
     <nav class="guide-nav">
@@ -95,6 +191,7 @@
     </nav>
   </main>
   <script src="../scripts/main.js"></script>
+  <script src="../scripts/ide-viewer.js"></script>
 </body>
 </html>
 
