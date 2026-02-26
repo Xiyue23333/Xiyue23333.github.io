@@ -1674,6 +1674,7 @@ details summary {
   display: grid;
   grid-template-rows: auto 1fr auto;
   min-width: 0;
+  min-height: 0;
 }
 
 .guide-main.guide-main-wide .viewer-topbar {
@@ -1753,6 +1754,7 @@ details summary {
   display: grid;
   grid-template-columns: 58px 1fr;
   min-height: 0;
+  height: 100%;
 }
 
 .guide-main.guide-main-wide .viewer-lines {
@@ -1766,6 +1768,8 @@ details summary {
   line-height: 1.6;
   user-select: none;
   overflow: hidden;
+  min-height: 0;
+  height: 100%;
 }
 
 .guide-main.guide-main-wide .viewer-line-num {
@@ -1792,6 +1796,7 @@ details summary {
 .guide-main.guide-main-wide .viewer-code-scroll {
   position: relative;
   min-height: 0;
+  height: 100%;
   background: #0d151f;
   overflow: hidden;
 }
@@ -1801,7 +1806,7 @@ details summary {
   position: absolute;
   inset: 0;
   margin: 0;
-  padding: 0.85rem;
+  padding: 0.85rem 0.85rem 1.35rem;
   border: 0;
   width: 100%;
   height: 100%;
