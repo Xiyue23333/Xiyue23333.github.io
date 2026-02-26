@@ -91,17 +91,17 @@
       <h2>第二点：修改主类与文件夹命名</h2>
       <ol class="step-list">
         <li>在 <code>src/main/java/com/example/ExampleMod.java</code>（或你的当前主类文件）中，将 <code>public static final String MODID = "examplemod";</code> 修改为自己的 <code>mod_id</code>，教程示例为 <code>tutorial</code>。</li>
-        <li>右键重命名主类（教程示例：<code>ExampleMod</code> → <code>Tutorial</code>）。</li>
+        <li>右键重命名主类（教程示例：<code>ExampleMod</code> → <code>TutorialMod</code>）。</li>
         <li>重命名包路径（教程示例：<code>example/examplemod</code> → <code>com/xiyue/tutorial</code>）。你当前工程命名示例为 <code>com/xiyue/tutorial</code>。</li>
       </ol>
-      <p><strong>命名规范：</strong>文件夹命名不能有大写；类文件可以有大写（如 <code>ExampleMod</code>、<code>Tutorial</code>）。</p>
+      <p><strong>命名规范：</strong>文件夹命名不能有大写；类文件可以有大写（如 <code>ExampleMod</code>、<code>TutorialMod</code>）。</p>
       <pre><code>// 修改前
 public static final String MODID = "examplemod";
 public class ExampleMod { ... }
 
 // 教程目标
 public static final String MODID = "tutorial";
-public class Tutorial { ... }</code></pre>
+public class TutorialMod { ... }</code></pre>
     </section>
 
     <section class="section">
@@ -168,7 +168,7 @@ public class Tutorial { ... }</code></pre>
           </div>
         </section>
 
-        <script type="text/plain" data-file="src/main/java/com/xiyue/tutorial/Tutorial.java">package com.xiyue.tutorial;
+        <script type="text/plain" data-file="src/main/java/com/xiyue/tutorial/TutorialMod.java">package com.xiyue.tutorial;
 
 import com.mojang.logging.LogUtils;
 import net.minecraft.client.Minecraft;
@@ -199,8 +199,8 @@ import net.minecraftforge.registries.RegistryObject;
 import org.slf4j.Logger;
 
 // The value here should match an entry in the META-INF/mods.toml file
-@Mod(Tutorial.MODID)
-public class Tutorial
+@Mod(TutorialMod.MODID)
+public class TutorialMod
 {
     // Define mod id in a common place for everything to reference
     public static final String MODID = "tutorial";
@@ -230,7 +230,7 @@ public class Tutorial
                 output.accept(EXAMPLE_ITEM.get()); // Add the example item to the tab. For your own tabs, this method is preferred over the event
             }).build());
 
-    public Tutorial(FMLJavaModLoadingContext context)
+    public TutorialMod(FMLJavaModLoadingContext context)
     {
         IEventBus modEventBus = context.getModEventBus();
 
@@ -312,7 +312,7 @@ import java.util.stream.Collectors;
 
 // An example config class. This is not required, but it's a good idea to have one to keep your config organized.
 // Demonstrates how to use Forge's config APIs
-@Mod.EventBusSubscriber(modid = Tutorial.MODID, bus = Mod.EventBusSubscriber.Bus.MOD)
+@Mod.EventBusSubscriber(modid = TutorialMod.MODID, bus = Mod.EventBusSubscriber.Bus.MOD)
 public class Config
 {
     private static final ForgeConfigSpec.Builder BUILDER = new ForgeConfigSpec.Builder();

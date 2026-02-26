@@ -37,7 +37,7 @@
       ]
     },
     {
-      file: /Tutorial\.java$/i,
+      file: /TutorialMod\.java$/i,
       includes: ["public static final String MODID = \"tutorial\";"]
     }
   ];
