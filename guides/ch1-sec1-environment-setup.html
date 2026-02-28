@@ -130,7 +130,13 @@ public class TutorialMod { ... }</code></pre>
           <code>id 'net.minecraftforge.gradle' version '[6.0,6.2)'</code> 下方，并确保在该块最下方。
         </li>
       </ol>
-      <p class="notice-warning"><strong>最后一步：</strong>点击 IDEA 右侧侧边栏蓝色大象（Gradle）图标重构 Gradle。重构成功后即可开始编写模组。</p>
+      <p class="notice-warning"><strong>最后一步：</strong>点击 IDEA 右侧侧边栏蓝色大象（Gradle）图标重构 Gradle。</p>
+      <ol class="step-list">
+        <li>重构完成后，打开右侧 Gradle（蓝色大象）侧边栏。</li>
+        <li>展开 <code>Tasks</code> → <code>forgegradle runs</code>，双击运行 <code>genIntellijRuns</code>。</li>
+        <li>构建结束后，在同一目录下双击运行 <code>runClient</code> 试启动游戏。</li>
+        <li>如果游戏能够正常启动，就可以进行后续编写了。</li>
+      </ol>
     </section>
 
     <section class="section">
