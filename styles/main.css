@@ -1593,6 +1593,13 @@ details summary {
   align-items: stretch;
 }
 
+.shader-lab {
+  --shader-editor-lines: 25;
+  --shader-line-height: 1.55em;
+  --shader-editor-padding-y: 1.5rem; /* 0.75rem top + 0.75rem bottom */
+  --shader-stage-height: calc(var(--shader-editor-lines) * var(--shader-line-height) + var(--shader-editor-padding-y));
+}
+
 .shader-panel {
   border: 1px solid var(--line);
   border-radius: 18px;
@@ -1601,7 +1608,7 @@ details summary {
   overflow: hidden;
   display: flex;
   flex-direction: column;
-  min-height: 720px;
+  min-height: 0;
 }
 
 .shader-panel-head {
@@ -1691,11 +1698,12 @@ details summary {
 }
 
 .shader-editor {
-  flex: 1;
+  flex: none;
   min-height: 0;
   display: grid;
   grid-template-columns: 58px 1fr;
   background: #0b121b;
+  height: var(--shader-stage-height);
 }
 
 .shader-lines {
@@ -1819,9 +1827,10 @@ details summary {
 
 .shader-canvas-wrap {
   position: relative;
-  flex: 1;
+  flex: none;
   min-height: 0;
   overflow: hidden;
+  height: var(--shader-stage-height);
 }
 
 .shader-canvas {
@@ -1863,7 +1872,7 @@ details summary {
     grid-template-columns: 1fr;
   }
   .shader-panel {
-    min-height: 640px;
+    min-height: 0;
   }
 }
 
