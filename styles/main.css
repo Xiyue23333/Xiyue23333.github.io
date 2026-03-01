@@ -1611,6 +1611,10 @@ details summary {
   min-height: 0;
 }
 
+.shader-panel-editor {
+  position: relative;
+}
+
 .shader-panel-head {
   display: flex;
   justify-content: space-between;
@@ -1713,9 +1717,13 @@ details summary {
   padding: 0.75rem 0;
   overflow: hidden;
   font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
-  font-size: 0.82rem;
+  font-size: 0.86rem;
   color: #8ea6bf;
   text-align: right;
+}
+
+.shader-lines-inner {
+  will-change: transform;
 }
 
 .shader-line-num {
@@ -1725,9 +1733,29 @@ details summary {
   user-select: none;
 }
 
+.shader-line-num.is-active {
+  color: #e8f6f0;
+  background: rgba(89, 209, 137, 0.12);
+}
+
 .shader-code-wrap {
   min-height: 0;
   overflow: hidden;
+  position: relative;
+}
+
+.shader-active-line {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  height: 1.55em;
+  background: rgba(121, 215, 255, 0.12);
+  border-top: 1px solid rgba(121, 215, 255, 0.12);
+  border-bottom: 1px solid rgba(121, 215, 255, 0.12);
+  pointer-events: none;
+  z-index: 0;
+  transform: translateY(-99999px);
 }
 
 .shader-code {
@@ -1745,6 +1773,8 @@ details summary {
   tab-size: 2;
   overflow: auto;
   white-space: pre;
+  position: relative;
+  z-index: 1;
 }
 
 .shader-code::selection {
@@ -1753,15 +1783,16 @@ details summary {
 
 .shader-log-float {
   position: absolute;
-  left: 0.75rem;
-  right: 0.75rem;
-  bottom: 0.75rem;
+  left: 0.85rem;
+  right: 0.85rem;
+  bottom: 0.85rem;
   max-height: 42%;
   overflow: auto;
   border-radius: 14px;
   border: 1px solid rgba(255, 255, 255, 0.12);
   background: rgba(5, 15, 13, 0.86);
   box-shadow: 0 18px 40px rgba(0, 0, 0, 0.4);
+  z-index: 3;
 }
 
 .shader-log {

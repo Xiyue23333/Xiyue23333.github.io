@@ -4,6 +4,7 @@
 
   const codeEl = root.querySelector("[data-code]");
   const linesEl = root.querySelector("[data-lines]");
+  const codeWrapEl = root.querySelector(".shader-code-wrap");
   const logEl = root.querySelector("[data-log]");
   const logWrapEl = root.querySelector("[data-log-wrap]");
   const imageEl = root.querySelector("[data-image]");
@@ -18,6 +19,8 @@
   const fileTabs = Array.from(root.querySelectorAll("[data-file-tab]"));
 
   if (!codeEl || !linesEl || !logEl || !canvasEl || !canvasWrapEl || !reloadBtn || !resetBtn) return;
+
+  const STAGE_LINES = 25;
 
   const TEMPLATE_VSH = `#version 150
 
@@ -125,6 +128,17 @@ void main() {
   };
 
   // ---------- editor ----------
+  const linesInnerEl = document.createElement("div");
+  linesInnerEl.className = "shader-lines-inner";
+  linesEl.innerHTML = "";
+  linesEl.appendChild(linesInnerEl);
+
+  const activeLineEl = document.createElement("div");
+  activeLineEl.className = "shader-active-line";
+  if (codeWrapEl) codeWrapEl.insertBefore(activeLineEl, codeEl);
+
+  let lastActiveLine = -1;
+
   function setLog(text) {
     logEl.textContent = text || "";
   }
@@ -169,8 +183,11 @@ void main() {
       div.textContent = String(i);
       frag.appendChild(div);
     }
-    linesEl.innerHTML = "";
-    linesEl.appendChild(frag);
+    linesInnerEl.innerHTML = "";
+    linesInnerEl.appendChild(frag);
+    lastActiveLine = -1;
+    // keep active line styling after re-render
+    scheduleActiveLineUpdate();
   }
 
   let syncScheduled = false;
@@ -179,8 +196,59 @@ void main() {
     syncScheduled = true;
     requestAnimationFrame(() => {
       syncScheduled = false;
-      linesEl.scrollTop = codeEl.scrollTop;
+      linesInnerEl.style.transform = `translateY(${-codeEl.scrollTop}px)`;
+      scheduleActiveLineUpdate();
     });
+  }
+
+  let activeLineScheduled = false;
+  function scheduleActiveLineUpdate() {
+    if (activeLineScheduled) return;
+    activeLineScheduled = true;
+    requestAnimationFrame(() => {
+      activeLineScheduled = false;
+      updateActiveLine();
+    });
+  }
+
+  function computeLineIndexAt(pos) {
+    const text = String(codeEl.value || "");
+    const end = Math.max(0, Math.min(pos, text.length));
+    let line = 1;
+    for (let i = 0; i < end; i += 1) {
+      if (text[i] === "\n") line += 1;
+    }
+    return line;
+  }
+
+  function updateActiveLine() {
+    const pos = typeof codeEl.selectionStart === "number" ? codeEl.selectionStart : 0;
+    const line = computeLineIndexAt(pos);
+
+    if (lastActiveLine !== line) {
+      const prev = linesInnerEl.children[lastActiveLine - 1];
+      if (prev) prev.classList.remove("is-active");
+      const next = linesInnerEl.children[line - 1];
+      if (next) next.classList.add("is-active");
+      lastActiveLine = line;
+    }
+
+    if (!activeLineEl) return;
+    const style = getComputedStyle(codeEl);
+    const lineHeightPx = parseFloat(style.lineHeight || "0") || 20;
+    const paddingTopPx = parseFloat(style.paddingTop || "0") || 0;
+    const topPx = paddingTopPx + (line - 1) * lineHeightPx - codeEl.scrollTop;
+    activeLineEl.style.height = `${lineHeightPx}px`;
+    activeLineEl.style.transform = `translateY(${Math.floor(topPx)}px)`;
+  }
+
+  function updateStageHeight() {
+    const style = getComputedStyle(codeEl);
+    const lineHeightPx = parseFloat(style.lineHeight || "0") || 20;
+    const paddingTopPx = parseFloat(style.paddingTop || "0") || 0;
+    const paddingBottomPx = parseFloat(style.paddingBottom || "0") || 0;
+    const stageHeight = STAGE_LINES * lineHeightPx + paddingTopPx + paddingBottomPx;
+    root.style.setProperty("--shader-stage-height", `${Math.round(stageHeight)}px`);
   }
 
   function setActiveFile(kind) {
@@ -192,6 +260,8 @@ void main() {
     codeEl.scrollTop = 0;
     codeEl.scrollLeft = 0;
     syncScroll();
+    scheduleActiveLineUpdate();
+    updateStageHeight();
 
     for (const tab of fileTabs) {
       const isActive = tab.getAttribute("data-file-tab") === kind;
@@ -598,6 +668,8 @@ void main() {
   codeEl.value = state.files[state.active];
   renderLineNumbers();
   syncScroll();
+  scheduleActiveLineUpdate();
+  updateStageHeight();
   setBackground("checker");
   if (bgEl) bgEl.addEventListener("change", () => setBackground(String(bgEl.value || "checker")));
 
@@ -609,7 +681,12 @@ void main() {
     state.files[state.active] = String(codeEl.value || "");
     renderLineNumbers();
     syncScroll();
+    scheduleActiveLineUpdate();
+    updateStageHeight();
   });
+  codeEl.addEventListener("click", scheduleActiveLineUpdate);
+  codeEl.addEventListener("keyup", scheduleActiveLineUpdate);
+  codeEl.addEventListener("select", scheduleActiveLineUpdate);
   codeEl.addEventListener("scroll", syncScroll);
 
   reloadBtn.addEventListener("click", reload);
@@ -641,6 +718,7 @@ void main() {
   const ro = "ResizeObserver" in window ? new ResizeObserver(() => updateCanvasSize()) : null;
   if (ro) ro.observe(canvasWrapEl);
   window.addEventListener("resize", updateCanvasSize);
+  window.addEventListener("resize", updateStageHeight);
 
   reload();
 })();
