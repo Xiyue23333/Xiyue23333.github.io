@@ -8,6 +8,7 @@
   const highlightEl = root.querySelector("[data-highlight]");
   const logEl = root.querySelector("[data-log]");
   const logWrapEl = root.querySelector("[data-log-wrap]");
+  const templateEl = root.querySelector("[data-template]");
   const imageEl = root.querySelector("[data-image]");
   const shaderFilesEl = root.querySelector("[data-shader-files]");
   const bgEl = root.querySelector("[data-bg]");
@@ -16,6 +17,7 @@
   const statusEl = root.querySelector("[data-canvas-status]");
   const reloadBtn = root.querySelector("[data-action='reload']");
   const resetBtn = root.querySelector("[data-action='reset']");
+  const applyTemplateBtn = root.querySelector("[data-action='apply-template']");
   const fileHintEl = root.querySelector("[data-filehint]");
   const fileTabs = Array.from(root.querySelectorAll("[data-file-tab]"));
 
@@ -88,6 +90,206 @@ void main() {
 }
 `;
 
+  const TEMPLATE_FSH_RIPPLE = `#version 150
+
+uniform sampler2D Sampler0;
+uniform float GameTime;
+uniform vec4 ColorModulator;
+uniform vec2 ScreenSize;
+
+in vec2 texCoord0;
+in vec4 vertexColor;
+out vec4 fragColor;
+
+void main() {
+    vec2 uv = texCoord0;
+    float t = GameTime;
+
+    vec2 p = uv * 2.0 - 1.0;
+    float dist = length(p);
+
+    float wave = 0.02 * sin(dist * 18.0 - t * 3.0);
+    vec2 dir = dist > 0.0001 ? (p / dist) : vec2(0.0);
+    vec2 uv2 = uv + dir * wave;
+
+    vec4 texCol = texture(Sampler0, uv2);
+    vec3 col = texCol.rgb;
+    col *= mix(1.05, 0.8, smoothstep(0.2, 1.0, dist));
+
+    fragColor = vec4(col, texCol.a) * vertexColor * ColorModulator;
+}
+`;
+
+  const TEMPLATE_FSH_PIXELATE = `#version 150
+
+uniform sampler2D Sampler0;
+uniform float GameTime;
+uniform vec4 ColorModulator;
+uniform vec2 ScreenSize;
+
+in vec2 texCoord0;
+in vec4 vertexColor;
+out vec4 fragColor;
+
+void main() {
+    vec2 uv = texCoord0;
+    vec2 res = max(ScreenSize, vec2(2.0));
+
+    float pixelSize = 10.0 + 6.0 * sin(GameTime * 0.8);
+    vec2 grid = res / pixelSize;
+    vec2 uv2 = (floor(uv * grid) + 0.5) / grid;
+
+    vec4 texCol = texture(Sampler0, uv2);
+    fragColor = texCol * vertexColor * ColorModulator;
+}
+`;
+
+  const TEMPLATE_FSH_RGB_SHIFT = `#version 150
+
+uniform sampler2D Sampler0;
+uniform float GameTime;
+uniform vec4 ColorModulator;
+uniform vec2 ScreenSize;
+
+in vec2 texCoord0;
+in vec4 vertexColor;
+out vec4 fragColor;
+
+void main() {
+    vec2 uv = texCoord0;
+    float t = GameTime;
+
+    float amp = 0.006 + 0.003 * sin(t * 1.7);
+    vec2 off = vec2(amp, 0.0);
+
+    float r = texture(Sampler0, uv + off).r;
+    float g = texture(Sampler0, uv).g;
+    float b = texture(Sampler0, uv - off).b;
+    float a = texture(Sampler0, uv).a;
+
+    vec3 col = vec3(r, g, b);
+    fragColor = vec4(col, a) * vertexColor * ColorModulator;
+}
+`;
+
+  const TEMPLATE_FSH_SCANLINES = `#version 150
+
+uniform sampler2D Sampler0;
+uniform float GameTime;
+uniform vec4 ColorModulator;
+uniform vec2 ScreenSize;
+
+in vec2 texCoord0;
+in vec4 vertexColor;
+out vec4 fragColor;
+
+float hash(vec2 p) {
+    return fract(sin(dot(p, vec2(12.9898, 78.233))) * 43758.5453);
+}
+
+void main() {
+    vec2 uv = texCoord0;
+    vec4 texCol = texture(Sampler0, uv);
+
+    float y = uv.y * max(ScreenSize.y, 2.0);
+    float scan = 0.9 + 0.1 * sin(y * 3.14159);
+
+    float noise = hash(uv * 1200.0 + GameTime) * 0.03;
+    vec3 col = texCol.rgb * scan + noise;
+
+    fragColor = vec4(col, texCol.a) * vertexColor * ColorModulator;
+}
+`;
+
+  const TEMPLATE_FSH_DISSOLVE = `#version 150
+
+uniform sampler2D Sampler0;
+uniform float GameTime;
+uniform vec4 ColorModulator;
+uniform vec2 ScreenSize;
+
+in vec2 texCoord0;
+in vec4 vertexColor;
+out vec4 fragColor;
+
+float hash(vec2 p) {
+    p = fract(p * vec2(123.34, 456.21));
+    p += dot(p, p + 45.32);
+    return fract(p.x * p.y);
+}
+
+void main() {
+    vec2 uv = texCoord0;
+    vec4 texCol = texture(Sampler0, uv);
+
+    float n = hash(floor(uv * vec2(220.0, 220.0)));
+    float threshold = 0.35 + 0.25 * sin(GameTime * 0.9);
+
+    float edge = smoothstep(threshold - 0.03, threshold + 0.03, n);
+    if (edge < 0.02) discard;
+
+    vec3 edgeCol = mix(vec3(1.0, 0.6, 0.2), vec3(1.0), edge);
+    vec3 col = mix(edgeCol, texCol.rgb, edge);
+
+    fragColor = vec4(col, texCol.a * edge) * vertexColor * ColorModulator;
+}
+`;
+
+  const TEMPLATE_FSH_PLASMA = `#version 150
+
+uniform float GameTime;
+uniform vec4 ColorModulator;
+uniform vec2 ScreenSize;
+
+in vec2 texCoord0;
+in vec4 vertexColor;
+out vec4 fragColor;
+
+void main() {
+    vec2 uv = texCoord0;
+    vec2 p = uv * 2.0 - 1.0;
+    p.x *= max(ScreenSize.x / max(ScreenSize.y, 2.0), 1.0);
+
+    float t = GameTime;
+    float v = 0.0;
+    v += sin(p.x * 6.0 + t * 1.2);
+    v += sin(p.y * 7.0 - t * 1.1);
+    v += sin((p.x + p.y) * 5.0 + t * 0.9);
+    v = v / 3.0;
+
+    vec3 col = 0.55 + 0.45 * cos(6.2831 * (vec3(0.0, 0.33, 0.67) + v + t * 0.05));
+    fragColor = vec4(col, 1.0) * vertexColor * ColorModulator;
+}
+`;
+
+  function buildJson(id) {
+    const safe = String(id || "template");
+    return `{
+  "blend": {
+    "func": "add",
+    "srcfactor": "src_alpha",
+    "dstfactor": "one_minus_src_alpha"
+  },
+  "vertex": "trimupgrade:${safe}",
+  "fragment": "trimupgrade:${safe}",
+  "attributes": [
+    "Position",
+    "Color",
+    "UV0"
+  ],
+  "uniforms": [
+    { "name": "ModelViewMat", "type": "matrix4x4", "count": 16, "values": [ 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0 ] },
+    { "name": "ProjMat",      "type": "matrix4x4", "count": 16, "values": [ 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0 ] },
+    { "name": "GameTime",     "type": "float",     "count": 1,  "values": [ 0.0 ] },
+    { "name": "ColorModulator","type": "float",    "count": 4,  "values": [ 1.0, 1.0, 1.0, 1.0 ] }
+  ],
+  "samplers": [
+    { "name": "Sampler0" }
+  ]
+}
+`;
+  }
+
   const TEMPLATE_JSON = `{
   "blend": {
     "func": "add",
@@ -113,18 +315,36 @@ void main() {
 }
 `;
 
-  const FILE_META = {
-    fsh: { name: "black_hole.fsh", label: "black_hole.fsh", template: TEMPLATE_FSH },
-    vsh: { name: "black_hole.vsh", label: "black_hole.vsh", template: TEMPLATE_VSH },
-    json: { name: "black_hole.json", label: "black_hole.json", template: TEMPLATE_JSON },
+  const TEMPLATES = {
+    black_hole: { id: "black_hole", label: "黑洞（极坐标旋涡）", vsh: TEMPLATE_VSH, fsh: TEMPLATE_FSH, json: TEMPLATE_JSON },
+    ripple: { id: "ripple", label: "水波纹（贴图扭曲）", vsh: TEMPLATE_VSH, fsh: TEMPLATE_FSH_RIPPLE, json: buildJson("ripple") },
+    pixelate: { id: "pixelate", label: "像素化（马赛克）", vsh: TEMPLATE_VSH, fsh: TEMPLATE_FSH_PIXELATE, json: buildJson("pixelate") },
+    rgb_shift: { id: "rgb_shift", label: "RGB 偏移（色散）", vsh: TEMPLATE_VSH, fsh: TEMPLATE_FSH_RGB_SHIFT, json: buildJson("rgb_shift") },
+    scanlines: { id: "scanlines", label: "扫描线（屏幕质感）", vsh: TEMPLATE_VSH, fsh: TEMPLATE_FSH_SCANLINES, json: buildJson("scanlines") },
+    dissolve: { id: "dissolve", label: "溶解（噪声裁剪）", vsh: TEMPLATE_VSH, fsh: TEMPLATE_FSH_DISSOLVE, json: buildJson("dissolve") },
+    plasma: { id: "plasma", label: "等离子（程序纹理）", vsh: TEMPLATE_VSH, fsh: TEMPLATE_FSH_PLASMA, json: buildJson("plasma") },
   };
+
+  function templateFileNames(id) {
+    const safe = String(id || "template");
+    return { fsh: `${safe}.fsh`, vsh: `${safe}.vsh`, json: `${safe}.json` };
+  }
+
+  const FILE_META = {
+    fsh: { name: "black_hole.fsh", label: "black_hole.fsh" },
+    vsh: { name: "black_hole.vsh", label: "black_hole.vsh" },
+    json: { name: "black_hole.json", label: "black_hole.json" },
+  };
+
+  let currentTemplateId = templateEl ? String(templateEl.value || "black_hole") : "black_hole";
+  if (!TEMPLATES[currentTemplateId]) currentTemplateId = "black_hole";
 
   const state = {
     active: "fsh",
     files: {
-      fsh: TEMPLATE_FSH,
-      vsh: TEMPLATE_VSH,
-      json: TEMPLATE_JSON,
+      fsh: TEMPLATES[currentTemplateId].fsh,
+      vsh: TEMPLATES[currentTemplateId].vsh,
+      json: TEMPLATES[currentTemplateId].json,
     },
   };
 
@@ -651,15 +871,37 @@ void main() {
     startLoop();
   }
 
-  function resetTemplate() {
-    state.files = {
-      fsh: FILE_META.fsh.template,
-      vsh: FILE_META.vsh.template,
-      json: FILE_META.json.template,
-    };
+  function applyTemplate(id) {
+    const nextId = TEMPLATES[id] ? String(id) : "black_hole";
+    currentTemplateId = nextId;
+    if (templateEl) templateEl.value = nextId;
+
+    const tpl = TEMPLATES[nextId];
+    const names = templateFileNames(nextId);
+
+    FILE_META.fsh.name = names.fsh;
+    FILE_META.vsh.name = names.vsh;
+    FILE_META.json.name = names.json;
+    FILE_META.fsh.label = names.fsh;
+    FILE_META.vsh.label = names.vsh;
+    FILE_META.json.label = names.json;
+
+    for (const tab of fileTabs) {
+      const kind = String(tab.getAttribute("data-file-tab") || "");
+      if (kind === "fsh") tab.textContent = names.fsh;
+      if (kind === "vsh") tab.textContent = names.vsh;
+      if (kind === "json") tab.textContent = names.json;
+    }
+
+    state.files = { fsh: tpl.fsh, vsh: tpl.vsh, json: tpl.json };
     setActiveFile("fsh");
-    setLog("（已重置模板）");
     setLogVisible(false);
+    setLog(`（已应用模板：${tpl.label}）`);
+  }
+
+  function resetTemplate() {
+    const id = templateEl ? String(templateEl.value || currentTemplateId) : currentTemplateId;
+    applyTemplate(id);
   }
 
   async function importShaderFiles(files) {
@@ -683,12 +925,7 @@ void main() {
   }
 
   // init UI
-  codeEl.value = state.files[state.active];
-  renderLineNumbers();
-  renderHighlight();
-  syncScroll();
-  scheduleActiveLineUpdate();
-  updateStageHeight();
+  applyTemplate(currentTemplateId);
   setBackground("checker");
   if (bgEl) bgEl.addEventListener("change", () => setBackground(String(bgEl.value || "checker")));
 
@@ -714,6 +951,13 @@ void main() {
     resetTemplate();
     await reload();
   });
+
+  if (applyTemplateBtn && templateEl) {
+    applyTemplateBtn.addEventListener("click", async () => {
+      applyTemplate(String(templateEl.value || "black_hole"));
+      await reload();
+    });
+  }
 
   if (shaderFilesEl) {
     shaderFilesEl.addEventListener("change", async () => {

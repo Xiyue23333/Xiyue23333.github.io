@@ -1682,6 +1682,19 @@ details summary {
   font-size: 0.9rem;
 }
 
+.shader-templatebar {
+  margin-top: 0.6rem;
+  display: flex;
+  align-items: flex-end;
+  gap: 0.7rem;
+  flex-wrap: wrap;
+}
+
+.shader-btn-small {
+  padding: 0.52rem 0.85rem;
+  border-radius: 10px;
+}
+
 .shader-panel-actions,
 .shader-panel-controls {
   display: flex;
@@ -1843,6 +1856,11 @@ details summary {
   color: var(--text);
   padding: 0.38rem 0.55rem;
   font: inherit;
+}
+
+.shader-select select option {
+  color: #000;
+  background: #fff;
 }
 
 .shader-canvas-wrap {

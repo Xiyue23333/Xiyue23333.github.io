@@ -79,7 +79,21 @@
           <header class="shader-panel-head">
             <div>
               <h2>Shader 文件（core）</h2>
-              <p class="shader-panel-sub">示例模板来自你的 <code>black_hole.vsh / black_hole.fsh / black_hole.json</code>。修改后点击“重载”预览。</p>
+              <div class="shader-templatebar">
+                <label class="shader-select shader-template-select">
+                  <span>模板库</span>
+                  <select data-template>
+                    <option value="black_hole">黑洞（极坐标旋涡）</option>
+                    <option value="ripple">水波纹（贴图扭曲）</option>
+                    <option value="pixelate">像素化（马赛克）</option>
+                    <option value="rgb_shift">RGB 偏移（色散）</option>
+                    <option value="scanlines">扫描线（屏幕质感）</option>
+                    <option value="dissolve">溶解（噪声裁剪）</option>
+                    <option value="plasma">等离子（程序纹理）</option>
+                  </select>
+                </label>
+                <button class="btn btn-outline shader-btn shader-btn-small" type="button" data-action="apply-template">应用模板</button>
+              </div>
             </div>
             <div class="shader-panel-actions">
               <button class="btn btn-outline shader-btn" type="button" data-action="reset">重置模板</button>
