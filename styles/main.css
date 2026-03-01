@@ -1723,10 +1723,6 @@ details summary {
   text-align: right;
 }
 
-.shader-lines-inner {
-  will-change: transform;
-}
-
 .shader-line-num {
   padding: 0 0.65rem 0 0.4rem;
   height: var(--shader-line-height-px);
@@ -1745,18 +1741,29 @@ details summary {
   position: relative;
 }
 
-.shader-active-line {
+.shader-highlight {
   position: absolute;
-  left: 0;
-  right: 0;
-  top: 0;
+  inset: 0;
+  padding: var(--shader-editor-padding-top-px) 0.9rem var(--shader-editor-padding-bottom-px);
+  overflow: hidden;
+  color: #e8f6f0;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+  font-size: 0.86rem;
+  line-height: var(--shader-line-height-px);
+  pointer-events: none;
+  z-index: 0;
+  white-space: pre;
+}
+
+.shader-code-line {
   height: var(--shader-line-height-px);
+  line-height: var(--shader-line-height-px);
+}
+
+.shader-code-line.is-active {
   background: rgba(121, 215, 255, 0.12);
   border-top: 1px solid rgba(121, 215, 255, 0.12);
   border-bottom: 1px solid rgba(121, 215, 255, 0.12);
-  pointer-events: none;
-  z-index: 0;
-  transform: translateY(-99999px);
 }
 
 .shader-code {
@@ -1767,7 +1774,8 @@ details summary {
   resize: none;
   padding: var(--shader-editor-padding-top-px) 0.9rem var(--shader-editor-padding-bottom-px);
   background: transparent;
-  color: #e8f6f0;
+  color: transparent;
+  caret-color: #e8f6f0;
   font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
   font-size: 0.86rem;
   line-height: var(--shader-line-height-px);

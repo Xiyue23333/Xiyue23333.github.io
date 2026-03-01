@@ -5,6 +5,7 @@
   const codeEl = root.querySelector("[data-code]");
   const linesEl = root.querySelector("[data-lines]");
   const codeWrapEl = root.querySelector(".shader-code-wrap");
+  const highlightEl = root.querySelector("[data-highlight]");
   const logEl = root.querySelector("[data-log]");
   const logWrapEl = root.querySelector("[data-log-wrap]");
   const imageEl = root.querySelector("[data-image]");
@@ -128,16 +129,14 @@ void main() {
   };
 
   // ---------- editor ----------
-  const linesInnerEl = document.createElement("div");
-  linesInnerEl.className = "shader-lines-inner";
-  linesEl.innerHTML = "";
-  linesEl.appendChild(linesInnerEl);
-
-  const activeLineEl = document.createElement("div");
-  activeLineEl.className = "shader-active-line";
-  if (codeWrapEl) codeWrapEl.insertBefore(activeLineEl, codeEl);
-
   let lastActiveLine = -1;
+
+  function escapeHtml(text) {
+    return String(text)
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;");
+  }
 
   function setLog(text) {
     logEl.textContent = text || "";
@@ -183,10 +182,22 @@ void main() {
       div.textContent = String(i);
       frag.appendChild(div);
     }
-    linesInnerEl.innerHTML = "";
-    linesInnerEl.appendChild(frag);
+    linesEl.innerHTML = "";
+    linesEl.appendChild(frag);
     lastActiveLine = -1;
     // keep active line styling after re-render
+    scheduleActiveLineUpdate();
+  }
+
+  function renderHighlight() {
+    if (!highlightEl) return;
+    const raw = String(codeEl.value || "").replace(/\r\n/g, "\n");
+    const rows = raw.split("\n");
+    const html = rows.map((line) => {
+      const safe = line === "" ? "&nbsp;" : escapeHtml(line);
+      return `<div class="shader-code-line">${safe}</div>`;
+    }).join("");
+    highlightEl.innerHTML = html;
     scheduleActiveLineUpdate();
   }
 
@@ -196,7 +207,11 @@ void main() {
     syncScheduled = true;
     requestAnimationFrame(() => {
       syncScheduled = false;
-      linesInnerEl.style.transform = `translateY(${-codeEl.scrollTop}px)`;
+      linesEl.scrollTop = codeEl.scrollTop;
+      if (highlightEl) {
+        highlightEl.scrollTop = codeEl.scrollTop;
+        highlightEl.scrollLeft = codeEl.scrollLeft;
+      }
       scheduleActiveLineUpdate();
     });
   }
@@ -226,20 +241,19 @@ void main() {
     const line = computeLineIndexAt(pos);
 
     if (lastActiveLine !== line) {
-      const prev = linesInnerEl.children[lastActiveLine - 1];
+      const prev = linesEl.children[lastActiveLine - 1];
       if (prev) prev.classList.remove("is-active");
-      const next = linesInnerEl.children[line - 1];
+      const next = linesEl.children[line - 1];
       if (next) next.classList.add("is-active");
+
+      if (highlightEl) {
+        const prevCode = highlightEl.children[lastActiveLine - 1];
+        if (prevCode) prevCode.classList.remove("is-active");
+        const nextCode = highlightEl.children[line - 1];
+        if (nextCode) nextCode.classList.add("is-active");
+      }
       lastActiveLine = line;
     }
-
-    if (!activeLineEl) return;
-    const style = getComputedStyle(codeEl);
-    const lineHeightPx = parseFloat(style.lineHeight || "0") || 20;
-    const paddingTopPx = parseFloat(style.paddingTop || "0") || 0;
-    const topPx = paddingTopPx + (line - 1) * lineHeightPx - codeEl.scrollTop;
-    activeLineEl.style.height = `${lineHeightPx}px`;
-    activeLineEl.style.transform = `translateY(${Math.floor(topPx)}px)`;
   }
 
   function updateStageHeight() {
@@ -260,6 +274,7 @@ void main() {
     state.active = kind;
     codeEl.value = state.files[kind];
     renderLineNumbers();
+    renderHighlight();
     codeEl.scrollTop = 0;
     codeEl.scrollLeft = 0;
     syncScroll();
@@ -670,6 +685,7 @@ void main() {
   // init UI
   codeEl.value = state.files[state.active];
   renderLineNumbers();
+  renderHighlight();
   syncScroll();
   scheduleActiveLineUpdate();
   updateStageHeight();
@@ -683,6 +699,7 @@ void main() {
   codeEl.addEventListener("input", () => {
     state.files[state.active] = String(codeEl.value || "");
     renderLineNumbers();
+    renderHighlight();
     syncScroll();
     scheduleActiveLineUpdate();
     updateStageHeight();
@@ -722,6 +739,20 @@ void main() {
   if (ro) ro.observe(canvasWrapEl);
   window.addEventListener("resize", updateCanvasSize);
   window.addEventListener("resize", updateStageHeight);
+
+  // Fonts can load after initial paint and change line metrics.
+  if (document.fonts && document.fonts.ready && typeof document.fonts.ready.then === "function") {
+    document.fonts.ready.then(() => {
+      updateStageHeight();
+      syncScroll();
+      scheduleActiveLineUpdate();
+    });
+  }
+  window.setTimeout(() => {
+    updateStageHeight();
+    syncScroll();
+    scheduleActiveLineUpdate();
+  }, 120);
 
   reload();
 })();
