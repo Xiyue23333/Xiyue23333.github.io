@@ -1,0 +1,150 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Shader 实验室 | Minecraft Mod Create</title>
+  <meta name="description" content="实时编写 GLSL Fragment Shader，导入图片并实时渲染预览。">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;700&family=Noto+Sans+SC:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../styles/main.css">
+</head>
+<body>
+  <header class="site-header">
+    <a class="brand js-sidebar-toggle" href="#" aria-controls="site-drawer" aria-expanded="false">
+      <span class="brand-menu" aria-hidden="true"><span></span><span></span><span></span></span>
+      <span>Minecraft Mod Create</span>
+    </a>
+    <nav>
+      <a href="../index.html#updates">最新更新</a>
+      <a href="chapter-select.html">章节选择</a>
+      <a href="../index.html#messages">留言区</a>
+      <a href="shader-lab.html">Shader 实验室</a>
+      <a class="nav-cta" href="chapter-select.html">开始学习</a>
+    </nav>
+  </header>
+
+  <div class="drawer-overlay" data-drawer-overlay hidden></div>
+  <aside class="site-drawer" id="site-drawer" aria-hidden="true">
+    <a class="drawer-home" href="../index.html">← 回到首页</a>
+
+    <div class="site-drawer-head">
+      <h2>快捷跳转</h2>
+      <button class="drawer-close" type="button" data-drawer-close aria-label="关闭侧边栏">x</button>
+    </div>
+
+    <p class="site-drawer-text">点击章节可展开并跳转到对应页面。</p>
+
+    <div class="drawer-groups">
+      <section class="drawer-group">
+        <button class="drawer-group-toggle root-toggle" type="button" data-drawer-group-toggle data-target="drawer-ch1-list" aria-expanded="false">
+          <span>第一章：初窥门径</span>
+          <span class="drawer-caret" aria-hidden="true">▾</span>
+        </button>
+        <nav class="drawer-group-list" id="drawer-ch1-list">
+          <a href="chapter-1-intro.html">章节总览</a>
+          <a href="ch1-sec1-environment-setup.html">第一节：开发环境构建</a>
+          <a href="ch1-sec2-read-official-code.html">第二节：学会查看官方代码</a>
+          <button class="drawer-group-toggle drawer-sub-toggle" type="button" data-drawer-group-toggle data-target="drawer-ch1-sec3-list" aria-expanded="false">
+            <span>第三节：开始制作自己的 Mod</span>
+            <span class="drawer-caret" aria-hidden="true">▾</span>
+          </button>
+          <nav class="drawer-group-list drawer-sub-list" id="drawer-ch1-sec3-list">
+            <a href="ch1-sec3-point1-first-item.html">第三节-1：第一个物品</a>
+            <a href="ch1-sec3-point2-creative-tab.html">第三节-2：创造模式物品栏</a>
+            <a href="ch1-sec3-point3-resources-structure.html">第三节-3：制作第一个方块</a>
+          </nav>
+          <a href="ch1-sec3-start-your-mod.html">进入第三节总览</a>
+        </nav>
+      </section>
+    </div>
+  </aside>
+
+  <main class="guide-main guide-main-wide">
+    <a class="breadcrumb" href="../index.html">← 返回教程主页面</a>
+
+    <header class="guide-hero">
+      <p class="eyebrow">SHADER LAB</p>
+      <h1>实时编写 GLSL Shader</h1>
+      <div class="meta">
+        <span>支持：导入图片、重载编译、背景切换</span>
+        <span>快捷键：Ctrl+Enter 重载</span>
+      </div>
+    </header>
+
+    <section class="section">
+      <div class="shader-lab" data-shader-lab>
+        <section class="shader-panel shader-panel-editor">
+          <header class="shader-panel-head">
+            <div>
+              <h2>Fragment Shader</h2>
+              <p class="shader-panel-sub">你可以自由修改代码，点击“重载”重新编译并渲染。</p>
+            </div>
+            <div class="shader-panel-actions">
+              <button class="btn btn-outline shader-btn" type="button" data-action="reset">重置模板</button>
+              <button class="btn btn-primary shader-btn" type="button" data-action="reload">重载</button>
+            </div>
+          </header>
+
+          <div class="shader-editor" data-editor>
+            <div class="shader-lines" aria-hidden="true" data-lines></div>
+            <div class="shader-code-wrap">
+              <textarea class="shader-code" spellcheck="false" autocapitalize="off" autocomplete="off" autocorrect="off"
+                data-code aria-label="Shader 代码编辑器"></textarea>
+            </div>
+          </div>
+
+          <details class="shader-hint">
+            <summary>可用变量 / 约定</summary>
+            <ul class="shader-hint-list">
+              <li><code>uniform vec2 u_resolution</code>：画布像素尺寸。</li>
+              <li><code>uniform float u_time</code>：从加载开始的秒数。</li>
+              <li><code>uniform sampler2D u_texture</code>：导入图片（没有图片时为 1x1 白色）。</li>
+              <li><code>varying vec2 v_uv</code>：0~1 的 UV 坐标（左下是 (0,0)）。</li>
+              <li>WebGL1 使用 <code>texture2D</code> 与 <code>gl_FragColor</code>。</li>
+            </ul>
+          </details>
+
+          <div class="shader-log-wrap" aria-live="polite">
+            <p class="shader-log-title">编译日志</p>
+            <pre class="shader-log" data-log>（点击“重载”开始编译）</pre>
+          </div>
+        </section>
+
+        <section class="shader-panel shader-panel-preview">
+          <header class="shader-panel-head shader-panel-head-tight">
+            <div>
+              <h2>实时渲染</h2>
+              <p class="shader-panel-sub">修改代码 / 图片后，点击“重载”应用。</p>
+            </div>
+            <div class="shader-panel-controls">
+              <label class="shader-file">
+                <span>导入图片</span>
+                <input type="file" accept="image/*" data-image>
+              </label>
+              <label class="shader-select">
+                <span>背景</span>
+                <select data-bg>
+                  <option value="checker">黑白棋盘</option>
+                  <option value="black">纯黑</option>
+                  <option value="white">纯白</option>
+                  <option value="green">纯绿</option>
+                </select>
+              </label>
+            </div>
+          </header>
+
+          <div class="shader-canvas-wrap bg-checker" data-canvas-wrap>
+            <canvas class="shader-canvas" data-canvas aria-label="Shader 渲染画布"></canvas>
+            <div class="shader-canvas-status" data-canvas-status hidden></div>
+          </div>
+        </section>
+      </div>
+    </section>
+  </main>
+
+  <script src="../scripts/main.js"></script>
+  <script src="../scripts/shader-lab.js"></script>
+</body>
+</html>
