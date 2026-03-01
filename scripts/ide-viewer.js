@@ -41,6 +41,7 @@
       includes: [
         "public static final String MODID = \"tutorial\";",
         "ModItems.register(modEventBus);",
+        "ModBlocks.register(modEventBus);",
         "ModCreativeModeTabs.register(modEventBus);"
       ]
     },
@@ -49,6 +50,15 @@
       includes: [
         "DeferredRegister.create(ForgeRegistries.ITEMS, TutorialMod.MODID)",
         "ITEMS.register(\"crystal\""
+      ]
+    },
+    {
+      file: /ModBlocks\.java$/i,
+      includes: [
+        "DeferredRegister.create(ForgeRegistries.BLOCKS, TutorialMod.MODID)",
+        "RegistryObject<Block> CRYSTAL_BLOCK",
+        "registerBlockWithItem(\"crystal_block\"",
+        "items.register(name, () -> new BlockItem(block.get(), new Item.Properties()));"
       ]
     },
     {
@@ -63,11 +73,23 @@
     },
     {
       file: /lang[\\/]+en_us\.json$/i,
-      includes: ["\"item.tutorial.crystal\"", "\"creativetab.tutorial_tab\""]
+      includes: ["\"item.tutorial.crystal\"", "\"block.tutorial.crystal_block\"", "\"creativetab.tutorial_tab\""]
     },
     {
       file: /lang[\\/]+zh_cn\.json$/i,
-      includes: ["\"item.tutorial.crystal\"", "\"creativetab.tutorial_tab\""]
+      includes: ["\"item.tutorial.crystal\"", "\"block.tutorial.crystal_block\"", "\"creativetab.tutorial_tab\""]
+    },
+    {
+      file: /blockstates[\\/]+crystal_block\.json$/i,
+      includes: ["\"tutorial:block/crystal_block\""]
+    },
+    {
+      file: /models[\\/]+block[\\/]+crystal_block\.json$/i,
+      includes: ["\"tutorial:block/crystal_block\"", "\"block/cube_all\""]
+    },
+    {
+      file: /models[\\/]+item[\\/]+crystal_block\.json$/i,
+      includes: ["\"tutorial:block/crystal_block\""]
     },
     {
       file: /models[\\/]+item[\\/]+crystal\.json$/i,
