@@ -102,19 +102,8 @@
             </div>
           </div>
 
-          <details class="shader-hint">
-            <summary>预览器约定（常用变量）</summary>
-            <ul class="shader-hint-list">
-              <li>本页以 WebGL2 预览“接近 Minecraft Core Shader 的写法”，会自动把 <code>#version 150</code> 转换为 WebGL2 可编译版本。</li>
-              <li>示例使用的属性名：<code>in vec3 Position</code> / <code>in vec4 Color</code> / <code>in vec2 UV0</code>（预览器会渲染一张全屏四边形）。</li>
-              <li>常用 uniform：<code>sampler2D Sampler0</code>（导入图片）、<code>float GameTime</code>（秒）、<code>vec2 ScreenSize</code>（像素）。</li>
-              <li>如果你的 shader 用到了 <code>ModelViewMat</code>/<code>ProjMat</code>，预览器默认传入单位矩阵。</li>
-            </ul>
-          </details>
-
-          <div class="shader-log-wrap" aria-live="polite">
-            <p class="shader-log-title">编译日志</p>
-            <pre class="shader-log" data-log>（点击“重载”开始编译）</pre>
+          <div class="shader-log-float" data-log-wrap hidden>
+            <pre class="shader-log" data-log aria-live="polite">（点击“重载”开始编译）</pre>
           </div>
         </section>
 

@@ -1704,6 +1704,7 @@ details summary {
   grid-template-columns: 58px 1fr;
   background: #0b121b;
   height: var(--shader-stage-height);
+  position: relative;
 }
 
 .shader-lines {
@@ -1750,49 +1751,28 @@ details summary {
   background: rgba(121, 215, 255, 0.26);
 }
 
-.shader-hint {
-  padding: 0.7rem 1.1rem;
-  border-top: 1px solid rgba(255, 255, 255, 0.06);
-  background: rgba(6, 18, 15, 0.55);
-}
-
-.shader-hint summary {
-  cursor: pointer;
-  color: #cfe8dc;
-  font-weight: 700;
-}
-
-.shader-hint-list {
-  margin: 0.65rem 0 0;
-  padding-left: 1.25rem;
-  color: var(--muted);
-}
-
-.shader-log-wrap {
-  padding: 0.85rem 1.1rem 1.1rem;
-  border-top: 1px solid rgba(255, 255, 255, 0.06);
-  background: rgba(5, 15, 13, 0.62);
-}
-
-.shader-log-title {
-  margin: 0;
-  font-family: "Chakra Petch", "Noto Sans SC", sans-serif;
-  letter-spacing: 0.08em;
-  color: var(--accent-2);
-  font-size: 0.78rem;
-  text-transform: uppercase;
+.shader-log-float {
+  position: absolute;
+  left: 0.75rem;
+  right: 0.75rem;
+  bottom: 0.75rem;
+  max-height: 42%;
+  overflow: auto;
+  border-radius: 14px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(5, 15, 13, 0.86);
+  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.4);
 }
 
 .shader-log {
-  margin: 0.55rem 0 0;
+  margin: 0;
   white-space: pre-wrap;
   word-break: break-word;
-  background: rgba(0, 0, 0, 0.25);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 12px;
+  background: transparent;
+  border: 0;
+  border-radius: 0;
   padding: 0.75rem 0.85rem;
   color: #c9d8e6;
-  min-height: 108px;
   font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
   font-size: 0.82rem;
 }

@@ -5,6 +5,7 @@
   const codeEl = root.querySelector("[data-code]");
   const linesEl = root.querySelector("[data-lines]");
   const logEl = root.querySelector("[data-log]");
+  const logWrapEl = root.querySelector("[data-log-wrap]");
   const imageEl = root.querySelector("[data-image]");
   const shaderFilesEl = root.querySelector("[data-shader-files]");
   const bgEl = root.querySelector("[data-bg]");
@@ -126,6 +127,11 @@ void main() {
   // ---------- editor ----------
   function setLog(text) {
     logEl.textContent = text || "";
+  }
+
+  function setLogVisible(visible) {
+    if (!logWrapEl) return;
+    logWrapEl.hidden = !visible;
   }
 
   function setStatus(text) {
@@ -499,6 +505,7 @@ void main() {
   async function reload() {
     if (!initGl()) return;
     reloadBtn.disabled = true;
+    setLogVisible(false);
     setLog("Compiling…");
 
     state.files[state.active] = String(codeEl.value || "");
@@ -517,6 +524,7 @@ void main() {
       if (!vs.ok) parts.push(`[Vertex Shader]\n${vs.log || "compile failed"}`);
       if (!fs.ok) parts.push(`[Fragment Shader]\n${fs.log || "compile failed"}`);
       setLog(parts.join("\n\n"));
+      setLogVisible(true);
       setStatus("编译失败：请查看日志。");
       reloadBtn.disabled = false;
       return;
@@ -525,6 +533,7 @@ void main() {
     const linked = linkProgram(vs.shader, fs.shader);
     if (!linked.ok) {
       setLog(`[Link]\n${linked.log || "link failed"}`);
+      setLogVisible(true);
       setStatus("链接失败：请查看日志。");
       reloadBtn.disabled = false;
       return;
@@ -549,6 +558,7 @@ void main() {
     applyPendingImage();
     setStatus("");
     setLog("OK.");
+    setLogVisible(false);
     reloadBtn.disabled = false;
     startLoop();
   }
@@ -561,6 +571,7 @@ void main() {
     };
     setActiveFile("fsh");
     setLog("（已重置模板）");
+    setLogVisible(false);
   }
 
   async function importShaderFiles(files) {
@@ -633,4 +644,3 @@ void main() {
 
   reload();
 })();
-
