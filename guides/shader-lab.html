@@ -3,8 +3,8 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Shader 实验室 | Minecraft Mod Create</title>
-  <meta name="description" content="实时编写 GLSL Fragment Shader，导入图片并实时渲染预览。">
+  <title>Shader 渲染器（Minecraft Core） | Minecraft Mod Create</title>
+  <meta name="description" content="实时编写 Minecraft Core Shader（vsh/fsh/json），导入图片并实时渲染预览。">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;700&family=Noto+Sans+SC:wght@400;600;700&display=swap" rel="stylesheet">
@@ -20,7 +20,7 @@
       <a href="../index.html#updates">最新更新</a>
       <a href="chapter-select.html">章节选择</a>
       <a href="../index.html#messages">留言区</a>
-      <a href="shader-lab.html">Shader 实验室</a>
+      <a href="shader-lab.html">Shader 渲染器</a>
       <a class="nav-cta" href="chapter-select.html">开始学习</a>
     </nav>
   </header>
@@ -65,11 +65,11 @@
     <a class="breadcrumb" href="../index.html">← 返回教程主页面</a>
 
     <header class="guide-hero">
-      <p class="eyebrow">SHADER LAB</p>
-      <h1>实时编写 GLSL Shader</h1>
+      <p class="eyebrow">MINECRAFT SHADER LAB</p>
+      <h1>Shader 渲染器（Minecraft Core）</h1>
       <div class="meta">
-        <span>支持：导入图片、重载编译、背景切换</span>
-        <span>快捷键：Ctrl+Enter 重载</span>
+        <span>支持：编辑 vsh / fsh / json、导入图片、重载预览</span>
+        <span>快捷键：Ctrl+Enter 重载（需要 WebGL2）</span>
       </div>
     </header>
 
@@ -78,14 +78,21 @@
         <section class="shader-panel shader-panel-editor">
           <header class="shader-panel-head">
             <div>
-              <h2>Fragment Shader</h2>
-              <p class="shader-panel-sub">你可以自由修改代码，点击“重载”重新编译并渲染。</p>
+              <h2>Shader 文件（core）</h2>
+              <p class="shader-panel-sub">示例模板来自你的 <code>black_hole.vsh / black_hole.fsh / black_hole.json</code>。修改后点击“重载”预览。</p>
             </div>
             <div class="shader-panel-actions">
               <button class="btn btn-outline shader-btn" type="button" data-action="reset">重置模板</button>
               <button class="btn btn-primary shader-btn" type="button" data-action="reload">重载</button>
             </div>
           </header>
+
+          <div class="shader-filebar" role="tablist" aria-label="Shader 文件选择">
+            <button class="shader-tab active" type="button" role="tab" aria-selected="true" data-file-tab="fsh">black_hole.fsh</button>
+            <button class="shader-tab" type="button" role="tab" aria-selected="false" data-file-tab="vsh">black_hole.vsh</button>
+            <button class="shader-tab" type="button" role="tab" aria-selected="false" data-file-tab="json">black_hole.json</button>
+            <span class="shader-filehint" data-filehint>当前编辑：black_hole.fsh</span>
+          </div>
 
           <div class="shader-editor" data-editor>
             <div class="shader-lines" aria-hidden="true" data-lines></div>
@@ -96,13 +103,12 @@
           </div>
 
           <details class="shader-hint">
-            <summary>可用变量 / 约定</summary>
+            <summary>预览器约定（常用变量）</summary>
             <ul class="shader-hint-list">
-              <li><code>uniform vec2 u_resolution</code>：画布像素尺寸。</li>
-              <li><code>uniform float u_time</code>：从加载开始的秒数。</li>
-              <li><code>uniform sampler2D u_texture</code>：导入图片（没有图片时为 1x1 白色）。</li>
-              <li><code>varying vec2 v_uv</code>：0~1 的 UV 坐标（左下是 (0,0)）。</li>
-              <li>WebGL1 使用 <code>texture2D</code> 与 <code>gl_FragColor</code>。</li>
+              <li>本页以 WebGL2 预览“接近 Minecraft Core Shader 的写法”，会自动把 <code>#version 150</code> 转换为 WebGL2 可编译版本。</li>
+              <li>示例使用的属性名：<code>in vec3 Position</code> / <code>in vec4 Color</code> / <code>in vec2 UV0</code>（预览器会渲染一张全屏四边形）。</li>
+              <li>常用 uniform：<code>sampler2D Sampler0</code>（导入图片）、<code>float GameTime</code>（秒）、<code>vec2 ScreenSize</code>（像素）。</li>
+              <li>如果你的 shader 用到了 <code>ModelViewMat</code>/<code>ProjMat</code>，预览器默认传入单位矩阵。</li>
             </ul>
           </details>
 
@@ -119,6 +125,10 @@
               <p class="shader-panel-sub">修改代码 / 图片后，点击“重载”应用。</p>
             </div>
             <div class="shader-panel-controls">
+              <label class="shader-file">
+                <span>导入 shader</span>
+                <input type="file" accept=".vsh,.fsh,.json,text/plain,application/json" multiple data-shader-files>
+              </label>
               <label class="shader-file">
                 <span>导入图片</span>
                 <input type="file" accept="image/*" data-image>
