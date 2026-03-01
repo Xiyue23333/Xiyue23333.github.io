@@ -249,6 +249,9 @@ void main() {
     const paddingBottomPx = parseFloat(style.paddingBottom || "0") || 0;
     const stageHeight = STAGE_LINES * lineHeightPx + paddingTopPx + paddingBottomPx;
     root.style.setProperty("--shader-stage-height", `${Math.round(stageHeight)}px`);
+    root.style.setProperty("--shader-line-height-px", `${Math.round(lineHeightPx)}px`);
+    root.style.setProperty("--shader-editor-padding-top-px", `${Math.round(paddingTopPx)}px`);
+    root.style.setProperty("--shader-editor-padding-bottom-px", `${Math.round(paddingBottomPx)}px`);
   }
 
   function setActiveFile(kind) {

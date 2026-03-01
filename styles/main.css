@@ -1595,9 +1595,10 @@ details summary {
 
 .shader-lab {
   --shader-editor-lines: 25;
-  --shader-line-height: 1.55em;
-  --shader-editor-padding-y: 1.5rem; /* 0.75rem top + 0.75rem bottom */
-  --shader-stage-height: calc(var(--shader-editor-lines) * var(--shader-line-height) + var(--shader-editor-padding-y));
+  --shader-line-height-px: 22px;
+  --shader-editor-padding-top-px: 12px;
+  --shader-editor-padding-bottom-px: 12px;
+  --shader-stage-height: calc(var(--shader-editor-lines) * var(--shader-line-height-px) + var(--shader-editor-padding-top-px) + var(--shader-editor-padding-bottom-px));
 }
 
 .shader-panel {
@@ -1714,7 +1715,7 @@ details summary {
 .shader-lines {
   background: linear-gradient(180deg, #101a26, #0c1520);
   border-right: 1px solid #2b435a;
-  padding: 0.75rem 0;
+  padding: var(--shader-editor-padding-top-px) 0 var(--shader-editor-padding-bottom-px);
   overflow: hidden;
   font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
   font-size: 0.86rem;
@@ -1728,8 +1729,8 @@ details summary {
 
 .shader-line-num {
   padding: 0 0.65rem 0 0.4rem;
-  height: 1.55em;
-  line-height: 1.55em;
+  height: var(--shader-line-height-px);
+  line-height: var(--shader-line-height-px);
   user-select: none;
 }
 
@@ -1749,7 +1750,7 @@ details summary {
   left: 0;
   right: 0;
   top: 0;
-  height: 1.55em;
+  height: var(--shader-line-height-px);
   background: rgba(121, 215, 255, 0.12);
   border-top: 1px solid rgba(121, 215, 255, 0.12);
   border-bottom: 1px solid rgba(121, 215, 255, 0.12);
@@ -1764,12 +1765,12 @@ details summary {
   border: 0;
   outline: none;
   resize: none;
-  padding: 0.75rem 0.9rem;
+  padding: var(--shader-editor-padding-top-px) 0.9rem var(--shader-editor-padding-bottom-px);
   background: transparent;
   color: #e8f6f0;
   font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
   font-size: 0.86rem;
-  line-height: 1.55;
+  line-height: var(--shader-line-height-px);
   tab-size: 2;
   overflow: auto;
   white-space: pre;
