@@ -40,7 +40,8 @@
       file: /TutorialMod\.java$/i,
       includes: [
         "public static final String MODID = \"tutorial\";",
-        "ModItems.ITEMS.register(modEventBus);"
+        "ModItems.register(modEventBus);",
+        "ModCreativeModeTabs.register(modEventBus);"
       ]
     },
     {
@@ -51,12 +52,22 @@
       ]
     },
     {
+      file: /ModCreativeModeTabs\.java$/i,
+      includes: [
+        "DeferredRegister.create(Registries.CREATIVE_MODE_TAB, TutorialMod.MODID)",
+        "CREATIVE_MODE_TABS.register(\"tutorial_tab\"",
+        ".icon(() -> new ItemStack(ModItems.CRYSTAL.get()))",
+        ".title(Component.translatable(\"creativetab.tutorial_tab\"))",
+        "output.accept(ModItems.CRYSTAL.get());"
+      ]
+    },
+    {
       file: /lang[\\/]+en_us\.json$/i,
-      includes: ["\"item.tutorial.crystal\""]
+      includes: ["\"item.tutorial.crystal\"", "\"creativetab.tutorial_tab\""]
     },
     {
       file: /lang[\\/]+zh_cn\.json$/i,
-      includes: ["\"item.tutorial.crystal\""]
+      includes: ["\"item.tutorial.crystal\"", "\"creativetab.tutorial_tab\""]
     },
     {
       file: /models[\\/]+item[\\/]+crystal\.json$/i,

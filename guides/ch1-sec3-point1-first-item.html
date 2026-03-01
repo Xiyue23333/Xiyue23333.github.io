@@ -102,10 +102,9 @@
     <section class="section">
       <h2>第二步：在主类中挂载注册（很关键）</h2>
       <p>只写了 <code>ModItems</code> 还不够，你必须在主类构造方法里把注册器挂到 <code>modEventBus</code> 上，否则游戏不会加载到你的物品。</p>
-      <p>你可以直接写：</p>
-      <pre><code>ModItems.ITEMS.register(modEventBus);</code></pre>
-      <p>或者更推荐的写法是调用封装方法（本质一样）：</p>
+      <p>推荐写法是调用封装方法（本质上就是注册 <code>DeferredRegister</code>）：</p>
       <pre><code>ModItems.register(modEventBus);</code></pre>
+      <p class="notice-warning"><strong>提示：</strong>如果你后续把“注册逻辑”都封装成 <code>register(...)</code> 方法（物品、方块、物品栏等），主类里会更清爽，也更不容易漏掉。</p>
     </section>
 
     <section class="section">
@@ -243,7 +242,7 @@ public class TutorialMod
 
         // Register the commonSetup method for modloading
         modEventBus.addListener(this::commonSetup);
-        ModItems.ITEMS.register(modEventBus);
+        ModItems.register(modEventBus);
 
 
         // Register ourselves for server and other game events we are interested in
