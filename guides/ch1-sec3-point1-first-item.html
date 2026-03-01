@@ -58,35 +58,282 @@
       </section>
     </div>
   </aside>
-  <main class="guide-main">
+  <main class="guide-main guide-main-wide">
     <a class="breadcrumb" href="chapter-1-intro.html">← 返回上一页</a>
 
     <header class="guide-hero">
       <p class="eyebrow">CHAPTER 01 · SECTION 03 · POINT 01</p>
       <h1>第三节·第一点：制作模组的第一个物品</h1>
       <div class="meta">
-        <span>状态：框架已搭建</span>
-        <span>内容：待导入教程 Mod</span>
+        <span>状态：完整教程</span>
+        <span>来源：E:\教程mod</span>
       </div>
     </header>
 
     <section class="section">
-      <h2>页面说明</h2>
-      <p>本页是“第一个物品”要点占位页，后续导入实际教程步骤与代码。</p>
+      <h2>本节目标</h2>
+      <ul class="step-list">
+        <li>学会用 <code>DeferredRegister</code> 注册一个物品（示例：<code>crystal</code> 水晶）。</li>
+        <li>学会把注册类拆分到独立文件，并在主类中正确挂载到事件总线。</li>
+        <li>学会添加物品的语言文件、模型文件与贴图资源，让物品在游戏里能正常显示。</li>
+      </ul>
     </section>
 
     <section class="section">
-      <h2>结构占位</h2>
-      <ul>
-  <li>注册流程占位</li>
-  <li>资源文件占位</li>
-  <li>验证流程占位</li>
-</ul>
+      <h2>建议：先把文件分类整理好</h2>
+      <p>初学者最容易踩的坑之一就是“代码都堆在主类里”。推荐你从一开始就按功能分类：</p>
+      <ul class="step-list">
+        <li>在主类包路径下创建 <code>common</code> 文件夹，用来放置常规逻辑（通用代码）。</li>
+        <li>在 <code>common</code> 下创建 <code>registry</code> 文件夹，专门放置“注册类”（物品、方块、声音、菜单等）。</li>
+        <li>本节示例：创建 <code>ModItems</code> 类文件，后续所有物品注册都写在这里。</li>
+      </ul>
+      <p class="notice-warning"><strong>命名提醒：</strong>资源文件名（json/贴图等）建议全部小写；Java 类名可首字母大写。</p>
+    </section>
+
+    <section class="section">
+      <h2>第一步：创建物品注册类 <code>ModItems</code></h2>
+      <p>在 <code>src/main/java/com/xiyue/tutorial/common/registry</code> 下创建 <code>ModItems</code>，并注册物品 <code>crystal</code>：</p>
+      <ul class="step-list">
+        <li><code>ITEMS</code>：物品注册器（命名空间使用 <code>TutorialMod.MODID</code>）。</li>
+        <li><code>CRYSTAL</code>：注册名为 <code>crystal</code> 的物品。</li>
+      </ul>
+    </section>
+
+    <section class="section">
+      <h2>第二步：在主类中挂载注册（很关键）</h2>
+      <p>只写了 <code>ModItems</code> 还不够，你必须在主类构造方法里把注册器挂到 <code>modEventBus</code> 上，否则游戏不会加载到你的物品。</p>
+      <p>你可以直接写：</p>
+      <pre><code>ModItems.ITEMS.register(modEventBus);</code></pre>
+      <p>或者更推荐的写法是调用封装方法（本质一样）：</p>
+      <pre><code>ModItems.register(modEventBus);</code></pre>
+    </section>
+
+    <section class="section">
+      <h2>第三步：添加资源文件（resources）</h2>
+      <p>在 <code>src/main/resources</code> 下创建：</p>
+      <ul class="step-list">
+        <li><code>assets</code> → <code>tutorial</code>（<code>tutorial</code> 必须与主类里的 <code>MODID</code> 完全一致）。</li>
+        <li>在 <code>tutorial</code> 下创建 <code>lang</code>（语言文件）、<code>models</code>（模型文件）、<code>textures</code>（贴图文件）。</li>
+      </ul>
+      <p>本节示例物品注册名是 <code>crystal</code>，所以资源文件路径也要跟着统一使用 <code>crystal</code>（小写）。</p>
+    </section>
+
+    <section class="section">
+      <h2>语言文件：<code>en_us.json</code> 与 <code>zh_cn.json</code></h2>
+      <p>语言文件都在 <code>assets/tutorial/lang</code> 下，常用：</p>
+      <ul class="step-list">
+        <li><code>en_us.json</code>：英文</li>
+        <li><code>zh_cn.json</code>：中文</li>
+      </ul>
+      <p>物品的 key 一般是 <code>item.&lt;modid&gt;.&lt;注册名&gt;</code>，例如：</p>
+      <pre><code>"item.tutorial.crystal": "Crystal"</code></pre>
+      <p>如果你注册的是方块，key 通常写成：</p>
+      <pre><code>"block.tutorial.crystal_block": "Crystal_Block"</code></pre>
+      <p>中文文件使用相同 key，只改显示文本，例如：</p>
+      <pre><code>"item.tutorial.crystal": "水晶"</code></pre>
+      <p class="notice-warning"><strong>提示：</strong>如果某个语言文件缺 key，会回退到英文；英文也没有时，游戏里会直接显示 key（也就是内部命名）。</p>
+    </section>
+
+    <section class="section">
+      <h2>模型文件：<code>models/item/crystal.json</code></h2>
+      <p>物品模型文件路径为：<code>assets/tutorial/models/item/crystal.json</code>。</p>
+      <ul class="step-list">
+        <li><code>parent</code>：使用的基础模型模板（常见物品用 <code>minecraft:item/generated</code>）。</li>
+        <li><code>textures.layer0</code>：物品贴图资源路径，必须写上命名空间，例如 <code>tutorial:item/crystal</code>（命名空间不可省略）。</li>
+      </ul>
+    </section>
+
+    <section class="section">
+      <h2>贴图文件：<code>textures/item/crystal.png</code></h2>
+      <p>贴图路径为：<code>assets/tutorial/textures/item/crystal.png</code>。</p>
+      <ul class="step-list">
+        <li>确保“物品注册名”与“贴图文件名”一致：<code>crystal</code>。</li>
+        <li>文件命名只用小写。</li>
+      </ul>
     </section>
 
     <section class="section placeholder-section">
-      <h2>正文内容（待补充）</h2>
-      <p>这里暂不放教程正文，后续导入你实际的教程内容与代码示例。</p>
+      <h2>进游戏验证</h2>
+      <p>如果你还没做创造模式物品栏（下一点会做），可以先用指令获取物品：</p>
+      <pre><code>/give @s tutorial:crystal</code></pre>
+      <p>看到物品图标与名称正常显示，就说明“注册 + 资源文件”流程通了。</p>
+    </section>
+
+    <section class="section">
+      <h2>IDE 工程视图（左选文件，右看代码）</h2>
+      <p>下面展示你在教程工程中新建的文件/目录，以及关键改动（已高亮）。</p>
+
+      <div class="viewer-workbench" data-ide-viewer>
+        <aside class="viewer-sidebar">
+          <p class="viewer-side-title">项目文件</p>
+          <div class="viewer-tree"></div>
+        </aside>
+
+        <section class="viewer-editor">
+          <div class="viewer-topbar">
+            <span class="viewer-dot red"></span>
+            <span class="viewer-dot amber"></span>
+            <span class="viewer-dot green"></span>
+            <div class="viewer-tabs" role="tablist" aria-label="打开的文件标签"></div>
+            <div class="viewer-search" role="search">
+              <input class="viewer-search-input" type="search" placeholder="搜索代码 (Ctrl+F)" aria-label="搜索代码">
+              <button class="viewer-search-btn" type="button" data-search-nav="-1" aria-label="上一个搜索结果">↑</button>
+              <button class="viewer-search-btn" type="button" data-search-nav="1" aria-label="下一个搜索结果">↓</button>
+              <span class="viewer-search-count" aria-live="polite">0 / 0</span>
+            </div>
+          </div>
+
+          <div class="viewer-code-area">
+            <div class="viewer-lines" aria-hidden="true"></div>
+            <div class="viewer-code-scroll">
+              <div class="viewer-highlight" aria-hidden="true"></div>
+              <textarea class="viewer-input" spellcheck="false" readonly aria-label="代码查看器"></textarea>
+            </div>
+          </div>
+
+          <div class="viewer-status">
+            <span class="viewer-path"></span>
+          </div>
+        </section>
+
+        <script type="text/plain" data-file="src/main/java/com/xiyue/tutorial/TutorialMod.java">package com.xiyue.tutorial;
+
+import com.mojang.logging.LogUtils;
+import com.xiyue.tutorial.common.registry.ModItems;
+import net.minecraft.client.Minecraft;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.world.food.FoodProperties;
+import net.minecraft.world.item.BlockItem;
+import net.minecraft.world.item.CreativeModeTab;
+import net.minecraft.world.item.CreativeModeTabs;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.state.BlockBehaviour;
+import net.minecraft.world.level.material.MapColor;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.event.BuildCreativeModeTabContentsEvent;
+import net.minecraftforge.event.server.ServerStartingEvent;
+import net.minecraftforge.eventbus.api.IEventBus;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.config.ModConfig;
+import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
+import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
+import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+import net.minecraftforge.registries.DeferredRegister;
+import net.minecraftforge.registries.ForgeRegistries;
+import net.minecraftforge.registries.RegistryObject;
+import org.slf4j.Logger;
+
+// The value here should match an entry in the META-INF/mods.toml file
+@Mod(TutorialMod.MODID)
+public class TutorialMod
+{
+    // Define mod id in a common place for everything to reference
+    public static final String MODID = "tutorial";
+    // Directly reference a slf4j logger
+    private static final Logger LOGGER = LogUtils.getLogger();
+
+
+    public TutorialMod(FMLJavaModLoadingContext context)
+    {
+        IEventBus modEventBus = context.getModEventBus();
+
+        // Register the commonSetup method for modloading
+        modEventBus.addListener(this::commonSetup);
+        ModItems.ITEMS.register(modEventBus);
+
+
+        // Register ourselves for server and other game events we are interested in
+        MinecraftForge.EVENT_BUS.register(this);
+
+        // Register the item to a creative tab
+        modEventBus.addListener(this::addCreative);
+
+        // Register our mod's ForgeConfigSpec so that Forge can create and load the config file for us
+        context.registerConfig(ModConfig.Type.COMMON, Config.SPEC);
+    }
+
+    private void commonSetup(final FMLCommonSetupEvent event)
+    {
+        // Some common setup code
+        LOGGER.info("HELLO FROM COMMON SETUP");
+
+        if (Config.logDirtBlock)
+            LOGGER.info("DIRT BLOCK >> {}", ForgeRegistries.BLOCKS.getKey(Blocks.DIRT));
+
+        LOGGER.info(Config.magicNumberIntroduction + Config.magicNumber);
+
+        Config.items.forEach((item) -> LOGGER.info("ITEM >> {}", item.toString()));
+    }
+
+    // Add the example block item to the building blocks tab
+    private void addCreative(BuildCreativeModeTabContentsEvent event)
+    {
+
+    }
+
+    // You can use SubscribeEvent and let the Event Bus discover methods to call
+    @SubscribeEvent
+    public void onServerStarting(ServerStartingEvent event)
+    {
+        // Do something when the server starts
+        LOGGER.info("HELLO from server starting");
+    }
+
+    // You can use EventBusSubscriber to automatically register all static methods in the class annotated with @SubscribeEvent
+    @Mod.EventBusSubscriber(modid = MODID, bus = Mod.EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
+    public static class ClientModEvents
+    {
+        @SubscribeEvent
+        public static void onClientSetup(FMLClientSetupEvent event)
+        {
+            // Some client setup code
+            LOGGER.info("HELLO FROM CLIENT SETUP");
+            LOGGER.info("MINECRAFT NAME >> {}", Minecraft.getInstance().getUser().getName());
+        }
+    }
+}</script>
+
+        <script type="text/plain" data-file="src/main/java/com/xiyue/tutorial/common/registry/ModItems.java">package com.xiyue.tutorial.common.registry;
+
+import com.xiyue.tutorial.TutorialMod;
+import net.minecraft.world.item.Item;
+import net.minecraftforge.eventbus.api.IEventBus;
+import net.minecraftforge.registries.DeferredRegister;
+import net.minecraftforge.registries.ForgeRegistries;
+import net.minecraftforge.registries.RegistryObject;
+
+
+public class ModItems {
+    public static final DeferredRegister<Item> ITEMS = DeferredRegister.create(ForgeRegistries.ITEMS, TutorialMod.MODID);
+
+    public static final RegistryObject<Item> CRYSTAL = ITEMS.register("crystal", () -> new Item(new Item.Properties()));
+
+    public static void register(IEventBus modEventBus) {
+        ITEMS.register(modEventBus);
+    }
+}</script>
+
+        <script type="text/plain" data-file="src/main/resources/assets/tutorial/lang/en_us.json">{
+  "item.tutorial.crystal": "Crystal"
+}</script>
+
+        <script type="text/plain" data-file="src/main/resources/assets/tutorial/lang/zh_cn.json">{
+  "item.tutorial.crystal": "水晶"
+}</script>
+
+        <script type="text/plain" data-file="src/main/resources/assets/tutorial/models/item/crystal.json">{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "tutorial:item/crystal"
+  }
+}</script>
+
+        <script type="text/plain" data-file="src/main/resources/assets/tutorial/textures/item/crystal.png">[binary png omitted]</script>
+      </div>
     </section>
 
     <nav class="guide-nav">
@@ -95,6 +342,7 @@
     </nav>
   </main>
   <script src="../scripts/main.js"></script>
+  <script src="../scripts/ide-viewer.js"></script>
 </body>
 </html>
 

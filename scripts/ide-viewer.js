@@ -38,7 +38,29 @@
     },
     {
       file: /TutorialMod\.java$/i,
-      includes: ["public static final String MODID = \"tutorial\";"]
+      includes: [
+        "public static final String MODID = \"tutorial\";",
+        "ModItems.ITEMS.register(modEventBus);"
+      ]
+    },
+    {
+      file: /ModItems\.java$/i,
+      includes: [
+        "DeferredRegister.create(ForgeRegistries.ITEMS, TutorialMod.MODID)",
+        "ITEMS.register(\"crystal\""
+      ]
+    },
+    {
+      file: /lang[\\/]+en_us\.json$/i,
+      includes: ["\"item.tutorial.crystal\""]
+    },
+    {
+      file: /lang[\\/]+zh_cn\.json$/i,
+      includes: ["\"item.tutorial.crystal\""]
+    },
+    {
+      file: /models[\\/]+item[\\/]+crystal\.json$/i,
+      includes: ["\"tutorial:item/crystal\""]
     }
   ];
 

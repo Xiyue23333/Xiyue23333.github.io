@@ -79,25 +79,75 @@ const commentForm = document.querySelector('[data-comment-form]');
 const commentList = document.querySelector('[data-comment-list]');
 const commentClear = document.querySelector('[data-comment-clear]');
 
-function loadComments() {
+function getCommentApiBase() {
+  const meta = document.querySelector('meta[name="comment-api-base"]');
+  const metaValue = meta ? String(meta.getAttribute('content') || '').trim() : '';
+  const globalValue = typeof window.COMMENT_API_BASE === 'string' ? window.COMMENT_API_BASE.trim() : '';
+  return globalValue || metaValue || '';
+}
+
+const COMMENT_API_BASE = getCommentApiBase();
+const COMMENT_MODE = COMMENT_API_BASE ? 'remote' : 'local';
+
+function loadCommentsLocal() {
   try {
     const raw = window.localStorage.getItem(COMMENT_KEY);
     if (!raw) return [];
     const parsed = JSON.parse(raw);
-    return Array.isArray(parsed) ? parsed : [];
+    const list = Array.isArray(parsed) ? parsed : [];
+    return list.slice().reverse();
   } catch {
     return [];
   }
 }
 
-function saveComments(comments) {
-  window.localStorage.setItem(COMMENT_KEY, JSON.stringify(comments));
+function saveCommentsLocal(commentsOldestFirst) {
+  window.localStorage.setItem(COMMENT_KEY, JSON.stringify(commentsOldestFirst));
 }
 
-function renderComments() {
+async function loadCommentsRemote() {
+  const url = new URL('/comments', COMMENT_API_BASE);
+  url.searchParams.set('limit', '80');
+  const res = await fetch(url, { headers: { accept: 'application/json' }, cache: 'no-store' });
+  if (!res.ok) throw new Error(`加载留言失败（${res.status}）`);
+  const data = await res.json();
+  if (!data || data.ok !== true || !Array.isArray(data.comments)) return [];
+  return data.comments;
+}
+
+async function postCommentRemote(name, message) {
+  const url = new URL('/comments', COMMENT_API_BASE);
+  const res = await fetch(url, {
+    method: 'POST',
+    headers: { 'content-type': 'application/json' },
+    body: JSON.stringify({ name, message }),
+  });
+  if (!res.ok) throw new Error(`发布失败（${res.status}）`);
+  const data = await res.json().catch(() => null);
+  if (!data || data.ok !== true) throw new Error('发布失败（服务返回异常）');
+}
+
+function renderCommentsError(message) {
   if (!commentList) return;
-  const comments = loadComments();
   commentList.innerHTML = '';
+
+  const error = document.createElement('p');
+  error.className = 'message-empty message-error';
+  error.textContent = message;
+  commentList.appendChild(error);
+}
+
+async function renderComments() {
+  if (!commentList) return;
+  commentList.innerHTML = '';
+
+  let comments = [];
+  try {
+    comments = COMMENT_MODE === 'remote' ? await loadCommentsRemote() : loadCommentsLocal();
+  } catch (error) {
+    renderCommentsError(error instanceof Error ? error.message : '加载留言失败');
+    return;
+  }
 
   if (comments.length === 0) {
     const empty = document.createElement('p');
@@ -107,8 +157,7 @@ function renderComments() {
     return;
   }
 
-  const ordered = comments.slice().reverse();
-  for (const item of ordered) {
+  for (const item of comments) {
     const card = document.createElement('article');
     card.className = 'message-item';
 
@@ -139,7 +188,13 @@ function renderComments() {
 if (commentForm && commentList) {
   renderComments();
 
-  commentForm.addEventListener('submit', (event) => {
+  if (commentClear) {
+    if (COMMENT_MODE === 'remote') {
+      commentClear.textContent = '刷新留言';
+    }
+  }
+
+  commentForm.addEventListener('submit', async (event) => {
     event.preventDefault();
     const formData = new FormData(commentForm);
     const name = String(formData.get('name') || '').trim();
@@ -147,21 +202,44 @@ if (commentForm && commentList) {
 
     if (!name || !message) return;
 
-    const comments = loadComments();
-    comments.push({
+    if (COMMENT_MODE === 'remote') {
+      try {
+        await postCommentRemote(name.slice(0, 24), message.slice(0, 280));
+        commentForm.reset();
+        renderComments();
+      } catch (error) {
+        renderCommentsError(error instanceof Error ? error.message : '发布失败');
+      }
+      return;
+    }
+
+    const raw = window.localStorage.getItem(COMMENT_KEY);
+    let commentsOldestFirst = [];
+    try {
+      const parsed = raw ? JSON.parse(raw) : [];
+      commentsOldestFirst = Array.isArray(parsed) ? parsed : [];
+    } catch {
+      commentsOldestFirst = [];
+    }
+
+    commentsOldestFirst.push({
       name: name.slice(0, 24),
       message: message.slice(0, 280),
       createdAt: new Date().toISOString(),
     });
 
-    const capped = comments.slice(-80);
-    saveComments(capped);
+    const capped = commentsOldestFirst.slice(-80);
+    saveCommentsLocal(capped);
     commentForm.reset();
     renderComments();
   });
 
   if (commentClear) {
     commentClear.addEventListener('click', () => {
+      if (COMMENT_MODE === 'remote') {
+        renderComments();
+        return;
+      }
       const ok = window.confirm('确定清空当前浏览器中的所有留言吗？');
       if (!ok) return;
       window.localStorage.removeItem(COMMENT_KEY);

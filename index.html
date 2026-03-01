@@ -5,6 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Minecraft Mod Create | 教程主页面</title>
   <meta name="description" content="Minecraft Mod Create 教程主页面：最新更新与用户留言。">
+  <!-- 配置共享留言后端（Cloudflare Worker URL），留空则回退为本地 localStorage 留言 -->
+  <meta name="comment-api-base" content="">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;700&family=Noto+Sans+SC:wght@400;600;700&display=swap" rel="stylesheet">
@@ -126,7 +128,7 @@
     <section id="messages" class="panel">
       <div class="panel-head">
         <h2>用户留言区</h2>
-        <p>留言数据仅保存在当前浏览器（localStorage），用于临时交流记录。</p>
+        <p>可配置共享留言后端；未配置时将回退为本地（localStorage）留言。</p>
       </div>
 
       <form class="message-form" data-comment-form>

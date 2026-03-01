@@ -1,0 +1,14 @@
+name = "mmc-comments"
+main = "src/index.js"
+compatibility_date = "2026-03-01"
+
+# 允许跨域的站点来源（CORS），逗号分隔；留空表示允许所有来源（不推荐）。
+# 例如：ALLOWED_ORIGINS = "https://xiyue23333.github.io,https://your-domain.com"
+[vars]
+ALLOWED_ORIGINS = ""
+
+[[d1_databases]]
+binding = "DB"
+database_name = "mmc_comments"
+database_id = "YOUR_D1_DATABASE_ID_HERE"
+

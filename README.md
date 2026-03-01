@@ -31,3 +31,16 @@
 3. 提交后等待 1-3 分钟，访问：
    - `https://xiyue23333.github.io/`
 
+## 共享留言（无需登录）
+
+当前首页留言区支持两种模式：
+
+- 未配置后端：留言仅保存在访问者本地浏览器（`localStorage`），其他用户看不到
+- 配置后端：留言存到远端数据库，所有访问者共享可见
+
+启用共享留言的做法：
+
+1. 部署后端：见 `comments-api/README.md`
+2. 拿到 Worker 地址（例如 `https://xxx.workers.dev`）后，打开 `index.html`，把 `meta[name="comment-api-base"]` 的 `content` 填成该地址
+
+
