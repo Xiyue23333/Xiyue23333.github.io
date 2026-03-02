@@ -2098,15 +2098,21 @@ details summary {
   height: 100%;
 }
 
+.guide-main.guide-main-wide .viewer-workbench {
+  --viewer-line-height-px: 23px;
+  --viewer-pad-top-px: 14px;
+  --viewer-pad-bottom-px: 22px;
+}
+
 .guide-main.guide-main-wide .viewer-lines {
   margin: 0;
-  padding: 0.85rem 0.38rem;
+  padding: var(--viewer-pad-top-px) 0.38rem var(--viewer-pad-bottom-px);
   border-right: 1px solid #304860;
   background: #111a25;
   text-align: right;
   font-family: "Consolas", "Courier New", monospace;
   font-size: 0.89rem;
-  line-height: 1.6;
+  line-height: var(--viewer-line-height-px);
   user-select: none;
   overflow: hidden;
   min-height: 0;
@@ -2116,7 +2122,8 @@ details summary {
 .guide-main.guide-main-wide .viewer-line-num {
   display: block;
   color: #61768f;
-  min-height: 1.6em;
+  height: var(--viewer-line-height-px);
+  line-height: var(--viewer-line-height-px);
   padding: 0 0.22rem;
   border-radius: 4px;
 }
@@ -2147,13 +2154,13 @@ details summary {
   position: absolute;
   inset: 0;
   margin: 0;
-  padding: 0.85rem 0.85rem 1.35rem;
+  padding: var(--viewer-pad-top-px) 0.85rem var(--viewer-pad-bottom-px);
   border: 0;
   width: 100%;
   height: 100%;
   font-family: "Consolas", "Courier New", monospace;
   font-size: 0.89rem;
-  line-height: 1.6;
+  line-height: var(--viewer-line-height-px);
   white-space: pre;
   tab-size: 2;
 }
@@ -2181,7 +2188,8 @@ details summary {
 
 .guide-main.guide-main-wide .viewer-code-line {
   display: block;
-  min-height: 1.6em;
+  height: var(--viewer-line-height-px);
+  line-height: var(--viewer-line-height-px);
 }
 
 .guide-main.guide-main-wide .viewer-code-line.is-active {

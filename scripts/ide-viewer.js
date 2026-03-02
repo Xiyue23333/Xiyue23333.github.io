@@ -33,6 +33,7 @@
         "mapping_channel=parchment",
         "mapping_version=2023.09.03-1.20.1",
         "mod_id=tutorial",
+        "mod_license=MIT",
         "mod_group_id=com.xiyue.tutorial"
       ]
     },
@@ -680,6 +681,29 @@
     if (!tree || !tabs || !lines || !highlight || !input || !path || !searchInput || !searchCount) return;
 
     input.setAttribute("wrap", "off");
+
+    function updateViewerMetrics() {
+      const style = window.getComputedStyle(input);
+      const fontSize = parseFloat(style.fontSize || "0") || 14;
+      const lineHeightRaw = style.lineHeight || "";
+      let lineHeightPx = parseFloat(lineHeightRaw);
+      if (!Number.isFinite(lineHeightPx) || lineHeightPx <= 0) {
+        lineHeightPx = fontSize * 1.6;
+      }
+      const padTopPx = parseFloat(style.paddingTop || "0") || 0;
+      const padBottomPx = parseFloat(style.paddingBottom || "0") || 0;
+
+      viewer.style.setProperty("--viewer-line-height-px", `${Math.round(lineHeightPx)}px`);
+      viewer.style.setProperty("--viewer-pad-top-px", `${Math.round(padTopPx)}px`);
+      viewer.style.setProperty("--viewer-pad-bottom-px", `${Math.round(padBottomPx)}px`);
+    }
+
+    updateViewerMetrics();
+    window.addEventListener("resize", updateViewerMetrics);
+    if (document.fonts && document.fonts.ready && typeof document.fonts.ready.then === "function") {
+      document.fonts.ready.then(updateViewerMetrics);
+    }
+    window.setTimeout(updateViewerMetrics, 120);
 
     const tabMenu = document.createElement("div");
     tabMenu.className = "viewer-tab-menu";
