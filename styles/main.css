@@ -2119,6 +2119,10 @@ details summary {
   height: 100%;
 }
 
+.guide-main.guide-main-wide .viewer-lines span {
+  display: inline;
+}
+
 .guide-main.guide-main-wide .viewer-line-num {
   display: block;
   color: #61768f;
@@ -2313,6 +2317,7 @@ details summary {
 
 .guide-main.guide-main-wide .viewer-line-label {
   min-width: 28px;
+  display: inline-block;
 }
 
 .guide-main.guide-main-wide .viewer-fold-toggle,
