@@ -168,6 +168,7 @@ h3 {
   right: 3%;
   top: 2%;
   width: min(100%, 350px);
+  image-rendering: pixelated;
   filter: drop-shadow(0 24px 26px rgba(0, 0, 0, 0.34));
   transform: rotate(-7deg);
 }
@@ -196,18 +197,17 @@ h3 {
     0 4px 0 #513900,
     0 10px 18px rgba(0, 0, 0, 0.32);
   transform-origin: center;
-  transform: rotate(var(--hero-splash-tilt, -18deg)) scale(1.02);
-  animation: heroSplashPulse 2.8s ease-in-out infinite;
+  transform: translateY(0) rotate(var(--hero-splash-tilt, -18deg)) scale(1);
+  animation: heroSplashBounce 0.62s cubic-bezier(0.36, 0, 0.18, 1) infinite alternate;
 }
 
-@keyframes heroSplashPulse {
-  0%,
-  100% {
-    transform: rotate(var(--hero-splash-tilt, -18deg)) scale(1);
+@keyframes heroSplashBounce {
+  0% {
+    transform: translateY(7px) rotate(var(--hero-splash-tilt, -18deg)) scale(0.9);
   }
 
-  50% {
-    transform: rotate(var(--hero-splash-tilt, -18deg)) scale(1.1);
+  100% {
+    transform: translateY(-6px) rotate(var(--hero-splash-tilt, -18deg)) scale(1.18);
   }
 }
 
