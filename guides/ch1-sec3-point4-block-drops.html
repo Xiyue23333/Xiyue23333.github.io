@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>第三节·第三点：制作第一个方块（方块注册与资源文件） | Minecraft Mod Create</title>
+  <title>第三节·第四点：方块掉落物 | Minecraft Mod Create</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;700&family=Noto+Sans+SC:wght@400;600;700&display=swap" rel="stylesheet">
@@ -65,8 +65,8 @@
     <a class="breadcrumb" href="ch1-sec3-start-your-mod.html">← 返回上一页</a>
 
     <header class="guide-hero">
-      <p class="eyebrow">CHAPTER 01 · SECTION 03 · POINT 03</p>
-      <h1>第三节·第三点：制作第一个方块（方块注册与资源文件）</h1>
+      <p class="eyebrow">CHAPTER 01 · SECTION 03 · POINT 04</p>
+      <h1>第三节·第四点：方块掉落物</h1>
       <div class="meta">
         <span>状态：完整教程</span>
         <span>来源：E:\教程mod</span>
@@ -76,108 +76,88 @@
     <section class="section">
       <h2>本节目标</h2>
       <ul class="step-list">
-        <li>注册一个方块（示例：<code>crystal_block</code> 水晶块）。</li>
-        <li>正确注册方块对应的方块物品（<code>BlockItem</code>），让玩家能在背包/创造模式中拿到它。</li>
-        <li>补齐方块资源文件：<code>blockstates</code> / <code>models</code> / <code>textures</code> / 语言文件。</li>
+        <li>让矿石方块 <code>crystal_ore</code> 在被挖掘时掉落 <code>crystal</code>，而不是总是掉自己。</li>
+        <li>让矿石只能被镐子正确挖掘，并要求最低工具等级为石镐。</li>
+        <li>理解 Java 方块属性、掉落表、方块标签三者分别负责什么。</li>
       </ul>
     </section>
 
     <section class="section">
-      <h2>第一步：创建方块注册类 <code>ModBlocks</code></h2>
-      <p>继续使用前面约定的文件分类：<code>common/registry</code> 专门放注册类。</p>
-      <p>创建：</p>
-      <p><code>src/main/java/com/xiyue/tutorial/common/registry/ModBlocks.java</code></p>
-      <p>然后用 <code>DeferredRegister&lt;Block&gt;</code> 注册你的方块。</p>
+      <h2>先理解：掉落物和挖掘等级不是一回事</h2>
+      <p>很多初学者第一次做矿石时，会把“掉什么物品”和“什么工具能挖”写混。实际上这两件事分属不同位置：</p>
+      <ul class="step-list">
+        <li><code>ModBlocks.java</code> 中的 <code>.requiresCorrectToolForDrops()</code>：告诉游戏“这类方块只有用正确工具时才应该正常掉落”。</li>
+        <li><code>data/minecraft/tags/blocks/mineable/pickaxe.json</code>：告诉游戏“这个方块属于镐子挖掘”。</li>
+        <li><code>data/minecraft/tags/blocks/needs_stone_tool.json</code>：告诉游戏“这个方块最低需要石镐级别”。</li>
+        <li><code>data/tutorial/loot_tables/blocks/crystal_ore.json</code>：真正定义“挖掉后掉什么”。</li>
+      </ul>
+      <p class="notice-warning"><strong>注意：</strong>这四部分缺任何一个，效果都可能和你预期不一致。</p>
     </section>
 
     <section class="section">
-      <h2>第二步：方块物品（BlockItem）注册（重点讲清楚）</h2>
-      <p>很多新手会遇到“方块注册了，但背包里拿不到”的问题，原因通常是：</p>
-      <ul class="step-list">
-        <li>你只注册了 <code>Block</code>，但没有注册对应的 <code>BlockItem</code>。</li>
-        <li>没有把注册类挂到主类的 <code>modEventBus</code> 上（事件总线没注册成功）。</li>
-      </ul>
-
-      <h3>为什么需要 BlockItem？</h3>
-      <p>在 Minecraft 里，“方块”和“物品”是两套注册表：</p>
-      <ul class="step-list">
-        <li><code>Block</code>：世界中的方块本体。</li>
-        <li><code>Item</code>：背包里能拿到的物品。</li>
-      </ul>
-      <p>如果你希望玩家能拿到你的方块，就必须给它配套注册一个 <code>BlockItem</code>。</p>
-
-      <h3>本教程采用的注册方式</h3>
-      <p>我们在 <code>ModBlocks</code> 里写了一个辅助方法：<code>registerBlockWithItem(...)</code>，它会：</p>
-      <ul class="step-list">
-        <li>先注册方块到 <code>BLOCKS</code></li>
-        <li>再用同一个名字，把 <code>BlockItem</code> 注册到 <code>ModItems.ITEMS</code></li>
-      </ul>
-      <p>这样做的好处是：你写一个方块时，不用再额外去别的地方“记得补一段方块物品注册”，减少漏写导致的 bug。</p>
-      <p>同时也要理解清楚：<strong>方块物品（BlockItem）本质上还是一个 Item</strong>，所以它必须注册在 <code>ITEMS</code> 这个物品注册表里。</p>
-      <p class="notice-warning"><strong>提醒：</strong>虽然 <code>BlockItem</code> 是在 <code>ModBlocks</code> 里“顺带注册”的，但它本质上还是属于 <code>ModItems.ITEMS</code>，所以主类里不要忘了同时注册 <code>ModItems</code> 与 <code>ModBlocks</code>。</p>
+      <h2>第一步：在矿石方块属性里开启“正确工具掉落”</h2>
+      <p>先在 <code>ModBlocks</code> 里找到矿石注册代码，给 <code>CRYSTAL_ORE</code> 的属性链加上：</p>
+      <pre><code>.requiresCorrectToolForDrops()</code></pre>
+      <p>它的作用不是指定“石镐”，而是告诉 Minecraft：这个方块必须结合工具标签来判断是否允许正常掉落。</p>
+      <p>如果你只写标签但不加这句，低级工具也可能照样掉落；如果只加这句但标签没配齐，就会出现“所有镐子都不掉落”。</p>
     </section>
 
     <section class="section">
-      <h2>第三步：创建方块资源文件（blockstates / models / textures）</h2>
-      <p>方块资源文件都放在：</p>
-      <p><code>src/main/resources/assets/tutorial/</code></p>
-      <p>其中关键目录：</p>
+      <h2>第二步：创建矿石掉落表 <code>crystal_ore.json</code></h2>
+      <p>掉落表文件路径为：</p>
+      <p><code>src/main/resources/data/tutorial/loot_tables/blocks/crystal_ore.json</code></p>
+      <p>本节逻辑采用常见矿石写法：</p>
       <ul class="step-list">
-        <li><code>blockstates/</code>：把“方块状态”映射到“方块模型”。</li>
-        <li><code>models/block/</code>：方块模型。</li>
-        <li><code>models/item/</code>：方块物品模型（通常直接引用方块模型）。</li>
-        <li><code>textures/block/</code>：方块贴图。</li>
+        <li>如果工具带有精准采集（Silk Touch），掉落矿石方块本身：<code>tutorial:crystal_ore</code></li>
+        <li>如果没有精准采集，掉落物品：<code>tutorial:crystal</code></li>
+        <li>掉落数量使用随机范围，并支持时运附魔加成</li>
       </ul>
-
-      <h3>1) blockstates</h3>
-      <p>先在 <code>assets/tutorial/</code> 下新建文件夹：<code>blockstates</code>。</p>
-      <p>然后创建：<code>blockstates/crystal_block.json</code>，让方块默认使用模型 <code>tutorial:block/crystal_block</code>。</p>
-
-      <h3>2) models</h3>
-      <p>创建：</p>
-      <ul class="step-list">
-        <li><code>models/block/crystal_block.json</code>：使用 <code>block/cube_all</code>（六面同贴图）。</li>
-        <li><code>models/item/crystal_block.json</code>：让物品模型直接继承方块模型。</li>
-      </ul>
-
-      <h3>3) textures</h3>
-      <p>放入贴图：<code>textures/block/crystal_block.png</code>。</p>
-      <p class="notice-warning"><strong>命名提醒：</strong>资源文件名全部小写，并与注册名保持一致（这里统一用 <code>crystal_block</code>）。</p>
+      <p class="notice-warning"><strong>命名提醒：</strong>掉落表文件名必须与方块注册名一致。你的方块注册名是 <code>crystal_ore</code>，文件就必须叫 <code>crystal_ore.json</code>，不能写成别的名字。</p>
     </section>
 
     <section class="section">
-      <h2>第四步：更新语言文件（方块名称）</h2>
-      <p>方块的语言 key 规则通常是：</p>
-      <pre><code>block.&lt;modid&gt;.&lt;注册名&gt;</code></pre>
-      <p>所以本节示例是：</p>
-      <pre><code>"block.tutorial.crystal_block": "Crystal Block"</code></pre>
-      <p>在 <code>en_us.json</code> 与 <code>zh_cn.json</code> 都要写一份，保证切换语言时都能显示正确。</p>
+      <h2>第三步：告诉游戏“这是镐子挖的矿石”</h2>
+      <p>在原版标签目录中创建：</p>
+      <p><code>src/main/resources/data/minecraft/tags/blocks/mineable/pickaxe.json</code></p>
+      <p>把 <code>tutorial:crystal_ore</code> 放进去，表示这个方块属于“镐子挖掘”的分类。</p>
+      <p>这一步只是在说“用什么工具类型”，还没有限制等级，所以单独写这个文件时，木镐也可能被允许正常掉落。</p>
     </section>
 
     <section class="section">
-      <h2>最后一步：主类里应用注册（别漏）</h2>
-      <p>在主类构造方法里确保有：</p>
-      <pre><code>ModItems.register(modEventBus);
-ModBlocks.register(modEventBus);</code></pre>
-      <p>否则会出现：</p>
+      <h2>第四步：再加最低工具等级限制</h2>
+      <p>接着创建：</p>
+      <p><code>src/main/resources/data/minecraft/tags/blocks/needs_stone_tool.json</code></p>
+      <p>同样把 <code>tutorial:crystal_ore</code> 放进去。这样 Minecraft 就会知道：</p>
       <ul class="step-list">
-        <li>只注册了方块但没注册方块物品：背包拿不到方块。</li>
-        <li>只注册了方块物品但没注册方块：游戏加载时报错。</li>
+        <li>这个方块要用镐挖</li>
+        <li>而且至少要石镐级别</li>
+      </ul>
+      <p>最终效果就是：木镐可以尝试挖，但不会正确掉落；石镐、铁镐、钻石镐及以上才能正常获得掉落物。</p>
+    </section>
+
+    <section class="section">
+      <h2>常见错误排查</h2>
+      <ul class="step-list">
+        <li>掉落表文件名和方块注册名不一致，例如方块是 <code>crystal_ore</code>，文件却写成别的名字。</li>
+        <li><code>pickaxe.json</code> 没建，导致游戏不知道它属于镐子挖掘。</li>
+        <li><code>needs_stone_tool.json</code> 路径写错。这个文件不在 <code>mineable</code> 目录下，而是在 <code>tags/blocks</code> 根目录下。</li>
+        <li>忘记在 Java 里加 <code>.requiresCorrectToolForDrops()</code>，结果木镐也能掉落。</li>
+        <li>JSON 里写错资源名，例如误写成没有注册过的 <code>tutorial:magic_crystal</code>。</li>
       </ul>
     </section>
 
     <section class="section placeholder-section">
       <h2>进游戏验证</h2>
-      <p>运行 <code>runClient</code> 进入游戏后，你可以：</p>
       <ul class="step-list">
-        <li>在你的自定义物品栏里找到 <code>crystal_block</code>。</li>
-        <li>或者直接用指令获取：<code>/give @s tutorial:crystal_block</code></li>
+        <li>木镐挖 <code>crystal_ore</code>：方块会被破坏，但不应正常掉落 <code>crystal</code>。</li>
+        <li>石镐及以上挖 <code>crystal_ore</code>：应掉落 <code>crystal</code>，并受时运影响。</li>
+        <li>带精准采集的石镐及以上：应直接掉落 <code>crystal_ore</code> 方块本身。</li>
       </ul>
     </section>
 
     <section class="section">
       <h2>IDE 工程视图（左选文件，右看代码）</h2>
-      <p>下面展示你新增/修改的关键文件（已高亮关键行）：</p>
+      <p>下面展示本节新增/修改的关键文件。矿石方块属性、掉落表和两个工具标签都会高亮显示。</p>
 
       <div class="viewer-workbench" data-ide-viewer>
         <aside class="viewer-sidebar">
@@ -234,6 +214,14 @@ public class ModBlocks {
             () -> new Block(BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_LIGHT_BLUE).strength(1.5F, 3.0F)),
             ModItems.ITEMS
     );
+    public static final RegistryObject<Block> CRYSTAL_ORE = registerBlockWithItem("crystal_ore",
+            () -> new Block(BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.COLOR_LIGHT_BLUE)
+                    .strength(1.5F, 3.0F)
+                    .requiresCorrectToolForDrops()),
+            ModItems.ITEMS
+    );
+
 
     private static <T extends Block> RegistryObject<T> registerBlock(String name, Supplier<T> supplier) {
         return BLOCKS.register(name, supplier);
@@ -265,6 +253,7 @@ import net.minecraftforge.registries.RegistryObject;
 
 public class ModItems {
     public static final DeferredRegister<Item> ITEMS = DeferredRegister.create(ForgeRegistries.ITEMS, TutorialMod.MODID);
+
     public static final RegistryObject<Item> CRYSTAL = ITEMS.register("crystal", () -> new Item(new Item.Properties()));
 
     public static void register(IEventBus modEventBus) {
@@ -272,66 +261,85 @@ public class ModItems {
     }
 }</script>
 
-        <script type="text/plain" data-file="src/main/java/com/xiyue/tutorial/TutorialMod.java">package com.xiyue.tutorial;
-
-import com.xiyue.tutorial.common.registry.ModBlocks;
-import com.xiyue.tutorial.common.registry.ModCreativeModeTabs;
-import com.xiyue.tutorial.common.registry.ModItems;
-import net.minecraftforge.eventbus.api.IEventBus;
-import net.minecraftforge.fml.config.ModConfig;
-import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
-
-@Mod(TutorialMod.MODID)
-public class TutorialMod {
-    public static final String MODID = "tutorial";
-
-    public TutorialMod(FMLJavaModLoadingContext context) {
-        IEventBus modEventBus = context.getModEventBus();
-        ModItems.register(modEventBus);
-        ModBlocks.register(modEventBus);
-        ModCreativeModeTabs.register(modEventBus);
-        context.registerConfig(ModConfig.Type.COMMON, Config.SPEC);
+        <script type="text/plain" data-file="src/main/resources/data/tutorial/loot_tables/blocks/crystal_ore.json">{
+  "type": "minecraft:block",
+  "pools": [
+    {
+      "rolls": 1,
+      "entries": [
+        {
+          "type": "minecraft:alternatives",
+          "children": [
+            {
+              "type": "minecraft:item",
+              "name": "tutorial:crystal_ore",
+              "conditions": [
+                {
+                  "condition": "minecraft:match_tool",
+                  "predicate": {
+                    "enchantments": [
+                      {
+                        "enchantment": "minecraft:silk_touch",
+                        "levels": {
+                          "min": 1
+                        }
+                      }
+                    ]
+                  }
+                }
+              ]
+            },
+            {
+              "type": "minecraft:item",
+              "name": "tutorial:crystal",
+              "functions": [
+                {
+                  "function": "minecraft:set_count",
+                  "count": {
+                    "type": "minecraft:uniform",
+                    "min": 1.0,
+                    "max": 3.0
+                  }
+                },
+                {
+                  "function": "minecraft:apply_bonus",
+                  "enchantment": "minecraft:fortune",
+                  "formula": "minecraft:uniform_bonus_count",
+                  "parameters": {
+                    "bonusMultiplier": 1
+                  }
+                },
+                {
+                  "function": "minecraft:explosion_decay"
+                }
+              ]
+            }
+          ]
+        }
+      ]
     }
+  ]
 }</script>
 
-        <script type="text/plain" data-file="src/main/resources/assets/tutorial/blockstates/crystal_block.json">{
-  "variants": {
-    "": {
-      "model": "tutorial:block/crystal_block"
-    }
-  }
+        <script type="text/plain" data-file="src/main/resources/data/minecraft/tags/blocks/mineable/pickaxe.json">{
+  "replace": false,
+  "values": [
+    "tutorial:crystal_ore"
+  ]
 }</script>
 
-        <script type="text/plain" data-file="src/main/resources/assets/tutorial/models/block/crystal_block.json">{
-  "parent": "block/cube_all",
-  "textures": {
-    "all": "tutorial:block/crystal_block"
-  }
-}</script>
-
-        <script type="text/plain" data-file="src/main/resources/assets/tutorial/models/item/crystal_block.json">{
-  "parent": "tutorial:block/crystal_block"
-}</script>
-
-        <script type="text/plain" data-file="src/main/resources/assets/tutorial/textures/block/crystal_block.png">[binary png omitted]</script>
-
-        <script type="text/plain" data-file="src/main/resources/assets/tutorial/lang/en_us.json">{
-  "item.tutorial.crystal": "Crystal",
-  "block.tutorial.crystal_block": "Crystal Block",
-  "creativetab.tutorial_tab": "Tutorial"
-}</script>
-
-        <script type="text/plain" data-file="src/main/resources/assets/tutorial/lang/zh_cn.json">{
-  "item.tutorial.crystal": "水晶",
-  "block.tutorial.crystal_block": "水晶块",
-  "creativetab.tutorial_tab": "教程"
+        <script type="text/plain" data-file="src/main/resources/data/minecraft/tags/blocks/needs_stone_tool.json">{
+  "replace": false,
+  "values": [
+    "tutorial:crystal_ore"
+  ]
 }</script>
       </div>
     </section>
 
     <nav class="guide-nav">
-      <a href="ch1-sec3-point2-creative-tab.html">上一页</a>
-      <a href="ch1-sec3-point4-block-drops.html">下一页</a>
+      <a href="ch1-sec3-point3-resources-structure.html">上一页</a>
+      <a href="chapter-1-intro.html">下一页</a>
     </nav>
   </main>
 

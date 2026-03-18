@@ -58,7 +58,10 @@
       includes: [
         "DeferredRegister.create(ForgeRegistries.BLOCKS, TutorialMod.MODID)",
         "RegistryObject<Block> CRYSTAL_BLOCK",
+        "RegistryObject<Block> CRYSTAL_ORE",
         "registerBlockWithItem(\"crystal_block\"",
+        "registerBlockWithItem(\"crystal_ore\"",
+        ".requiresCorrectToolForDrops()",
         "items.register(name, () -> new BlockItem(block.get(), new Item.Properties()));"
       ]
     },
@@ -95,6 +98,18 @@
     {
       file: /models[\\/]+item[\\/]+crystal\.json$/i,
       includes: ["\"tutorial:item/crystal\""]
+    },
+    {
+      file: /loot_tables[\\/]+blocks[\\/]+crystal_ore\.json$/i,
+      includes: ["\"name\": \"tutorial:crystal_ore\"", "\"name\": \"tutorial:crystal\""]
+    },
+    {
+      file: /mineable[\\/]+pickaxe\.json$/i,
+      includes: ["\"tutorial:crystal_ore\""]
+    },
+    {
+      file: /tags[\\/]+blocks[\\/]+needs_stone_tool\.json$/i,
+      includes: ["\"tutorial:crystal_ore\""]
     }
   ];
 
