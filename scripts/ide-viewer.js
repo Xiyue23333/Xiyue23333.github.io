@@ -110,6 +110,23 @@
     {
       file: /tags[\\/]+blocks[\\/]+needs_stone_tool\.json$/i,
       includes: ["\"tutorial:crystal_ore\""]
+    },
+    {
+      file: /recipes[\\/]+crystal_block\.json$/i,
+      includes: [
+        "\"type\": \"minecraft:crafting_shaped\"",
+        "\"item\": \"tutorial:crystal\"",
+        "\"item\": \"tutorial:crystal_block\""
+      ]
+    },
+    {
+      file: /recipes[\\/]+crystal_from_block\.json$/i,
+      includes: [
+        "\"type\": \"minecraft:crafting_shapeless\"",
+        "\"item\": \"tutorial:crystal_block\"",
+        "\"item\": \"tutorial:crystal\"",
+        "\"count\": 9"
+      ]
     }
   ];
 

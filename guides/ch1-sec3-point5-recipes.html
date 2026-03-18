@@ -1,0 +1,299 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>第三节·第五点：物品的配方制作 | Minecraft Mod Create</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;700&family=Noto+Sans+SC:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../styles/main.css">
+</head>
+<body>
+  <header class="site-header">
+    <a class="brand js-sidebar-toggle" href="#" aria-controls="site-drawer" aria-expanded="false">
+      <span class="brand-menu" aria-hidden="true"><span></span><span></span><span></span></span>
+      <span>Minecraft Mod Create</span>
+    </a>
+    <nav>
+      <a href="../index.html#updates">最新更新</a>
+      <a href="chapter-select.html">章节选择</a>
+      <a href="../index.html#messages">留言区</a>
+      <a href="shader-lab.html">Shader 渲染器</a>
+      <a class="nav-cta" href="chapter-select.html">开始学习</a>
+    </nav>
+  </header>
+
+  <div class="drawer-overlay" data-drawer-overlay hidden></div>
+  <aside class="site-drawer" id="site-drawer" aria-hidden="true">
+    <a class="drawer-home" href="../index.html">← 回到首页</a>
+
+    <div class="site-drawer-head">
+      <h2>快捷跳转</h2>
+      <button class="drawer-close" type="button" data-drawer-close aria-label="关闭侧边栏">x</button>
+    </div>
+
+    <p class="site-drawer-text">点击章节可展开并跳转到对应页面。</p>
+
+    <div class="drawer-groups">
+      <section class="drawer-group">
+        <button class="drawer-group-toggle root-toggle" type="button" data-drawer-group-toggle data-target="drawer-ch1-list" aria-expanded="false">
+          <span>第一章：初窥门径</span>
+          <span class="drawer-caret" aria-hidden="true">▾</span>
+        </button>
+        <nav class="drawer-group-list" id="drawer-ch1-list">
+          <a href="chapter-1-intro.html">章节总览</a>
+          <a href="ch1-sec1-environment-setup.html">第一节：开发环境构建</a>
+          <a href="ch1-sec2-read-official-code.html">第二节：学会查看官方代码</a>
+          <button class="drawer-group-toggle drawer-sub-toggle" type="button" data-drawer-group-toggle data-target="drawer-ch1-sec3-list" aria-expanded="false">
+            <span>第三节：开始制作自己的 Mod</span>
+            <span class="drawer-caret" aria-hidden="true">▾</span>
+          </button>
+          <nav class="drawer-group-list drawer-sub-list" id="drawer-ch1-sec3-list">
+            <a href="ch1-sec3-point1-first-item.html">第三节-1：第一个物品</a>
+            <a href="ch1-sec3-point2-creative-tab.html">第三节-2：创造模式物品栏</a>
+            <a href="ch1-sec3-point3-resources-structure.html">第三节-3：制作第一个方块</a>
+            <a href="ch1-sec3-point4-block-drops.html">第三节-4：方块掉落物</a>
+            <a href="ch1-sec3-point5-recipes.html">第三节-5：物品的配方制作</a>
+          </nav>
+          <a href="ch1-sec3-start-your-mod.html">进入第三节总览</a>
+        </nav>
+      </section>
+    </div>
+  </aside>
+
+  <main class="guide-main guide-main-wide">
+    <a class="breadcrumb" href="ch1-sec3-start-your-mod.html">← 返回上一页</a>
+
+    <header class="guide-hero">
+      <p class="eyebrow">CHAPTER 01 · SECTION 03 · POINT 05</p>
+      <h1>第三节·第五点：物品的配方制作</h1>
+      <div class="meta">
+        <span>状态：完整教程</span>
+        <span>来源：E:\教程mod</span>
+      </div>
+    </header>
+
+    <section class="section">
+      <h2>本节目标</h2>
+      <ul class="step-list">
+        <li>学会用原始 JSON 方式为模组添加工作台配方，不使用数据生成。</li>
+        <li>为 <code>crystal_block</code> 制作正向配方：9 个 <code>crystal</code> 合成 1 个方块。</li>
+        <li>为 <code>crystal_block</code> 制作逆向配方：1 个方块拆回 9 个 <code>crystal</code>。</li>
+      </ul>
+    </section>
+
+    <section class="section">
+      <h2>为什么先学原始配方写法</h2>
+      <p>虽然后面可以用数据生成自动产出配方，但在教程的现阶段，先手写 JSON 更容易理解。因为你能直接看到：</p>
+      <ul class="step-list">
+        <li>配方文件应该放在哪个目录</li>
+        <li>有序配方和无序配方的 JSON 结构分别长什么样</li>
+        <li>结果物品、材料物品、数量是如何写进文件的</li>
+      </ul>
+      <p class="notice-warning"><strong>建议：</strong>先把手写配方学明白，后面再学 datagen，思路会更清楚。</p>
+    </section>
+
+    <section class="section">
+      <h2>第一步：创建配方目录</h2>
+      <p>所有工作台配方文件都放在：</p>
+      <p><code>src/main/resources/data/tutorial/recipes/</code></p>
+      <p>这里的 <code>tutorial</code> 必须和你的模组 id 保持一致。也就是说，前面主类里写的是：</p>
+      <pre><code>public static final String MODID = "tutorial";</code></pre>
+      <p>那么配方目录就必须是 <code>data/tutorial/recipes</code>，不能写成其他命名空间。</p>
+    </section>
+
+    <section class="section">
+      <h2>第二步：正向配方，9 个水晶合成 1 个水晶块</h2>
+      <p>矿石块、金属块、宝石块这类“9 合 1”的配方通常写成 <strong>有序配方（Shaped Recipe）</strong>。</p>
+      <p>创建文件：</p>
+      <p><code>src/main/resources/data/tutorial/recipes/crystal_block.json</code></p>
+      <p>然后用 3 行 3 列的图案来表示工作台摆放：</p>
+      <ul class="step-list">
+        <li><code>pattern</code>：工作台布局</li>
+        <li><code>key</code>：把图案中的字母映射到实际物品</li>
+        <li><code>result</code>：合成结果</li>
+      </ul>
+      <p>由于每一格都是水晶，所以最适合用同一个字符，例如 <code>X</code>。</p>
+    </section>
+
+    <section class="section">
+      <h2>第三步：逆向配方，1 个水晶块拆成 9 个水晶</h2>
+      <p>反向拆解通常写成 <strong>无序配方（Shapeless Recipe）</strong>，因为它不关心工作台格子的摆放顺序。</p>
+      <p>创建文件：</p>
+      <p><code>src/main/resources/data/tutorial/recipes/crystal_from_block.json</code></p>
+      <p>这类配方最适合写成：</p>
+      <ul class="step-list">
+        <li><code>ingredients</code>：只写需要的材料列表</li>
+        <li><code>result.count</code>：直接把数量写成 9</li>
+      </ul>
+      <p>这样玩家只要把一个 <code>crystal_block</code> 放进工作台任意一格，就能拆回 9 个 <code>crystal</code>。</p>
+    </section>
+
+    <section class="section">
+      <h2>命名与内容要保持完全对应</h2>
+      <p>这一步最容易出错的是资源名不统一。你当前模组里真正注册的是：</p>
+      <ul class="step-list">
+        <li>物品：<code>tutorial:crystal</code></li>
+        <li>方块物品：<code>tutorial:crystal_block</code></li>
+      </ul>
+      <p>所以配方 JSON 里也必须写这两个名字，不能随手写成别的内部名。</p>
+      <p class="notice-warning"><strong>注意：</strong>如果配方里写了未注册的物品 id，游戏加载数据包时就会报错，或者配方根本不会出现。</p>
+    </section>
+
+    <section class="section placeholder-section">
+      <h2>进游戏验证</h2>
+      <ul class="step-list">
+        <li>在工作台中摆放 9 个 <code>crystal</code>，应能合成 1 个 <code>crystal_block</code>。</li>
+        <li>把 1 个 <code>crystal_block</code> 放入工作台任意格，应能分解为 9 个 <code>crystal</code>。</li>
+        <li>如果配方不生效，优先检查文件路径、命名空间和物品 id 是否完全一致。</li>
+      </ul>
+    </section>
+
+    <section class="section">
+      <h2>IDE 工程视图（左选文件，右看代码）</h2>
+      <p>下面展示本节新增的两个配方文件，以及它们依赖的注册对象。正向和逆向配方的关键行会高亮显示。</p>
+
+      <div class="viewer-workbench" data-ide-viewer>
+        <aside class="viewer-sidebar">
+          <p class="viewer-side-title">项目文件</p>
+          <div class="viewer-tree"></div>
+        </aside>
+
+        <section class="viewer-editor">
+          <div class="viewer-topbar">
+            <span class="viewer-dot red"></span>
+            <span class="viewer-dot amber"></span>
+            <span class="viewer-dot green"></span>
+            <div class="viewer-tabs" role="tablist" aria-label="打开的文件标签"></div>
+            <div class="viewer-search" role="search">
+              <input class="viewer-search-input" type="search" placeholder="搜索代码 (Ctrl+F)" aria-label="搜索代码">
+              <button class="viewer-search-btn" type="button" data-search-nav="-1" aria-label="上一个搜索结果">↑</button>
+              <button class="viewer-search-btn" type="button" data-search-nav="1" aria-label="下一个搜索结果">↓</button>
+              <span class="viewer-search-count" aria-live="polite">0 / 0</span>
+            </div>
+          </div>
+
+          <div class="viewer-code-area">
+            <div class="viewer-lines" aria-hidden="true"></div>
+            <div class="viewer-code-scroll">
+              <div class="viewer-highlight" aria-hidden="true"></div>
+              <textarea class="viewer-input" spellcheck="false" readonly aria-label="代码查看器"></textarea>
+            </div>
+          </div>
+
+          <div class="viewer-status">
+            <span class="viewer-path"></span>
+          </div>
+        </section>
+
+        <script type="text/plain" data-file="src/main/java/com/xiyue/tutorial/common/registry/ModItems.java">package com.xiyue.tutorial.common.registry;
+
+import com.xiyue.tutorial.TutorialMod;
+import net.minecraft.world.item.Item;
+import net.minecraftforge.eventbus.api.IEventBus;
+import net.minecraftforge.registries.DeferredRegister;
+import net.minecraftforge.registries.ForgeRegistries;
+import net.minecraftforge.registries.RegistryObject;
+
+
+public class ModItems {
+    public static final DeferredRegister<Item> ITEMS = DeferredRegister.create(ForgeRegistries.ITEMS, TutorialMod.MODID);
+
+    public static final RegistryObject<Item> CRYSTAL = ITEMS.register("crystal", () -> new Item(new Item.Properties()));
+
+    public static void register(IEventBus modEventBus) {
+        ITEMS.register(modEventBus);
+    }
+}</script>
+
+        <script type="text/plain" data-file="src/main/java/com/xiyue/tutorial/common/registry/ModBlocks.java">package com.xiyue.tutorial.common.registry;
+
+import com.xiyue.tutorial.TutorialMod;
+import net.minecraft.world.item.BlockItem;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.BlockBehaviour;
+import net.minecraft.world.level.material.MapColor;
+import net.minecraftforge.eventbus.api.IEventBus;
+import net.minecraftforge.registries.DeferredRegister;
+import net.minecraftforge.registries.ForgeRegistries;
+import net.minecraftforge.registries.RegistryObject;
+
+import java.util.function.Supplier;
+
+public class ModBlocks {
+    public static final DeferredRegister<Block> BLOCKS = DeferredRegister.create(ForgeRegistries.BLOCKS, TutorialMod.MODID);
+
+    public static final RegistryObject<Block> CRYSTAL_BLOCK = registerBlockWithItem("crystal_block",
+            () -> new Block(BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_LIGHT_BLUE).strength(1.5F, 3.0F)),
+            ModItems.ITEMS
+    );
+
+    private static <T extends Block> RegistryObject<T> registerBlock(String name, Supplier<T> supplier) {
+        return BLOCKS.register(name, supplier);
+    }
+
+    private static <T extends Block> RegistryObject<T> registerBlockWithItem(
+            String name,
+            Supplier<T> supplier,
+            DeferredRegister<Item> items
+    ) {
+        RegistryObject<T> block = registerBlock(name, supplier);
+        items.register(name, () -> new BlockItem(block.get(), new Item.Properties()));
+        return block;
+    }
+
+    public static void register(IEventBus modEventBus) {
+        BLOCKS.register(modEventBus);
+    }
+}</script>
+
+        <script type="text/plain" data-file="src/main/resources/data/tutorial/recipes/crystal_block.json">{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "XXX",
+    "XXX",
+    "XXX"
+  ],
+  "key": {
+    "X": {
+      "item": "tutorial:crystal"
+    }
+  },
+  "result": {
+    "item": "tutorial:crystal_block",
+    "count": 1
+  }
+}</script>
+
+        <script type="text/plain" data-file="src/main/resources/data/tutorial/recipes/crystal_from_block.json">{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    {
+      "item": "tutorial:crystal_block"
+    }
+  ],
+  "result": {
+    "item": "tutorial:crystal",
+    "count": 9
+  }
+}</script>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2>本节小结</h2>
+      <p>这一点我们先用原始 JSON 写法完成了 9 合 1 和 1 拆 9 的配方。后续在数据生成章节里，你可以再把这两份手写 JSON 升级成自动生成版本。</p>
+    </section>
+
+    <nav class="guide-nav">
+      <a href="ch1-sec3-point4-block-drops.html">上一页</a>
+      <a href="chapter-1-intro.html">下一页</a>
+    </nav>
+  </main>
+
+  <script src="../scripts/main.js"></script>
+  <script src="../scripts/ide-viewer.js"></script>
+</body>
+</html>
