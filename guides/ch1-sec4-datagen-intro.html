@@ -1,9 +1,9 @@
-﻿<!doctype html>
+<!doctype html>
 <html lang="zh-CN">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>第三节：开始制作自己的 Mod | Minecraft Mod Create</title>
+  <title>第四节：优化代码（数据生成） | Minecraft Mod Create</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;700&family=Noto+Sans+SC:wght@400;600;700&display=swap" rel="stylesheet">
@@ -62,70 +62,39 @@
       </section>
     </div>
   </aside>
+
   <main class="guide-main">
     <a class="breadcrumb" href="chapter-1-intro.html">← 返回上一页</a>
 
     <header class="guide-hero">
-      <p class="eyebrow">CHAPTER 01 · SECTION 03</p>
-      <h1>第三节：开始制作自己的 Mod</h1>
+      <p class="eyebrow">CHAPTER 01 · SECTION 04</p>
+      <h1>第四节：优化代码（数据生成）</h1>
       <div class="meta">
-        <span>状态：框架已搭建</span>
-        <span>内容：待导入教程 Mod</span>
+        <span>状态：入口已创建</span>
+        <span>内容：待补充</span>
       </div>
     </header>
 
     <section class="section">
       <h2>页面说明</h2>
-      <p>本节为第三节总览页，挂载 5 个要点页面。</p>
-    </section>
-
-    <section class="section">
-      <h2>要点选择</h2>
-      <div class="card-list">
-        <a class="card" href="ch1-sec3-point1-first-item.html">
-          <span class="tag">POINT 01</span>
-          <h3>第一点：制作模组的第一个物品</h3>
-          <p>创建注册类，补齐语言 / 模型 / 贴图资源文件。</p>
-        </a>
-
-        <a class="card" href="ch1-sec3-point2-creative-tab.html">
-          <span class="tag">POINT 02</span>
-          <h3>第二点：制作自己模组的创造模式物品栏</h3>
-          <p>注册自定义物品栏，并把你的物品添加进去显示。</p>
-        </a>
-
-        <a class="card" href="ch1-sec3-point3-resources-structure.html">
-          <span class="tag">POINT 03</span>
-          <h3>第三点：制作第一个方块</h3>
-          <p>注册方块 + 方块物品，并补齐 blockstates / models / textures。</p>
-        </a>
-
-        <a class="card" href="ch1-sec3-point4-block-drops.html">
-          <span class="tag">POINT 04</span>
-          <h3>第四点：方块掉落物</h3>
-          <p>为矿石编写掉落表，并配置正确工具与石镐等级限制。</p>
-        </a>
-
-        <a class="card" href="ch1-sec3-point5-recipes.html">
-          <span class="tag">POINT 05</span>
-          <h3>第五点：物品的配方制作</h3>
-          <p>手写工作台配方，完成水晶块的 9 合 1 与 1 拆 9。</p>
-        </a>
-      </div>
+      <p>本节将作为“数据生成”专题入口，用来整理如何把手写 JSON 资源逐步优化为更易维护的自动生成代码。</p>
     </section>
 
     <section class="section placeholder-section">
-      <h2>正文内容（待补充）</h2>
-      <p>这里暂不放教程正文，后续导入你实际的教程内容与代码示例。</p>
+      <h2>预计内容</h2>
+      <ul class="step-list">
+        <li>数据生成入口注册：<code>GatherDataEvent</code></li>
+        <li>配方生成：从手写 JSON 迁移到 Provider</li>
+        <li>方块标签、掉落表、模型与语言文件的自动生成</li>
+      </ul>
     </section>
 
     <nav class="guide-nav">
-      <a href="ch1-sec2-read-official-code.html">上一页</a>
-      <a href="ch1-sec3-point1-first-item.html">下一页</a>
+      <a href="ch1-sec3-point5-recipes.html">上一页</a>
+      <a href="chapter-1-intro.html">下一页</a>
     </nav>
   </main>
+
   <script src="../scripts/main.js"></script>
 </body>
 </html>
-
-
