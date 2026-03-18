@@ -1,0 +1,94 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 360" role="img" aria-labelledby="title desc">
+  <title id="title">Grass Block</title>
+  <desc id="desc">An isometric pixel-style grass block for the Minecraft-themed homepage hero.</desc>
+  <defs>
+    <linearGradient id="topFace" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#7dc768"/>
+      <stop offset="1" stop-color="#467e3b"/>
+    </linearGradient>
+    <linearGradient id="leftFace" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#6b4b35"/>
+      <stop offset="1" stop-color="#4b3325"/>
+    </linearGradient>
+    <linearGradient id="rightFace" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#835b41"/>
+      <stop offset="1" stop-color="#583a29"/>
+    </linearGradient>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="160%">
+      <feDropShadow dx="0" dy="18" stdDeviation="14" flood-color="#000000" flood-opacity="0.35"/>
+    </filter>
+    <clipPath id="clipTop">
+      <polygon points="180,38 308,112 180,186 52,112"/>
+    </clipPath>
+    <clipPath id="clipLeft">
+      <polygon points="52,112 180,186 180,316 52,242"/>
+    </clipPath>
+    <clipPath id="clipRight">
+      <polygon points="308,112 180,186 180,316 308,242"/>
+    </clipPath>
+  </defs>
+
+  <g filter="url(#shadow)" shape-rendering="crispEdges">
+    <polygon points="180,38 308,112 180,186 52,112" fill="url(#topFace)"/>
+    <polygon points="52,112 180,186 180,316 52,242" fill="url(#leftFace)"/>
+    <polygon points="308,112 180,186 180,316 308,242" fill="url(#rightFace)"/>
+
+    <g clip-path="url(#clipTop)">
+      <rect x="78" y="76" width="26" height="14" fill="#89d273"/>
+      <rect x="120" y="64" width="34" height="16" fill="#538b47"/>
+      <rect x="164" y="78" width="22" height="12" fill="#91dd7f"/>
+      <rect x="206" y="70" width="30" height="14" fill="#4b7f3e"/>
+      <rect x="242" y="92" width="28" height="14" fill="#8bd676"/>
+      <rect x="98" y="102" width="24" height="12" fill="#4a7e3b"/>
+      <rect x="142" y="100" width="26" height="14" fill="#7bc469"/>
+      <rect x="188" y="108" width="24" height="12" fill="#558a45"/>
+      <rect x="224" y="118" width="34" height="12" fill="#6eaf5d"/>
+      <rect x="134" y="132" width="34" height="12" fill="#8fd57b"/>
+      <rect x="178" y="128" width="22" height="10" fill="#4e833f"/>
+      <rect x="206" y="142" width="28" height="10" fill="#85cc71"/>
+      <rect x="86" y="126" width="22" height="10" fill="#6aaa57"/>
+      <rect x="256" y="70" width="18" height="12" fill="#6fb55b"/>
+      <rect x="66" y="96" width="16" height="10" fill="#5a9649"/>
+    </g>
+
+    <g clip-path="url(#clipLeft)">
+      <rect x="66" y="134" width="24" height="18" fill="#7a573f"/>
+      <rect x="94" y="148" width="32" height="18" fill="#4f3526"/>
+      <rect x="130" y="162" width="34" height="18" fill="#886047"/>
+      <rect x="62" y="172" width="28" height="18" fill="#61412f"/>
+      <rect x="96" y="188" width="24" height="18" fill="#8f6548"/>
+      <rect x="126" y="202" width="34" height="18" fill="#533726"/>
+      <rect x="66" y="214" width="26" height="18" fill="#79553d"/>
+      <rect x="98" y="230" width="30" height="18" fill="#5c3d2c"/>
+      <rect x="134" y="246" width="28" height="18" fill="#886146"/>
+      <rect x="74" y="256" width="24" height="16" fill="#6e4a35"/>
+      <rect x="108" y="270" width="28" height="16" fill="#4f3525"/>
+      <rect x="142" y="286" width="22" height="14" fill="#7c573e"/>
+      <rect x="76" y="154" width="10" height="10" fill="#8f6a52"/>
+      <rect x="120" y="176" width="10" height="10" fill="#9d7659"/>
+      <rect x="144" y="226" width="10" height="10" fill="#a68062"/>
+    </g>
+
+    <g clip-path="url(#clipRight)">
+      <rect x="214" y="136" width="26" height="18" fill="#8d6348"/>
+      <rect x="246" y="148" width="30" height="18" fill="#5f3f2d"/>
+      <rect x="282" y="162" width="18" height="18" fill="#946b4e"/>
+      <rect x="202" y="174" width="28" height="18" fill="#6b4834"/>
+      <rect x="236" y="188" width="30" height="18" fill="#9f7456"/>
+      <rect x="270" y="202" width="24" height="18" fill="#5c3c2a"/>
+      <rect x="206" y="214" width="26" height="18" fill="#835c42"/>
+      <rect x="240" y="228" width="30" height="18" fill="#6a4732"/>
+      <rect x="274" y="242" width="20" height="18" fill="#8d6449"/>
+      <rect x="214" y="254" width="26" height="16" fill="#573827"/>
+      <rect x="246" y="266" width="26" height="16" fill="#9a6e52"/>
+      <rect x="276" y="280" width="16" height="14" fill="#65422f"/>
+      <rect x="222" y="156" width="10" height="10" fill="#aa8364"/>
+      <rect x="254" y="214" width="10" height="10" fill="#b88c6b"/>
+      <rect x="282" y="252" width="8" height="8" fill="#a97e60"/>
+    </g>
+
+    <polygon points="180,38 308,112 180,186 52,112" fill="none" stroke="#2b4f2c" stroke-width="4"/>
+    <polygon points="52,112 180,186 180,316 52,242" fill="none" stroke="#3c271c" stroke-width="4"/>
+    <polygon points="308,112 180,186 180,316 308,242" fill="none" stroke="#452d1f" stroke-width="4"/>
+  </g>
+</svg>

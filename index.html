@@ -21,7 +21,7 @@
     <nav>
       <a href="#updates">最新更新</a>
       <a href="#chapter">第一章</a>
-      <a href="#messages">留言区</a>
+      <a href="guides/messages.html">留言区</a>
       <a href="guides/shader-lab.html">Shader 渲染器</a>
       <a class="nav-cta" href="guides/chapter-select.html">开始学习</a>
     </nav>
@@ -60,7 +60,7 @@
             <a href="guides/ch1-sec3-point5-recipes.html">第三节-5：物品的配方制作</a>
           </nav>
           <a href="guides/ch1-sec3-start-your-mod.html">进入第三节总览</a>
-          <a href="guides/ch1-sec4-datagen-intro.html">第四节：优化代码（数据生成）</a>
+          <a href="guides/ch1-sec4-datagen-intro.html">第四节：优化代码（数据生成）[可选学（维新派）]</a>
         </nav>
       </section>
     </div>
@@ -68,12 +68,19 @@
 
   <main>
     <section class="hero">
-      <p class="eyebrow">MINECRAFT MOD CREATE</p>
-      <h1>教程主页面</h1>
-      <p class="hero-text">这里集中展示教程更新动态与社区留言。第一章《初窥门径》框架已完成，后续会逐步填入真实教程内容。</p>
-      <div class="hero-actions">
-        <a class="btn btn-primary" href="guides/chapter-select.html">开始学习</a>
-        <a class="btn btn-outline" href="#updates">查看更新</a>
+      <div class="hero-copy">
+        <p class="eyebrow">MINECRAFT MOD CREATE</p>
+        <h1>教程主页面</h1>
+        <p class="hero-text">这里集中展示教程更新动态与社区留言。第一章《初窥门径》框架已完成，后续会逐步填入真实教程内容。</p>
+        <div class="hero-actions">
+          <a class="btn btn-primary" href="guides/chapter-select.html">开始学习</a>
+          <a class="btn btn-outline" href="#updates">查看更新</a>
+        </div>
+      </div>
+      <div class="hero-art" aria-hidden="true">
+        <div class="hero-art-glow"></div>
+        <img class="hero-block" src="assets/hero-grass-block.svg" alt="">
+        <p class="hero-splash" data-splash-text>Loading meme...</p>
       </div>
     </section>
 
@@ -124,14 +131,11 @@
           <ul>
             <li><a href="guides/ch1-sec3-point1-first-item.html">第一点：第一个物品</a></li>
             <li><a href="guides/ch1-sec3-point2-creative-tab.html">第二点：创造模式物品栏</a></li>
-            <li><a href="guides/ch1-sec3-point3-resources-structure.html">第三点：制作第一个方块</a></li>
-            <li><a href="guides/ch1-sec3-point4-block-drops.html">第四点：方块掉落物</a></li>
-            <li><a href="guides/ch1-sec3-point5-recipes.html">第五点：物品的配方制作</a></li>
           </ul>
         </article>
         <article class="outline-card">
           <span class="tag">第四节</span>
-          <h3><a href="guides/ch1-sec4-datagen-intro.html">优化代码（数据生成）</a></h3>
+          <h3><a href="guides/ch1-sec4-datagen-intro.html">优化代码（数据生成）[可选学（维新派）]</a></h3>
           <p>为后续数据生成专题预留入口，逐步整理配方、标签、掉落表与语言文件的自动化写法。</p>
         </article>
       </div>
@@ -140,7 +144,7 @@
     <section id="messages" class="panel">
       <div class="panel-head">
         <h2>用户留言区</h2>
-        <p>可配置共享留言后端；未配置时将回退为本地（localStorage）留言。</p>
+        <p>首页仅展示最新 10 条留言；可前往<a href="guides/messages.html">全部留言页面</a>查看完整内容与搜索关键字。</p>
       </div>
 
       <form class="message-form" data-comment-form>
@@ -158,9 +162,13 @@
         </div>
       </form>
 
-      <div class="message-feed" data-comment-list>
+      <div class="message-feed" data-comment-list data-comment-limit="10">
         <p class="message-empty">暂无留言，来写第一条吧。</p>
       </div>
+
+      <p class="message-more">
+        <a href="guides/messages.html">查看全部留言与搜索</a>
+      </p>
     </section>
   </main>
 

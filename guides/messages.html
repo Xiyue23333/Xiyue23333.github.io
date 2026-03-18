@@ -1,9 +1,11 @@
-﻿<!doctype html>
+<!doctype html>
 <html lang="zh-CN">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>第三节：开始制作自己的 Mod | Minecraft Mod Create</title>
+  <title>留言区 | Minecraft Mod Create</title>
+  <meta name="description" content="Minecraft Mod Create 全部留言与关键词搜索页面。">
+  <meta name="comment-api-base" content="">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;700&family=Noto+Sans+SC:wght@400;600;700&display=swap" rel="stylesheet">
@@ -62,70 +64,59 @@
       </section>
     </div>
   </aside>
+
   <main class="guide-main">
-    <a class="breadcrumb" href="chapter-1-intro.html">← 返回上一页</a>
+    <a class="breadcrumb" href="../index.html">← 返回教程主页面</a>
 
     <header class="guide-hero">
-      <p class="eyebrow">CHAPTER 01 · SECTION 03</p>
-      <h1>第三节：开始制作自己的 Mod</h1>
+      <p class="eyebrow">MESSAGE BOARD</p>
+      <h1>全部留言</h1>
       <div class="meta">
-        <span>状态：框架已搭建</span>
-        <span>内容：待导入教程 Mod</span>
+        <span>展示范围：全部留言</span>
+        <span>支持：关键词搜索</span>
       </div>
     </header>
 
     <section class="section">
       <h2>页面说明</h2>
-      <p>制作最基础的模组框架。</p>
+      <p>这里集中展示当前站点的全部留言。你可以直接搜索昵称或留言内容中的关键字，也可以继续在本页发布新留言。</p>
     </section>
 
     <section class="section">
-      <h2>要点选择</h2>
-      <div class="card-list">
-        <a class="card" href="ch1-sec3-point1-first-item.html">
-          <span class="tag">POINT 01</span>
-          <h3>第一点：制作模组的第一个物品</h3>
-          <p>创建注册类，补齐语言 / 模型 / 贴图资源文件。</p>
-        </a>
+      <div class="message-toolbar">
+        <label class="message-search">
+          <span>搜索留言</span>
+          <input type="search" placeholder="输入昵称或留言关键字" data-comment-search>
+        </label>
+        <p class="message-status" data-comment-status>正在加载留言...</p>
+      </div>
 
-        <a class="card" href="ch1-sec3-point2-creative-tab.html">
-          <span class="tag">POINT 02</span>
-          <h3>第二点：制作自己模组的创造模式物品栏</h3>
-          <p>注册自定义物品栏，并把你的物品添加进去显示。</p>
-        </a>
+      <form class="message-form" data-comment-form>
+        <label>
+          昵称
+          <input type="text" name="name" maxlength="24" placeholder="例如：Xiyue23333" required>
+        </label>
+        <label>
+          留言
+          <textarea name="message" maxlength="280" rows="4" placeholder="输入你想反馈的内容..." required></textarea>
+        </label>
+        <div class="message-actions">
+          <button class="btn btn-primary" type="submit">发布留言</button>
+          <button class="btn btn-outline" type="button" data-comment-clear>清空本地留言</button>
+        </div>
+      </form>
 
-        <a class="card" href="ch1-sec3-point3-resources-structure.html">
-          <span class="tag">POINT 03</span>
-          <h3>第三点：制作第一个方块</h3>
-          <p>注册方块 + 方块物品，并补齐 blockstates / models / textures。</p>
-        </a>
-
-        <a class="card" href="ch1-sec3-point4-block-drops.html">
-          <span class="tag">POINT 04</span>
-          <h3>第四点：方块掉落物</h3>
-          <p>为矿石编写掉落表，并配置正确工具与石镐等级限制。</p>
-        </a>
-
-        <a class="card" href="ch1-sec3-point5-recipes.html">
-          <span class="tag">POINT 05</span>
-          <h3>第五点：物品的配方制作</h3>
-          <p>手写工作台配方，完成水晶块的 9 合 1 与 1 拆 9。</p>
-        </a>
+      <div class="message-feed" data-comment-list data-comment-limit="all">
+        <p class="message-empty">暂无留言，来写第一条吧。</p>
       </div>
     </section>
 
-    <section class="section placeholder-section">
-      <h2>正文内容（待补充）</h2>
-      <p>这里暂不放教程正文，后续导入你实际的教程内容与代码示例。</p>
-    </section>
-
     <nav class="guide-nav">
-      <a href="ch1-sec2-read-official-code.html">上一页</a>
-      <a href="ch1-sec3-point1-first-item.html">下一页</a>
+      <a href="../index.html">返回首页</a>
+      <a href="chapter-select.html">前往章节选择</a>
     </nav>
   </main>
+
   <script src="../scripts/main.js"></script>
 </body>
 </html>
-
-
