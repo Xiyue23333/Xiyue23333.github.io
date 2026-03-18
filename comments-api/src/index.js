@@ -51,6 +51,12 @@ function normalizeText(value, maxLen) {
   return String(value || '').trim().slice(0, maxLen);
 }
 
+function parseCommentId(value) {
+  if (value === null || value === undefined || value === '') return null;
+  const parsed = Number.parseInt(String(value), 10);
+  return Number.isFinite(parsed) && parsed > 0 ? parsed : null;
+}
+
 export default {
   async fetch(request, env) {
     const url = new URL(request.url);
@@ -63,21 +69,66 @@ export default {
       return withCors(jsonResponse({ ok: true, service: 'mmc-comments' }), request, env);
     }
 
+    const commentMatch = url.pathname.match(/^\/comments\/(\d+)\/like$/);
+
+    if (commentMatch && request.method === 'POST') {
+      const commentId = parseCommentId(commentMatch[1]);
+      if (!commentId) {
+        return withCors(
+          jsonResponse({ ok: false, error: 'invalid_comment_id' }, { status: 400 }),
+          request,
+          env,
+        );
+      }
+
+      const result = await env.DB
+        .prepare('UPDATE comments SET like_count = like_count + 1 WHERE id = ?')
+        .bind(commentId)
+        .run();
+
+      if (!result?.success || !result?.meta?.changes) {
+        return withCors(
+          jsonResponse({ ok: false, error: 'comment_not_found' }, { status: 404 }),
+          request,
+          env,
+        );
+      }
+
+      const row = await env.DB
+        .prepare('SELECT id, like_count FROM comments WHERE id = ?')
+        .bind(commentId)
+        .first();
+
+      return withCors(
+        jsonResponse({
+          ok: true,
+          comment: {
+            id: row?.id ?? commentId,
+            likeCount: row?.like_count ?? 0,
+          },
+        }),
+        request,
+        env,
+      );
+    }
+
     if (url.pathname !== '/comments') {
       return withCors(jsonResponse({ ok: false, error: 'not_found' }, { status: 404 }), request, env);
     }
 
     if (request.method === 'GET') {
-      const limit = clampInt(url.searchParams.get('limit'), 1, 80, 50);
+      const limit = clampInt(url.searchParams.get('limit'), 1, 500, 120);
       const { results } = await env.DB
-        .prepare('SELECT id, name, message, created_at FROM comments ORDER BY id DESC LIMIT ?')
+        .prepare('SELECT id, parent_id, name, message, like_count, created_at FROM comments ORDER BY id DESC LIMIT ?')
         .bind(limit)
         .all();
 
       const comments = (results || []).map((row) => ({
         id: row.id,
+        parentId: row.parent_id,
         name: row.name,
         message: row.message,
+        likeCount: row.like_count ?? 0,
         createdAt: row.created_at,
       }));
 
@@ -94,6 +145,7 @@ export default {
 
       const name = normalizeText(body?.name, 24);
       const message = normalizeText(body?.message, 280);
+      const parentId = parseCommentId(body?.parentId);
 
       if (!name || !message) {
         return withCors(
@@ -103,10 +155,33 @@ export default {
         );
       }
 
+      if (parentId) {
+        const parent = await env.DB
+          .prepare('SELECT id, parent_id FROM comments WHERE id = ?')
+          .bind(parentId)
+          .first();
+
+        if (!parent) {
+          return withCors(
+            jsonResponse({ ok: false, error: 'parent_not_found' }, { status: 400 }),
+            request,
+            env,
+          );
+        }
+
+        if (parent.parent_id !== null && parent.parent_id !== undefined) {
+          return withCors(
+            jsonResponse({ ok: false, error: 'nested_reply_not_allowed' }, { status: 400 }),
+            request,
+            env,
+          );
+        }
+      }
+
       const now = new Date().toISOString();
       const result = await env.DB
-        .prepare('INSERT INTO comments (name, message, created_at) VALUES (?, ?, ?)')
-        .bind(name, message, now)
+        .prepare('INSERT INTO comments (parent_id, name, message, like_count, created_at) VALUES (?, ?, ?, 0, ?)')
+        .bind(parentId, name, message, now)
         .run();
 
       return withCors(
@@ -114,8 +189,10 @@ export default {
           ok: true,
           comment: {
             id: result?.meta?.last_row_id ?? null,
+            parentId,
             name,
             message,
+            likeCount: 0,
             createdAt: now,
           },
         }),
@@ -131,4 +208,3 @@ export default {
     );
   },
 };
-
