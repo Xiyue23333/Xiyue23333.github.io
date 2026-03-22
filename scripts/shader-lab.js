@@ -24,6 +24,15 @@
   if (!codeEl || !linesEl || !logEl || !canvasEl || !canvasWrapEl || !reloadBtn || !resetBtn) return;
 
   const STAGE_LINES = 25;
+  const caretMeasureEl = document.createElement("div");
+  const caretMeasureMarkerEl = document.createElement("span");
+  let caretMeasureReady = false;
+
+  caretMeasureEl.className = "shader-caret-measure";
+  caretMeasureMarkerEl.className = "shader-caret-marker";
+  caretMeasureMarkerEl.textContent = "\u200b";
+  caretMeasureEl.appendChild(caretMeasureMarkerEl);
+  document.body.appendChild(caretMeasureEl);
 
   const TEMPLATE_VSH = `#version 150
 
@@ -393,6 +402,50 @@ void main() {
     return count;
   }
 
+  function syncCaretMeasureStyle() {
+    const style = getComputedStyle(codeEl);
+    const props = [
+      "boxSizing",
+      "fontFamily",
+      "fontSize",
+      "fontStyle",
+      "fontWeight",
+      "fontVariant",
+      "fontStretch",
+      "fontKerning",
+      "letterSpacing",
+      "tabSize",
+      "textIndent",
+      "textTransform",
+      "lineHeight",
+      "paddingTop",
+      "paddingRight",
+      "paddingBottom",
+      "paddingLeft",
+      "borderTopWidth",
+      "borderRightWidth",
+      "borderBottomWidth",
+      "borderLeftWidth",
+    ];
+
+    for (const prop of props) {
+      caretMeasureEl.style[prop] = style[prop];
+    }
+
+    caretMeasureEl.style.width = `${codeEl.clientWidth}px`;
+    caretMeasureEl.style.whiteSpace = "pre";
+    caretMeasureEl.style.overflowWrap = "normal";
+    caretMeasureEl.style.wordBreak = "normal";
+    caretMeasureEl.style.position = "absolute";
+    caretMeasureEl.style.visibility = "hidden";
+    caretMeasureEl.style.pointerEvents = "none";
+    caretMeasureEl.style.left = "-99999px";
+    caretMeasureEl.style.top = "0";
+    caretMeasureEl.style.overflow = "hidden";
+    caretMeasureEl.style.contain = "layout style paint";
+    caretMeasureReady = true;
+  }
+
   function renderLineNumbers() {
     const total = countLines(codeEl.value);
     const frag = document.createDocumentFragment();
@@ -456,9 +509,38 @@ void main() {
     return line;
   }
 
-  function updateActiveLine() {
+  function computeVisualLineIndex() {
+    if (!caretMeasureReady) {
+      syncCaretMeasureStyle();
+    }
+
+    const text = String(codeEl.value || "").replace(/\r\n/g, "\n");
     const pos = typeof codeEl.selectionStart === "number" ? codeEl.selectionStart : 0;
-    const line = computeLineIndexAt(pos);
+    const end = Math.max(0, Math.min(pos, text.length));
+    const before = text.slice(0, end);
+    const after = text.slice(end);
+
+    caretMeasureEl.textContent = before;
+
+    // At line-start / blank-line boundaries, keep a zero-width anchor so the measured
+    // line matches the browser's actual caret row instead of the preceding line.
+    if (before.endsWith("\n") || (!before && after.startsWith("\n"))) {
+      caretMeasureEl.appendChild(document.createTextNode("\u200b"));
+    }
+
+    caretMeasureEl.appendChild(caretMeasureMarkerEl);
+
+    const markerTop = caretMeasureMarkerEl.offsetTop;
+    const style = getComputedStyle(codeEl);
+    const paddingTop = parseFloat(style.paddingTop || "0") || 0;
+    const lineHeight = parseFloat(style.lineHeight || "0") || 20;
+    const line = Math.max(1, Math.round((markerTop - paddingTop) / lineHeight) + 1);
+
+    return Number.isFinite(line) ? line : computeLineIndexAt(pos);
+  }
+
+  function updateActiveLine() {
+    const line = computeVisualLineIndex();
 
     if (lastActiveLine !== line) {
       const prev = linesEl.children[lastActiveLine - 1];
@@ -486,6 +568,7 @@ void main() {
     root.style.setProperty("--shader-line-height-px", `${Math.round(lineHeightPx)}px`);
     root.style.setProperty("--shader-editor-padding-top-px", `${Math.round(paddingTopPx)}px`);
     root.style.setProperty("--shader-editor-padding-bottom-px", `${Math.round(paddingBottomPx)}px`);
+    syncCaretMeasureStyle();
   }
 
   function setActiveFile(kind) {
