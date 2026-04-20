@@ -71,7 +71,7 @@
       <div class="hero-copy">
         <p class="eyebrow">MINECRAFT MOD CREATE</p>
         <h1>教程主页面</h1>
-        <p class="hero-text">这里集中展示教程更新动态与社区留言。第一章《初窥门径》框架已完成，后续会逐步填入真实教程内容。</p>
+        <p class="hero-text">这里集中展示教程更新动态与社区留言。第一章《初窥门径》已补全核心教程，当前可完整学习环境搭建、基础内容开发与数据生成入口。</p>
         <div class="hero-actions">
           <a class="btn btn-primary" href="guides/chapter-select.html">开始学习</a>
           <a class="btn btn-outline" href="#updates">查看更新</a>
@@ -87,9 +87,19 @@
     <section id="updates" class="panel">
       <div class="panel-head">
         <h2>最新更新内容</h2>
-        <p>记录教程站的结构更新与章节进度。</p>
+        <p>记录教程站的结构更新、章节进度与示例代码同步。</p>
       </div>
       <div class="updates-list">
+        <article class="update-item">
+          <p class="update-date">2026-04-20</p>
+          <h3>第三节总览页补全</h3>
+          <p>“开始制作自己的 Mod”从占位页升级为完整路线页，新增学习顺序、验收标准与常见坑提醒。</p>
+        </article>
+        <article class="update-item">
+          <p class="update-date">2026-04-20</p>
+          <h3>第四节数据生成教程上线</h3>
+          <p>新增 datagen 迁移思路、Provider 拆分建议、runData 执行流程与目录规范。</p>
+        </article>
         <article class="update-item">
           <p class="update-date">2026-02-15</p>
           <h3>搭建教程主页面</h3>
@@ -112,18 +122,18 @@
     <section id="chapter" class="panel">
       <div class="panel-head">
         <h2>第一章结构</h2>
-        <p>当前仅搭建结构，正文内容待你后续导入教程 Mod 后补充。</p>
+        <p>第一章已从“框架”升级为“可学习正文”，并同步到当前教程模组代码。</p>
       </div>
       <div class="chapter-outline">
         <article class="outline-card">
           <span class="tag">第一节</span>
           <h3><a href="guides/ch1-sec1-environment-setup.html">开发环境构建</a></h3>
-          <p>页面框架已创建。</p>
+          <p>已包含 Forge 1.20.1、映射配置、Gradle 运行与首启验证流程。</p>
         </article>
         <article class="outline-card">
           <span class="tag">第二节</span>
           <h3><a href="guides/ch1-sec2-read-official-code.html">学会查看官方代码</a></h3>
-          <p>页面框架已创建。</p>
+          <p>已给出按注册链路定位官方代码的阅读方法。</p>
         </article>
         <article class="outline-card">
           <span class="tag">第三节</span>
@@ -131,12 +141,15 @@
           <ul>
             <li><a href="guides/ch1-sec3-point1-first-item.html">第一点：第一个物品</a></li>
             <li><a href="guides/ch1-sec3-point2-creative-tab.html">第二点：创造模式物品栏</a></li>
+            <li><a href="guides/ch1-sec3-point3-resources-structure.html">第三点：制作第一个方块</a></li>
+            <li><a href="guides/ch1-sec3-point4-block-drops.html">第四点：方块掉落物</a></li>
+            <li><a href="guides/ch1-sec3-point5-recipes.html">第五点：物品的配方制作</a></li>
           </ul>
         </article>
         <article class="outline-card">
           <span class="tag">第四节</span>
           <h3><a href="guides/ch1-sec4-datagen-intro.html">优化代码（数据生成）[可选学（维新派）]</a></h3>
-          <p>为后续数据生成专题预留入口，逐步整理配方、标签、掉落表与语言文件的自动化写法。</p>
+          <p>已补全 datagen 入门：入口注册、Provider 拆分、资源迁移与 runData 实战。</p>
         </article>
       </div>
     </section>

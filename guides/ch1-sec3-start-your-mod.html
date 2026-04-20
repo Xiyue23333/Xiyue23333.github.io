@@ -69,14 +69,24 @@
       <p class="eyebrow">CHAPTER 01 · SECTION 03</p>
       <h1>第三节：开始制作自己的 Mod</h1>
       <div class="meta">
-        <span>状态：框架已搭建</span>
-        <span>内容：待导入教程 Mod</span>
+        <span>状态：完整教程</span>
+        <span>目标：从 0 到可游玩基础内容</span>
       </div>
     </header>
 
     <section class="section">
       <h2>页面说明</h2>
-      <p>制作最基础的模组框架。</p>
+      <p>这一节是“把工程跑起来之后，真正开始做内容”的核心阶段。你会按真实开发顺序，完成物品、创造模式物品栏、方块、掉落表、配方五个步骤，最终得到一个可进入游戏验证的基础教程模组。</p>
+    </section>
+
+    <section class="section">
+      <h2>本节完成标准</h2>
+      <ul class="step-list">
+        <li>能在游戏中看到并获取 <code>tutorial:crystal</code>、<code>tutorial:crystal_block</code>、<code>tutorial:crystal_ore</code>。</li>
+        <li>自定义创造模式物品栏可正常显示物品与方块。</li>
+        <li>矿石掉落与工具等级限制生效（支持精准采集与时运）。</li>
+        <li>配方支持 9 合 1 与 1 拆 9（<code>crystal</code> ↔ <code>crystal_block</code>）。</li>
+      </ul>
     </section>
 
     <section class="section">
@@ -114,9 +124,27 @@
       </div>
     </section>
 
-    <section class="section placeholder-section">
-      <h2>正文内容（待补充）</h2>
-      <p>这里暂不放教程正文，后续导入你实际的教程内容与代码示例。</p>
+    <section class="section">
+      <h2>建议学习顺序</h2>
+      <ol class="step-list">
+        <li>先完成 <strong>第一点 + 第二点</strong>：确保“注册机制 + 显示入口”打通。</li>
+        <li>再做 <strong>第三点</strong>：建立方块与资源文件的目录和命名规范。</li>
+        <li>随后完成 <strong>第四点 + 第五点</strong>：补齐“玩法闭环”（采集与合成）。</li>
+        <li>最后跑一次 <code>runClient</code>，逐项验证显示、掉落、配方是否一致。</li>
+      </ol>
+      <p class="notice-warning"><strong>提醒：</strong>Forge 1.20.1 项目建议固定使用 JDK 17。若用更高版本（例如 Java 25）运行 Gradle，可能报 <code>Unsupported class file major version 69</code>。</p>
+    </section>
+
+    <section class="section">
+      <h2>本节会生成的关键文件</h2>
+      <ul class="step-list">
+        <li><code>src/main/java/com/xiyue/tutorial/common/registry/ModItems.java</code></li>
+        <li><code>src/main/java/com/xiyue/tutorial/common/registry/ModBlocks.java</code></li>
+        <li><code>src/main/java/com/xiyue/tutorial/common/registry/ModCreativeModeTabs.java</code></li>
+        <li><code>src/main/resources/assets/tutorial/*</code>（语言、模型、贴图、blockstates）</li>
+        <li><code>src/main/resources/data/tutorial/*</code>（loot tables、recipes）</li>
+        <li><code>src/main/resources/data/minecraft/tags/blocks/*</code>（采掘工具与等级标签）</li>
+      </ul>
     </section>
 
     <nav class="guide-nav">

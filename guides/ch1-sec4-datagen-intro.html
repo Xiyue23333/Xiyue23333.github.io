@@ -4,6 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>第四节：优化代码（数据生成）[可选学（维新派）] | Minecraft Mod Create</title>
+  <meta name="description" content="将手写 JSON 迁移到数据生成（Data Generation）：配方、标签、掉落表、模型与语言文件自动生成。">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;700&family=Noto+Sans+SC:wght@400;600;700&display=swap" rel="stylesheet">
@@ -63,29 +64,109 @@
     </div>
   </aside>
 
-  <main class="guide-main">
+  <main class="guide-main guide-main-wide">
     <a class="breadcrumb" href="chapter-1-intro.html">← 返回上一页</a>
 
     <header class="guide-hero">
       <p class="eyebrow">CHAPTER 01 · SECTION 04</p>
       <h1>第四节：优化代码（数据生成）[可选学（维新派）]</h1>
       <div class="meta">
-        <span>状态：入口已创建</span>
-        <span>内容：待补充</span>
+        <span>状态：完整教程（可选）</span>
+        <span>目标：从手写 JSON 迁移到自动生成</span>
       </div>
     </header>
 
     <section class="section">
-      <h2>页面说明</h2>
-      <p>本节将作为“数据生成”专题入口，用来整理如何把手写 JSON 资源逐步优化为更易维护的自动生成代码。</p>
+      <h2>本节定位</h2>
+      <p>前三节我们用手写 JSON 完成了资源流程，优点是直观、上手快。第四节开始引入 Data Generation（数据生成），把配方、标签、掉落表、模型、语言文件改为“由 Java 代码统一生成”，减少重复劳动并降低改名时的维护成本。</p>
+      <p class="notice-warning"><strong>说明：</strong>本节是“工程化优化”，不是“入门必修”。你可以先把前三节做熟，再回来升级。</p>
     </section>
 
-    <section class="section placeholder-section">
-      <h2>预计内容</h2>
+    <section class="section">
+      <h2>你会得到什么</h2>
       <ul class="step-list">
-        <li>数据生成入口注册：<code>GatherDataEvent</code></li>
-        <li>配方生成：从手写 JSON 迁移到 Provider</li>
-        <li>方块标签、掉落表、模型与语言文件的自动生成</li>
+        <li>统一的资源生成入口，不再手动维护大量 JSON。</li>
+        <li>新增内容时可以“一次改代码，多文件同步产出”。</li>
+        <li>更清晰的模块拆分：配方、标签、掉落表、模型、语言各自独立 Provider。</li>
+      </ul>
+    </section>
+
+    <section class="section">
+      <h2>推荐目录策略</h2>
+      <p>保留这三层分工，最不容易乱：</p>
+      <ul class="step-list">
+        <li><code>src/main/resources</code>：手写的核心资源（保底可运行）。</li>
+        <li><code>src/generated/resources</code>：数据生成产物（由任务覆盖更新）。</li>
+        <li><code>src/main/java/.../datagen</code>：各类 Provider 与入口类。</li>
+      </ul>
+      <p>并确保 <code>build.gradle</code> 已包含：</p>
+      <pre><code>sourceSets.main.resources { srcDir 'src/generated/resources' }</code></pre>
+    </section>
+
+    <section class="section">
+      <h2>第一步：注册数据生成入口</h2>
+      <p>在主类中监听 <code>GatherDataEvent</code>，把各 Provider 挂进去。示意结构如下：</p>
+      <pre><code>@Mod.EventBusSubscriber(modid = TutorialMod.MODID, bus = Mod.EventBusSubscriber.Bus.MOD)
+public final class DataGenerators {
+    @SubscribeEvent
+    public static void gatherData(GatherDataEvent event) {
+        DataGenerator generator = event.getGenerator();
+        PackOutput output = generator.getPackOutput();
+        ExistingFileHelper helper = event.getExistingFileHelper();
+
+        generator.addProvider(event.includeServer(), new ModRecipeProvider(output));
+        generator.addProvider(event.includeServer(), new ModBlockTagProvider(output, event.getLookupProvider(), helper));
+        generator.addProvider(event.includeServer(), new ModLootTableProvider(output));
+
+        generator.addProvider(event.includeClient(), new ModBlockStateProvider(output, helper));
+        generator.addProvider(event.includeClient(), new ModItemModelProvider(output, helper));
+        generator.addProvider(event.includeClient(), new ModLanguageProvider(output, "zh_cn"));
+    }
+}</code></pre>
+    </section>
+
+    <section class="section">
+      <h2>第二步：按功能拆 Provider</h2>
+      <p>建议最少拆成 5 组：</p>
+      <ul class="step-list">
+        <li><strong>配方：</strong><code>ModRecipeProvider</code>（如 <code>crystal_block</code> 与 <code>crystal_from_block</code>）。</li>
+        <li><strong>方块标签：</strong><code>ModBlockTagProvider</code>（如 <code>mineable/pickaxe</code>、<code>needs_stone_tool</code>）。</li>
+        <li><strong>掉落表：</strong><code>ModLootTableProvider</code>（矿石精准采集/时运逻辑统一放这里）。</li>
+        <li><strong>模型与方块状态：</strong><code>ModBlockStateProvider</code> + <code>ModItemModelProvider</code>。</li>
+        <li><strong>语言：</strong><code>ModLanguageProvider</code>（<code>en_us</code> / <code>zh_cn</code>）。</li>
+      </ul>
+      <p>规则是：一个 Provider 只负责一类资源，后续查错和扩展都更快。</p>
+    </section>
+
+    <section class="section">
+      <h2>第三步：执行数据生成</h2>
+      <p>使用 Gradle 的数据生成任务输出文件：</p>
+      <pre><code>./gradlew runData</code></pre>
+      <p>执行后重点检查：</p>
+      <ul class="step-list">
+        <li><code>src/generated/resources/data/tutorial/recipes</code></li>
+        <li><code>src/generated/resources/data/tutorial/loot_tables</code></li>
+        <li><code>src/generated/resources/data/minecraft/tags/blocks</code></li>
+        <li><code>src/generated/resources/assets/tutorial</code></li>
+      </ul>
+    </section>
+
+    <section class="section">
+      <h2>从现有工程迁移的建议顺序</h2>
+      <ol class="step-list">
+        <li>先迁移“配方 + 标签”（最简单、最稳定）。</li>
+        <li>再迁移“掉落表”（逻辑较多，验证成本高）。</li>
+        <li>最后迁移“模型/语言”（数量多但逻辑简单）。</li>
+        <li>每迁移一类就跑一次 <code>runData</code> + <code>runClient</code>，不要一次改完再排错。</li>
+      </ol>
+    </section>
+
+    <section class="section">
+      <h2>常见问题</h2>
+      <ul class="step-list">
+        <li><strong>生成了但游戏没读到：</strong>确认 <code>src/generated/resources</code> 已加入 main resources。</li>
+        <li><strong>命名空间错乱：</strong>所有资源都要和 <code>MODID=tutorial</code> 对齐。</li>
+        <li><strong>数据任务报版本问题：</strong>Forge 1.20.1 工程建议使用 JDK 17 运行 Gradle。</li>
       </ul>
     </section>
 
